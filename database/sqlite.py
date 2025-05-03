@@ -77,90 +77,91 @@ cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
 lessons = [
     {
-        "lesson_title": "Welcome to Java Programming",
+        "lesson_title": "Welcome to C++ Programming",
         "content": """
-# Welcome to Java Programming
+# Welcome to C++ Programming
 
-Hey there! 👋 Ready to start learning Java?
+Hey there! 👋 Ready to dive into C++?
 
-Java is one of the most widely-used programming languages in the world. From Android apps to enterprise systems, Java is everywhere!
+C++ is a powerful programming language used in everything from game engines to operating systems. It’s fast, flexible, and teaches you how computers really work.
 
-### Why learn Java?
-- It's beginner-friendly and strongly typed
-- It's used in mobile apps, web apps, and backend services
-- It's a great language for building solid programming foundations
+### Why learn C++?
+- It's widely used in performance-critical applications
+- It builds strong programming fundamentals
+- It’s the foundation for many other languages
 
-We’ll start from the very basics, and by the end of this course, you’ll be writing real Java programs.
-
-Let’s begin!
+This course is designed for total beginners. No experience? No worries. We’ll guide you step by step.
 """,
         "lesson_order": 1
     },
     {
-        "lesson_title": "Setting Up Java",
+        "lesson_title": "Setting Up C++",
         "content": """
-# Setting Up Java
+# Setting Up C++
 
-Before writing Java code, we need to get Java installed.
+Before we can start coding, let’s set up your environment.
 
-### Step 1: Install Java
-- Visit [https://www.oracle.com/java/technologies/javase-downloads.html](https://www.oracle.com/java/technologies/javase-downloads.html)
-- Download and install the Java Development Kit (JDK)
+### Option 1: Using an online compiler (easiest)
+- Go to [https://www.onlinegdb.com/online_c++_compiler](https://www.onlinegdb.com/online_c++_compiler)
+- Select "C++" and start coding right away in your browser
 
-### Step 2: Install an IDE (Optional, but helpful)
-You can write Java using any text editor, but using an IDE like:
-- IntelliJ IDEA (recommended)
-- Eclipse
-- VS Code (with Java extensions)
+### Option 2: Install locally
+1. Download and install a C++ compiler:
+   - Windows: Install [Code::Blocks](http://www.codeblocks.org/downloads) or [MinGW](https://osdn.net/projects/mingw/releases/)
+   - Mac: Use Xcode or install `g++` via Homebrew
+   - Linux: Use `sudo apt install g++`
 
-### Step 3: Verify Java Installation
-Open your terminal and type:
+2. Use any text editor or IDE like:
+   - VS Code
+   - CLion
+   - Code::Blocks
+
+### Check your installation
+Run:
 ```bash
-java -version
-javac -version
+g++ --version
 ```
-
-### Explanation:
-- `java -version` checks if the Java runtime is installed
-- `javac -version` checks if the Java compiler is installed
-
-If both commands show a version number, you're all set!
+If you see a version number, you’re ready!
 """,
         "lesson_order": 2
     },
     {
-        "lesson_title": "Your First Java Program",
+        "lesson_title": "Your First C++ Program",
         "content": """
-# Your First Java Program
+# Your First C++ Program
 
-Let’s write a simple program that says "Hello, world!"
+Let’s write a simple program that prints a message.
 
-Create a file called `HelloWorld.java` with this code:
-```java
-public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, world!");
-    }
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello, world!" << endl;
+    return 0;
 }
 ```
 
 ### Explanation:
-- `public class HelloWorld` defines a class called HelloWorld
-- `public static void main(String[] args)` is the method that Java runs first
-- `System.out.println(...)` prints a message to the screen
+- `#include <iostream>` lets us use `cout` for printing
+- `using namespace std;` avoids typing `std::cout`
+- `int main()` is where the program starts
+- `cout <<` prints to the screen
+- `endl` ends the line
+- `return 0;` signals successful execution
 
 ### How to run:
-1. Open your terminal and navigate to the file location
-2. Compile the code:
+1. Save as `hello.cpp`
+2. Compile with:
 ```bash
-javac HelloWorld.java
+g++ hello.cpp -o hello
 ```
-3. Then run it:
+3. Run it:
 ```bash
-java HelloWorld
+./hello
 ```
 
-🎉 You should see: `Hello, world!`
+🎉 It should print `Hello, world!`
 """,
         "lesson_order": 3
     },
@@ -169,62 +170,59 @@ java HelloWorld
         "content": """
 # Variables and Data Types
 
-Java requires you to declare what type of data each variable holds.
+Variables store data. In C++, you need to declare the type.
 
-```java
-String name = "Alice";
+```cpp
 int age = 25;
-double height = 5.6;
-boolean isStudent = true;
+double height = 5.9;
+char grade = 'A';
+bool isStudent = true;
 ```
 
 ### Explanation:
-- `String` holds text
-- `int` is for whole numbers
-- `double` is for decimal numbers
-- `boolean` is for true/false values
+- `int` for whole numbers
+- `double` for decimals
+- `char` for single characters
+- `bool` for true/false
 
-To print them:
-```java
-System.out.println(name);
-System.out.println(age);
+You can print them:
+```cpp
+cout << "Age: " << age << endl;
 ```
 
-This helps Java know what kind of data to expect and catch errors early.
+Declaring types helps the computer understand your program better.
 """,
         "lesson_order": 4
     },
     {
-        "lesson_title": "Taking Input from the User",
+        "lesson_title": "User Input",
         "content": """
-# Taking Input from the User
+# User Input
 
-Use the `Scanner` class to read user input.
+Use `cin` to get input from the user.
 
-```java
-import java.util.Scanner;
+```cpp
+#include <iostream>
+using namespace std;
 
-public class InputExample {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+int main() {
+    string name;
+    int age;
 
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine();
+    cout << "Enter your name: ";
+    cin >> name;
 
-        System.out.print("Enter your age: ");
-        int age = scanner.nextInt();
+    cout << "Enter your age: ";
+    cin >> age;
 
-        System.out.println("Hello, " + name + ". You are " + age + " years old.");
-    }
+    cout << "Hello, " << name << ". You are " << age << " years old." << endl;
+    return 0;
 }
 ```
 
 ### Explanation:
-- `import java.util.Scanner;` brings in the Scanner class from Java's utility library
-- `Scanner scanner = new Scanner(System.in);` sets up input reading from the keyboard
-- `scanner.nextLine()` reads a line of text
-- `scanner.nextInt()` reads a number
-- We then print out a personalized greeting
+- `cin >>` reads input from the user
+- It stores the value in the variable you specify
 
 This makes your programs interactive!
 """,
@@ -235,95 +233,96 @@ This makes your programs interactive!
         "content": """
 # If Statements
 
-Let's teach our program to make decisions.
+Use `if` to run code based on conditions.
 
-```java
-int age = 20;
+```cpp
+int age = 17;
 
 if (age >= 18) {
-    System.out.println("You are an adult.");
+    cout << "You are an adult." << endl;
 } else {
-    System.out.println("You are a minor.");
+    cout << "You are a minor." << endl;
 }
 ```
 
 ### Explanation:
-- `if (age >= 18)` checks whether the condition is true
-- If it is, the first message is printed
-- Otherwise, the `else` part runs
+- The condition inside `if (...)` is checked
+- If it’s true, the first block runs
+- Otherwise, the `else` block runs
 
-More conditions:
-```java
+You can add more with `else if`:
+```cpp
 if (age >= 65) {
-    System.out.println("You are a senior.");
+    cout << "Senior." << endl;
 } else if (age >= 18) {
-    System.out.println("You are an adult.");
+    cout << "Adult." << endl;
 } else {
-    System.out.println("You are a minor.");
+    cout << "Minor." << endl;
 }
 ```
-
-Use if/else to control what your program does based on values.
 """,
         "lesson_order": 6
     },
     {
-        "lesson_title": "Loops in Java",
+        "lesson_title": "Loops",
         "content": """
-# Loops in Java
+# Loops
 
-Loops let you repeat code multiple times.
+Loops let you repeat tasks.
 
 ### For loop:
-```java
+```cpp
 for (int i = 0; i < 5; i++) {
-    System.out.println("Count: " + i);
+    cout << "Number: " << i << endl;
 }
 ```
-
-### Explanation:
-- `int i = 0` sets the starting point
-- `i < 5` is the condition to keep looping
-- `i++` increases `i` by 1 each time
-- The loop runs 5 times, printing 0 to 4
 
 ### While loop:
-```java
-int count = 0;
-while (count < 3) {
-    System.out.println("While count: " + count);
-    count++;
+```cpp
+int i = 0;
+while (i < 3) {
+    cout << "i is " << i << endl;
+    i++;
 }
 ```
 
-This keeps looping as long as the condition is true.
+### Do-while loop:
+```cpp
+int j = 0;
+do {
+    cout << "j is " << j << endl;
+    j++;
+} while (j < 2);
+```
+
+Loops are used when you want to repeat something multiple times.
 """,
         "lesson_order": 7
     },
     {
-        "lesson_title": "Methods (Functions)",
+        "lesson_title": "Functions",
         "content": """
-# Methods (Functions)
+# Functions
 
-Methods help you organize code into reusable blocks.
+Functions help you organize your code.
 
-```java
-public class Greeter {
-    public static void greet(String name) {
-        System.out.println("Hello, " + name);
-    }
+```cpp
+void greet(string name) {
+    cout << "Hello, " << name << "!" << endl;
+}
 
-    public static void main(String[] args) {
-        greet("Alice");
-        greet("Bob");
-    }
+int main() {
+    greet("Alice");
+    greet("Bob");
+    return 0;
 }
 ```
 
 ### Explanation:
-- `public static void greet(String name)` defines a method that takes a name
-- You call it with different values to reuse the logic
-- The `main` method runs when the program starts
+- `void greet(string name)` defines a function
+- You can call it with different values
+
+Functions are great for reusing logic.
 """,
         "lesson_order": 8
     },
@@ -334,123 +333,94 @@ public class Greeter {
 
 Arrays store multiple values of the same type.
 
-```java
-int[] numbers = {1, 2, 3, 4};
-System.out.println(numbers[0]);
-```
+```cpp
+int numbers[4] = {10, 20, 30, 40};
 
-### Explanation:
-- `int[]` declares an array of integers
-- `{1, 2, 3, 4}` are the values stored
-- `numbers[0]` accesses the first item
-
-You can loop through arrays:
-```java
-for (int num : numbers) {
-    System.out.println(num);
+for (int i = 0; i < 4; i++) {
+    cout << numbers[i] << endl;
 }
 ```
 
-Use arrays to manage lists of values.
+### Explanation:
+- `int numbers[4]` creates an array with 4 integers
+- You can access each element using an index like `numbers[0]`
+
+Arrays are helpful for managing groups of similar data.
 """,
         "lesson_order": 9
     },
     {
-        "lesson_title": "Object-Oriented Basics",
+        "lesson_title": "Classes and Objects",
         "content": """
-# Object-Oriented Basics
+# Classes and Objects
 
-Java is an object-oriented language — you define classes and create objects from them.
+C++ supports object-oriented programming.
 
-```java
-class Person {
-    String name;
-    int age;
+```cpp
+class Car {
+public:
+    string brand;
+    int year;
 
-    void sayHello() {
-        System.out.println("Hi, I'm " + name);
+    void honk() {
+        cout << "Beep!" << endl;
     }
-}
+};
 
-public class Main {
-    public static void main(String[] args) {
-        Person p = new Person();
-        p.name = "Alice";
-        p.age = 30;
-        p.sayHello();
-    }
+int main() {
+    Car myCar;
+    myCar.brand = "Toyota";
+    myCar.year = 2020;
+    myCar.honk();
+    cout << myCar.brand << " - " << myCar.year << endl;
+    return 0;
 }
 ```
 
 ### Explanation:
-- `class Person` defines a blueprint
-- `name` and `age` are properties
-- `sayHello()` is a method
-- We create a `Person` object and call its method
+- `class Car` defines a blueprint
+- We create an object `myCar` from that class
+- We access and use its members
 """,
         "lesson_order": 10
     },
     {
-        "lesson_title": "Exception Handling",
+        "lesson_title": "Final Project: Simple Student Record",
         "content": """
-# Exception Handling
+# Final Project: Simple Student Record
 
-Use `try` and `catch` to deal with errors.
+Let’s build a tiny system to store student info.
 
-```java
-try {
-    int result = 10 / 0;
-} catch (ArithmeticException e) {
-    System.out.println("You can't divide by zero!");
-}
-```
-
-### Explanation:
-- Code in `try` runs first
-- If an error happens, it jumps to `catch`
-- This stops the program from crashing and lets you handle it
-""",
-        "lesson_order": 11
-    },
-    {
-        "lesson_title": "Final Project: Contact Book",
-        "content": """
-# Final Project: Contact Book
-
-Let’s bring together what you've learned.
-
-```java
-class Contact {
-    String name;
-    String phone;
+```cpp
+class Student {
+public:
+    string name;
+    int age;
 
     void display() {
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phone);
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
     }
-}
+};
 
-public class ContactBook {
-    public static void main(String[] args) {
-        Contact c1 = new Contact();
-        c1.name = "Alice";
-        c1.phone = "123-456-7890";
-        c1.display();
-    }
+int main() {
+    Student s1;
+    s1.name = "Luna";
+    s1.age = 18;
+    s1.display();
+    return 0;
 }
 ```
 
 ### Explanation:
-- We created a `Contact` class
-- We added properties and a method to display them
-- Then we made a `ContactBook` class to create and show a contact
+- We defined a `Student` class with properties and a method
+- We created a student and printed the info
 
-🎉 You just finished your first Java mini project!
+🎉 You just finished your first C++ project!
 """,
-        "lesson_order": 12
+        "lesson_order": 11
     }
 ]
-
 
 for lesson in lessons:
     lesson_id = str(uuid.uuid4())
@@ -460,7 +430,7 @@ INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) V
 """,
         (
             lesson_id,
-            java_course_id,
+            cplusplus_course_id ,
             lesson["lesson_title"],
             lesson["content"],
             lesson["lesson_order"],
