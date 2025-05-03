@@ -77,350 +77,6 @@ cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
 lessons = [
     {
-        "lesson_title": "Welcome to TypeScript",
-        "content": """
-# Welcome to TypeScript
-
-Hey there! 👋 Welcome to your TypeScript journey.
-
-If you’ve already touched JavaScript (even just a little), you’ll love what TypeScript brings. It adds features like type safety, better autocompletion, and more confidence in your code.
-
-### Why Learn TypeScript?
-- It helps catch mistakes before running your code
-- It makes your code easier to understand and maintain
-- It's widely used in professional web development
-
-Let’s take it step by step — no rush. Ready? Let's get started!
-""",
-        "lesson_order": 1
-    },
-    {
-        "lesson_title": "Setting Up TypeScript",
-        "content": """
-# Setting Up TypeScript
-
-Let’s get your computer ready to write TypeScript!
-
-### Step 1: Install Node.js
-If you don’t already have Node.js:
-- Go to [https://nodejs.org](https://nodejs.org)
-- Download and install the LTS version
-
-### Step 2: Install TypeScript
-Open your terminal and run:
-```bash
-npm install -g typescript
-```
-This makes the `tsc` command (TypeScript compiler) available globally.
-
-### Step 3: Check it works
-```bash
-tsc --version
-```
-If you see a version number, you're good to go!
-
-Next up: let’s write our first TypeScript program!
-""",
-        "lesson_order": 2
-    },
-    {
-        "lesson_title": "Your First TypeScript Program",
-        "content": """
-# Your First TypeScript Program
-
-Create a file named `hello.ts` and write this code:
-```ts
-let message: string = "Hello, TypeScript!";
-console.log(message);
-```
-
-### What does this do?
-- We declare a variable `message`
-- `: string` tells TypeScript that `message` must always be a string
-- We print it using `console.log()`
-
-### Run it:
-First, compile it:
-```bash
-tsc hello.ts
-```
-This creates `hello.js`
-
-Now run it with Node:
-```bash
-node hello.js
-```
-
-🎉 You just ran your first TypeScript program!
-""",
-        "lesson_order": 3
-    },
-    {
-        "lesson_title": "Variables and Types",
-        "content": """
-# Variables and Types
-
-TypeScript makes JavaScript better by letting you specify types.
-
-```ts
-let name: string = "Alice";
-let age: number = 30;
-let isStudent: boolean = true;
-```
-
-### Explanation:
-- `string`, `number`, and `boolean` are basic types
-- If you try to assign a wrong type later, TypeScript will warn you
-
-Example:
-```ts
-age = "thirty"; // ❌ Error: 'string' is not assignable to 'number'
-```
-
-This helps you catch bugs early!
-""",
-        "lesson_order": 4
-    },
-    {
-        "lesson_title": "Functions with Types",
-        "content": """
-# Functions with Types
-
-Let’s write a simple function in TypeScript.
-
-```ts
-function greet(name: string): void {
-  console.log("Hello, " + name);
-}
-
-greet("Bob");
-```
-
-### What’s going on?
-- `name: string` tells us the function needs a string
-- `void` means it returns nothing
-
-Let’s try a function that returns something:
-```ts
-function add(a: number, b: number): number {
-  return a + b;
-}
-
-console.log(add(5, 3));
-```
-
-Adding types makes your code safer and easier to understand.
-""",
-        "lesson_order": 5
-    },
-    {
-        "lesson_title": "Arrays and Tuples",
-        "content": """
-# Arrays and Tuples
-
-Arrays hold lists of values.
-
-```ts
-let fruits: string[] = ["apple", "banana", "cherry"];
-console.log(fruits[0]);
-```
-
-We specify what type of items are in the array (`string[]`).
-
-### Tuples
-Tuples are like arrays, but with fixed types and order.
-```ts
-let person: [string, number] = ["Alice", 30];
-```
-
-- First must be a string, second a number.
-- Helps when position and type both matter.
-""",
-        "lesson_order": 6
-    },
-    {
-        "lesson_title": "Objects and Interfaces",
-        "content": """
-# Objects and Interfaces
-
-Let’s define a person using an object.
-
-```ts
-let person = {
-  name: "Bob",
-  age: 28
-};
-console.log(person.name);
-```
-
-### Adding structure with interfaces:
-```ts
-interface Person {
-  name: string;
-  age: number;
-}
-
-let student: Person = {
-  name: "Alice",
-  age: 20
-};
-```
-
-Interfaces make sure the object has all required fields — and correct types.
-""",
-        "lesson_order": 7
-    },
-    {
-        "lesson_title": "Union and Literal Types",
-        "content": """
-# Union and Literal Types
-
-What if something could be more than one type?
-
-### Union type:
-```ts
-let id: number | string;
-id = 101;
-id = "A102";
-```
-
-You can use `|` to allow multiple types.
-
-### Literal type:
-```ts
-let direction: "left" | "right";
-direction = "left"; // ✅
-direction = "up";   // ❌ Error
-```
-
-Use these when you want exact values only.
-""",
-        "lesson_order": 8
-    },
-    {
-        "lesson_title": "Type Aliases and Enums",
-        "content": """
-# Type Aliases and Enums
-
-### Type Aliases
-They let you create custom type names.
-```ts
-type ID = number | string;
-let userId: ID = 123;
-```
-
-### Enums
-Great for a fixed set of values.
-```ts
-enum Color {
-  Red,
-  Green,
-  Blue
-}
-
-let myColor: Color = Color.Green;
-console.log(myColor); // prints 1
-```
-
-Enums start at 0 by default.
-""",
-        "lesson_order": 9
-    },
-    {
-        "lesson_title": "Type Assertions and Casting",
-        "content": """
-# Type Assertions and Casting
-
-Sometimes, you know more than TypeScript. You can tell it:
-```ts
-let someValue: any = "this is a string";
-let strLength: number = (someValue as string).length;
-```
-
-Or with angle brackets:
-```ts
-let len = (<string>someValue).length;
-```
-
-This is useful when working with external data.
-""",
-        "lesson_order": 10
-    },
-    {
-        "lesson_title": "Classes and Inheritance",
-        "content": """
-# Classes and Inheritance
-
-TypeScript supports OOP with classes.
-
-```ts
-class Animal {
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-  move() {
-    console.log(this.name + " moves.");
-  }
-}
-
-class Dog extends Animal {
-  bark() {
-    console.log("Woof!");
-  }
-}
-
-let dog = new Dog("Buddy");
-dog.move();
-dog.bark();
-```
-
-Use classes to structure and reuse your code.
-""",
-        "lesson_order": 11
-    },
-    {
-        "lesson_title": "Your Final Project: A User Profile Form",
-        "content": """
-# Your Final Project: A User Profile Form
-
-Let’s bring it all together into a small project.
-
-```ts
-interface User {
-  name: string;
-  age: number;
-  isStudent: boolean;
-}
-
-function createUser(user: User): void {
-  console.log("Welcome, " + user.name);
-  if (user.isStudent) {
-    console.log("You're a student!");
-  }
-}
-
-let newUser: User = {
-  name: "Alice",
-  age: 22,
-  isStudent: true
-};
-
-createUser(newUser);
-```
-
-### What we did:
-- Used an interface
-- Created and passed an object
-- Printed a message based on values
-
-🎉 You now know the basics of TypeScript. Great job!
-""",
-        "lesson_order": 12
-    }
-]
-lessons = [
-    {
         "lesson_title": "Welcome to Java Programming",
         "content": """
 # Welcome to Java Programming
@@ -463,6 +119,11 @@ Open your terminal and type:
 java -version
 javac -version
 ```
+
+### Explanation:
+- `java -version` checks if the Java runtime is installed
+- `javac -version` checks if the Java compiler is installed
+
 If both commands show a version number, you're all set!
 """,
         "lesson_order": 2
@@ -483,18 +144,18 @@ public class HelloWorld {
 }
 ```
 
-### Let’s understand this:
-- `public class HelloWorld` defines a class named HelloWorld
-- `public static void main(String[] args)` is the entry point of the program
-- `System.out.println(...)` prints a line of text
+### Explanation:
+- `public class HelloWorld` defines a class called HelloWorld
+- `public static void main(String[] args)` is the method that Java runs first
+- `System.out.println(...)` prints a message to the screen
 
 ### How to run:
 1. Open your terminal and navigate to the file location
-2. Compile it:
+2. Compile the code:
 ```bash
 javac HelloWorld.java
 ```
-3. Run it:
+3. Then run it:
 ```bash
 java HelloWorld
 ```
@@ -508,7 +169,7 @@ java HelloWorld
         "content": """
 # Variables and Data Types
 
-Java is a strongly typed language. You must declare the type of each variable.
+Java requires you to declare what type of data each variable holds.
 
 ```java
 String name = "Alice";
@@ -518,18 +179,18 @@ boolean isStudent = true;
 ```
 
 ### Explanation:
-- `String` is for text
+- `String` holds text
 - `int` is for whole numbers
-- `double` is for decimals
+- `double` is for decimal numbers
 - `boolean` is for true/false values
 
-You can print variables like this:
+To print them:
 ```java
 System.out.println(name);
 System.out.println(age);
 ```
 
-Try changing the values and running your program again!
+This helps Java know what kind of data to expect and catch errors early.
 """,
         "lesson_order": 4
     },
@@ -538,7 +199,7 @@ Try changing the values and running your program again!
         "content": """
 # Taking Input from the User
 
-We can use the `Scanner` class to read input.
+Use the `Scanner` class to read user input.
 
 ```java
 import java.util.Scanner;
@@ -559,11 +220,13 @@ public class InputExample {
 ```
 
 ### Explanation:
-- `Scanner scanner = new Scanner(System.in);` creates an input reader
+- `import java.util.Scanner;` brings in the Scanner class from Java's utility library
+- `Scanner scanner = new Scanner(System.in);` sets up input reading from the keyboard
 - `scanner.nextLine()` reads a line of text
-- `scanner.nextInt()` reads an integer
+- `scanner.nextInt()` reads a number
+- We then print out a personalized greeting
 
-This is how we make interactive Java programs!
+This makes your programs interactive!
 """,
         "lesson_order": 5
     },
@@ -572,7 +235,7 @@ This is how we make interactive Java programs!
         "content": """
 # If Statements
 
-If statements help your program make decisions.
+Let's teach our program to make decisions.
 
 ```java
 int age = 20;
@@ -584,7 +247,12 @@ if (age >= 18) {
 }
 ```
 
-You can also chain conditions:
+### Explanation:
+- `if (age >= 18)` checks whether the condition is true
+- If it is, the first message is printed
+- Otherwise, the `else` part runs
+
+More conditions:
 ```java
 if (age >= 65) {
     System.out.println("You are a senior.");
@@ -595,7 +263,7 @@ if (age >= 65) {
 }
 ```
 
-The program checks each condition in order and runs the block that matches.
+Use if/else to control what your program does based on values.
 """,
         "lesson_order": 6
     },
@@ -613,7 +281,11 @@ for (int i = 0; i < 5; i++) {
 }
 ```
 
-This prints numbers from 0 to 4.
+### Explanation:
+- `int i = 0` sets the starting point
+- `i < 5` is the condition to keep looping
+- `i++` increases `i` by 1 each time
+- The loop runs 5 times, printing 0 to 4
 
 ### While loop:
 ```java
@@ -624,7 +296,7 @@ while (count < 3) {
 }
 ```
 
-Loops are useful when you want to run the same logic over and over.
+This keeps looping as long as the condition is true.
 """,
         "lesson_order": 7
     },
@@ -633,7 +305,7 @@ Loops are useful when you want to run the same logic over and over.
         "content": """
 # Methods (Functions)
 
-Methods are blocks of code that perform tasks.
+Methods help you organize code into reusable blocks.
 
 ```java
 public class Greeter {
@@ -650,9 +322,8 @@ public class Greeter {
 
 ### Explanation:
 - `public static void greet(String name)` defines a method that takes a name
-- We call it using `greet(...)`
-
-This helps organize and reuse your code.
+- You call it with different values to reuse the logic
+- The `main` method runs when the program starts
 """,
         "lesson_order": 8
     },
@@ -668,14 +339,19 @@ int[] numbers = {1, 2, 3, 4};
 System.out.println(numbers[0]);
 ```
 
-You can loop through them:
+### Explanation:
+- `int[]` declares an array of integers
+- `{1, 2, 3, 4}` are the values stored
+- `numbers[0]` accesses the first item
+
+You can loop through arrays:
 ```java
 for (int num : numbers) {
     System.out.println(num);
 }
 ```
 
-Arrays help manage lists of data.
+Use arrays to manage lists of values.
 """,
         "lesson_order": 9
     },
@@ -684,7 +360,7 @@ Arrays help manage lists of data.
         "content": """
 # Object-Oriented Basics
 
-Java is an object-oriented language.
+Java is an object-oriented language — you define classes and create objects from them.
 
 ```java
 class Person {
@@ -706,7 +382,11 @@ public class Main {
 }
 ```
 
-This example defines a class and creates an object.
+### Explanation:
+- `class Person` defines a blueprint
+- `name` and `age` are properties
+- `sayHello()` is a method
+- We create a `Person` object and call its method
 """,
         "lesson_order": 10
     },
@@ -715,7 +395,7 @@ This example defines a class and creates an object.
         "content": """
 # Exception Handling
 
-Exceptions let you handle errors gracefully.
+Use `try` and `catch` to deal with errors.
 
 ```java
 try {
@@ -725,18 +405,19 @@ try {
 }
 ```
 
-The code inside `try` runs normally. If an error occurs, `catch` handles it.
-
-This helps keep your program from crashing.
+### Explanation:
+- Code in `try` runs first
+- If an error happens, it jumps to `catch`
+- This stops the program from crashing and lets you handle it
 """,
         "lesson_order": 11
     },
     {
-        "lesson_title": "Final Project: Simple Contact Book",
+        "lesson_title": "Final Project: Contact Book",
         "content": """
-# Final Project: Simple Contact Book
+# Final Project: Contact Book
 
-Let’s wrap things up with a simple project.
+Let’s bring together what you've learned.
 
 ```java
 class Contact {
@@ -759,7 +440,12 @@ public class ContactBook {
 }
 ```
 
-You created a class, set values, and printed a contact. 🎉 Great job!
+### Explanation:
+- We created a `Contact` class
+- We added properties and a method to display them
+- Then we made a `ContactBook` class to create and show a contact
+
+🎉 You just finished your first Java mini project!
 """,
         "lesson_order": 12
     }
@@ -774,7 +460,7 @@ INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) V
 """,
         (
             lesson_id,
-            typescript_course_id,
+            java_course_id,
             lesson["lesson_title"],
             lesson["content"],
             lesson["lesson_order"],
