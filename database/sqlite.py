@@ -74,6 +74,286 @@ typescript_course_id = "2d9673df-902f-4771-ae46-703475f40f8d"
 java_course_id = "dac91fc1-e6f7-4973-8ae8-b81e0047aa2b"
 cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
+lessons = [
+    {
+        "lesson_title": "Welcome to TypeScript",
+        "content": """
+# Welcome to TypeScript
+
+TypeScript is a language that builds on JavaScript by adding **static types**. It helps catch errors early and makes your code easier to understand and maintain.
+
+### Why Learn TypeScript?
+- Type safety: Catch mistakes at compile time
+- Great for beginners transitioning to serious development
+- Used in large projects like Angular, Microsoft tools, and many startups
+
+This course assumes **no prior experience** with JavaScript or TypeScript.
+""",
+        "lesson_order": 1
+    },
+    {
+        "lesson_title": "Setting Up TypeScript",
+        "content": """
+# Setting Up TypeScript
+
+### Option 1: Online Playground
+Go to [TypeScript Playground](https://www.typescriptlang.org/play) — no installation needed.
+
+### Option 2: Local Setup
+1. Install Node.js from [https://nodejs.org](https://nodejs.org)
+2. Open terminal:
+```bash
+npm install -g typescript
+```
+3. Create file:
+```bash
+tsc --init
+```
+Now you're ready to write `.ts` files.
+""",
+        "lesson_order": 2
+    },
+    {
+        "lesson_title": "Hello TypeScript",
+        "content": """
+# Hello TypeScript
+
+Create a file called `hello.ts` and add:
+```typescript
+let message: string = "Hello, TypeScript!";
+console.log(message);
+```
+
+Compile and run:
+```bash
+tsc hello.ts
+node hello.js
+```
+You should see: `Hello, TypeScript!`
+""",
+        "lesson_order": 3
+    },
+    {
+        "lesson_title": "Variables and Types",
+        "content": """
+# Variables and Types
+
+TypeScript allows you to **declare variables with types**:
+```typescript
+let name: string = "Alice";
+let age: number = 30;
+let isStudent: boolean = true;
+```
+
+### Type Inference
+You can omit the type if it's obvious:
+```typescript
+let country = "New Zealand"; // inferred as string
+```
+""",
+        "lesson_order": 4
+    },
+    {
+        "lesson_title": "Basic Input and Output",
+        "content": """
+# Basic Input and Output
+
+In TypeScript, you use `console.log()` for output.
+```typescript
+console.log("Hello from TypeScript");
+```
+
+Input from the user requires additional setup like readline:
+```typescript
+import * as readline from 'readline';
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+rl.question("What is your name? ", function(name) {
+  console.log("Hello, " + name);
+  rl.close();
+});
+```
+""",
+        "lesson_order": 5
+    },
+    {
+        "lesson_title": "Operators and Expressions",
+        "content": """
+# Operators and Expressions
+
+### Arithmetic:
+```typescript
+let a = 10;
+let b = 3;
+console.log(a + b);
+```
+
+### Comparison:
+```typescript
+console.log(a > b);
+console.log(a === 10);
+```
+
+### Logical:
+```typescript
+console.log(true && false);
+```
+""",
+        "lesson_order": 6
+    },
+    {
+        "lesson_title": "Conditionals (if/else)",
+        "content": """
+# Conditionals (if/else)
+
+```typescript
+let score = 85;
+
+if (score >= 90) {
+  console.log("A");
+} else if (score >= 75) {
+  console.log("B");
+} else {
+  console.log("C");
+}
+```
+""",
+        "lesson_order": 7
+    },
+    {
+        "lesson_title": "Loops (for and while)",
+        "content": """
+# Loops (for and while)
+
+### for loop:
+```typescript
+for (let i = 0; i < 5; i++) {
+  console.log(i);
+}
+```
+
+### while loop:
+```typescript
+let count = 0;
+while (count < 5) {
+  console.log(count);
+  count++;
+}
+```
+""",
+        "lesson_order": 8
+    },
+    {
+        "lesson_title": "Functions",
+        "content": """
+# Functions
+
+```typescript
+function greet(name: string): void {
+  console.log("Hello, " + name);
+}
+
+greet("Alice");
+
+function add(x: number, y: number): number {
+  return x + y;
+}
+
+console.log(add(2, 3));
+```
+""",
+        "lesson_order": 9
+    },
+    {
+        "lesson_title": "Arrays and Tuples",
+        "content": """
+# Arrays and Tuples
+
+### Arrays:
+```typescript
+let numbers: number[] = [1, 2, 3];
+console.log(numbers[0]);
+```
+
+### Tuples:
+```typescript
+let person: [string, number] = ["Alice", 25];
+console.log(person[1]);
+```
+""",
+        "lesson_order": 10
+    },
+    {
+        "lesson_title": "Interfaces and Objects",
+        "content": """
+# Interfaces and Objects
+
+### Object:
+```typescript
+let user = {
+  name: "Alice",
+  age: 30
+};
+console.log(user.name);
+```
+
+### Interface:
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+let employee: Person = { name: "Bob", age: 40 };
+console.log(employee.age);
+```
+""",
+        "lesson_order": 11
+    },
+    {
+        "lesson_title": "Error Handling",
+        "content": """
+# Error Handling
+
+```typescript
+try {
+  throw new Error("Something went wrong");
+} catch (e) {
+  console.log("Caught error:", e.message);
+}
+```
+""",
+        "lesson_order": 12
+    },
+    {
+        "lesson_title": "Classes and OOP Basics",
+        "content": """
+# Classes and OOP Basics
+
+```typescript
+class Animal {
+  name: string;
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  speak(): void {
+    console.log(this.name + " makes a sound");
+  }
+}
+
+let dog = new Animal("Dog");
+dog.speak();
+```
+""",
+        "lesson_order": 13
+    }
+]
 
 for lesson in lessons:
     lesson_id = str(uuid.uuid4())
