@@ -77,350 +77,347 @@ cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
 lessons = [
     {
-        "lesson_title": "Welcome to C++ Programming",
+        "lesson_title": "Welcome to TypeScript",
         "content": """
-# Welcome to C++ Programming
+# Welcome to TypeScript
 
-Hey there! 👋 Ready to dive into C++?
+Hey there! 👋 Welcome to your TypeScript journey.
 
-C++ is a powerful programming language used in everything from game engines to operating systems. It’s fast, flexible, and teaches you how computers really work.
+If you’ve already touched JavaScript (even just a little), you’ll love what TypeScript brings. It adds features like type safety, better autocompletion, and more confidence in your code.
 
-### Why learn C++?
-- It's widely used in performance-critical applications
-- It builds strong programming fundamentals
-- It’s the foundation for many other languages
+### Why Learn TypeScript?
+- It helps catch mistakes before running your code
+- It makes your code easier to understand and maintain
+- It's widely used in professional web development
 
-This course is designed for total beginners. No experience? No worries. We’ll guide you step by step.
+Let’s take it step by step — no rush. Ready? Let's get started!
 """,
         "lesson_order": 1
     },
     {
-        "lesson_title": "Setting Up C++",
+        "lesson_title": "Setting Up TypeScript",
         "content": """
-# Setting Up C++
+# Setting Up TypeScript
 
-Before we can start coding, let’s set up your environment.
+Let’s get your computer ready to write TypeScript!
 
-### Option 1: Using an online compiler (easiest)
-- Go to [https://www.onlinegdb.com/online_c++_compiler](https://www.onlinegdb.com/online_c++_compiler)
-- Select "C++" and start coding right away in your browser
+### Step 1: Install Node.js
+If you don’t already have Node.js:
+- Go to [https://nodejs.org](https://nodejs.org)
+- Download and install the LTS version
 
-### Option 2: Install locally
-1. Download and install a C++ compiler:
-   - Windows: Install [Code::Blocks](http://www.codeblocks.org/downloads) or [MinGW](https://osdn.net/projects/mingw/releases/)
-   - Mac: Use Xcode or install `g++` via Homebrew
-   - Linux: Use `sudo apt install g++`
-
-2. Use any text editor or IDE like:
-   - VS Code
-   - CLion
-   - Code::Blocks
-
-### Check your installation
-Run:
+### Step 2: Install TypeScript
+Open your terminal and run:
 ```bash
-g++ --version
+npm install -g typescript
 ```
-If you see a version number, you’re ready!
+This makes the `tsc` command (TypeScript compiler) available globally.
+
+### Step 3: Check it works
+```bash
+tsc --version
+```
+If you see a version number, you're good to go!
 """,
         "lesson_order": 2
     },
     {
-        "lesson_title": "Your First C++ Program",
+        "lesson_title": "Your First TypeScript Program",
         "content": """
-# Your First C++ Program
+# Your First TypeScript Program
 
-Let’s write a simple program that prints a message.
-
-```cpp
-#include <iostream>
-using namespace std;
-
-int main() {
-    cout << "Hello, world!" << endl;
-    return 0;
-}
+Create a file named `hello.ts` and write this code:
+```ts
+let message: string = "Hello, TypeScript!";
+console.log(message);
 ```
 
-### Explanation:
-- `#include <iostream>` lets us use `cout` for printing
-- `using namespace std;` avoids typing `std::cout`
-- `int main()` is where the program starts
-- `cout <<` prints to the screen
-- `endl` ends the line
-- `return 0;` signals successful execution
+### What does this do?
+- We declare a variable `message`
+- `: string` tells TypeScript that `message` must always be a string
+- We print it using `console.log()`
 
-### How to run:
-1. Save as `hello.cpp`
-2. Compile with:
+### Run it:
+First, compile it:
 ```bash
-g++ hello.cpp -o hello
+tsc hello.ts
 ```
-3. Run it:
+This creates `hello.js`
+
+Now run it with Node:
 ```bash
-./hello
+node hello.js
 ```
 
-🎉 It should print `Hello, world!`
+🎉 You just ran your first TypeScript program!
 """,
         "lesson_order": 3
     },
     {
-        "lesson_title": "Variables and Data Types",
+        "lesson_title": "Variables and Types",
         "content": """
-# Variables and Data Types
+# Variables and Types
 
-Variables store data. In C++, you need to declare the type.
+TypeScript makes JavaScript better by letting you specify types.
 
-```cpp
-int age = 25;
-double height = 5.9;
-char grade = 'A';
-bool isStudent = true;
+```ts
+let name: string = "Alice";
+let age: number = 30;
+let isStudent: boolean = true;
 ```
 
 ### Explanation:
-- `int` for whole numbers
-- `double` for decimals
-- `char` for single characters
-- `bool` for true/false
+- `string`, `number`, and `boolean` are basic types
+- If you try to assign a wrong type later, TypeScript will warn you
 
-You can print them:
-```cpp
-cout << "Age: " << age << endl;
+Example:
+```ts
+age = "thirty"; // ❌ Error: 'string' is not assignable to 'number'
 ```
 
-Declaring types helps the computer understand your program better.
+This helps you catch bugs early!
 """,
         "lesson_order": 4
     },
     {
-        "lesson_title": "User Input",
+        "lesson_title": "Functions with Types",
         "content": """
-# User Input
+# Functions with Types
 
-Use `cin` to get input from the user.
+Let’s write a simple function in TypeScript.
 
-```cpp
-#include <iostream>
-using namespace std;
-
-int main() {
-    string name;
-    int age;
-
-    cout << "Enter your name: ";
-    cin >> name;
-
-    cout << "Enter your age: ";
-    cin >> age;
-
-    cout << "Hello, " << name << ". You are " << age << " years old." << endl;
-    return 0;
+```ts
+function greet(name: string): void {
+  console.log("Hello, " + name);
 }
+
+greet("Bob");
 ```
 
-### Explanation:
-- `cin >>` reads input from the user
-- It stores the value in the variable you specify
+### What’s going on?
+- `name: string` tells us the function needs a string
+- `void` means it returns nothing
 
-This makes your programs interactive!
+Let’s try a function that returns something:
+```ts
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+console.log(add(5, 3));
+```
+
+Adding types makes your code safer and easier to understand.
 """,
         "lesson_order": 5
     },
     {
-        "lesson_title": "If Statements",
+        "lesson_title": "Arrays and Tuples",
         "content": """
-# If Statements
+# Arrays and Tuples
 
-Use `if` to run code based on conditions.
+Arrays hold lists of values.
 
-```cpp
-int age = 17;
-
-if (age >= 18) {
-    cout << "You are an adult." << endl;
-} else {
-    cout << "You are a minor." << endl;
-}
+```ts
+let fruits: string[] = ["apple", "banana", "cherry"];
+console.log(fruits[0]);
 ```
 
-### Explanation:
-- The condition inside `if (...)` is checked
-- If it’s true, the first block runs
-- Otherwise, the `else` block runs
+We specify what type of items are in the array (`string[]`).
 
-You can add more with `else if`:
-```cpp
-if (age >= 65) {
-    cout << "Senior." << endl;
-} else if (age >= 18) {
-    cout << "Adult." << endl;
-} else {
-    cout << "Minor." << endl;
-}
+### Tuples
+Tuples are like arrays, but with fixed types and order.
+```ts
+let person: [string, number] = ["Alice", 30];
 ```
+
+- First must be a string, second a number.
+- Helps when position and type both matter.
 """,
         "lesson_order": 6
     },
     {
-        "lesson_title": "Loops",
+        "lesson_title": "Objects and Interfaces",
         "content": """
-# Loops
+# Objects and Interfaces
 
-Loops let you repeat tasks.
+Let’s define a person using an object.
 
-### For loop:
-```cpp
-for (int i = 0; i < 5; i++) {
-    cout << "Number: " << i << endl;
+```ts
+let person = {
+  name: "Bob",
+  age: 28
+};
+console.log(person.name);
+```
+
+### Adding structure with interfaces:
+```ts
+interface Person {
+  name: string;
+  age: number;
 }
+
+let student: Person = {
+  name: "Alice",
+  age: 20
+};
 ```
 
-### While loop:
-```cpp
-int i = 0;
-while (i < 3) {
-    cout << "i is " << i << endl;
-    i++;
-}
-```
-
-### Do-while loop:
-```cpp
-int j = 0;
-do {
-    cout << "j is " << j << endl;
-    j++;
-} while (j < 2);
-```
-
-Loops are used when you want to repeat something multiple times.
+Interfaces make sure the object has all required fields — and correct types.
 """,
         "lesson_order": 7
     },
     {
-        "lesson_title": "Functions",
+        "lesson_title": "Union and Literal Types",
         "content": """
-# Functions
+# Union and Literal Types
 
-Functions help you organize your code.
+What if something could be more than one type?
 
-```cpp
-void greet(string name) {
-    cout << "Hello, " << name << "!" << endl;
-}
-
-int main() {
-    greet("Alice");
-    greet("Bob");
-    return 0;
-}
+### Union type:
+```ts
+let id: number | string;
+id = 101;
+id = "A102";
 ```
 
-### Explanation:
-- `void greet(string name)` defines a function
-- You can call it with different values
+You can use `|` to allow multiple types.
 
-Functions are great for reusing logic.
+### Literal type:
+```ts
+let direction: "left" | "right";
+direction = "left"; // ✅
+direction = "up";   // ❌ Error
+```
+
+Use these when you want exact values only.
 """,
         "lesson_order": 8
     },
     {
-        "lesson_title": "Arrays",
+        "lesson_title": "Type Aliases and Enums",
         "content": """
-# Arrays
+# Type Aliases and Enums
 
-Arrays store multiple values of the same type.
-
-```cpp
-int numbers[4] = {10, 20, 30, 40};
-
-for (int i = 0; i < 4; i++) {
-    cout << numbers[i] << endl;
-}
+### Type Aliases
+They let you create custom type names.
+```ts
+type ID = number | string;
+let userId: ID = 123;
 ```
 
-### Explanation:
-- `int numbers[4]` creates an array with 4 integers
-- You can access each element using an index like `numbers[0]`
+### Enums
+Great for a fixed set of values.
+```ts
+enum Color {
+  Red,
+  Green,
+  Blue
+}
 
-Arrays are helpful for managing groups of similar data.
+let myColor: Color = Color.Green;
+console.log(myColor); // prints 1
+```
+
+Enums start at 0 by default.
 """,
         "lesson_order": 9
     },
     {
-        "lesson_title": "Classes and Objects",
+        "lesson_title": "Type Assertions and Casting",
         "content": """
-# Classes and Objects
+# Type Assertions and Casting
 
-C++ supports object-oriented programming.
-
-```cpp
-class Car {
-public:
-    string brand;
-    int year;
-
-    void honk() {
-        cout << "Beep!" << endl;
-    }
-};
-
-int main() {
-    Car myCar;
-    myCar.brand = "Toyota";
-    myCar.year = 2020;
-    myCar.honk();
-    cout << myCar.brand << " - " << myCar.year << endl;
-    return 0;
-}
+Sometimes, you know more than TypeScript. You can tell it:
+```ts
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
 ```
 
-### Explanation:
-- `class Car` defines a blueprint
-- We create an object `myCar` from that class
-- We access and use its members
+Or with angle brackets:
+```ts
+let len = (<string>someValue).length;
+```
+
+This is useful when working with external data.
 """,
         "lesson_order": 10
     },
     {
-        "lesson_title": "Final Project: Simple Student Record",
+        "lesson_title": "Classes and Inheritance",
         "content": """
-# Final Project: Simple Student Record
+# Classes and Inheritance
 
-Let’s build a tiny system to store student info.
+TypeScript supports OOP with classes.
 
-```cpp
-class Student {
-public:
-    string name;
-    int age;
-
-    void display() {
-        cout << "Name: " << name << endl;
-        cout << "Age: " << age << endl;
-    }
-};
-
-int main() {
-    Student s1;
-    s1.name = "Luna";
-    s1.age = 18;
-    s1.display();
-    return 0;
+```ts
+class Animal {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+  move() {
+    console.log(this.name + " moves.");
+  }
 }
+
+class Dog extends Animal {
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+let dog = new Dog("Buddy");
+dog.move();
+dog.bark();
 ```
 
-### Explanation:
-- We defined a `Student` class with properties and a method
-- We created a student and printed the info
-
-🎉 You just finished your first C++ project!
+Use classes to structure and reuse your code.
 """,
         "lesson_order": 11
+    },
+    {
+        "lesson_title": "Final Project: A User Profile Form",
+        "content": """
+# Final Project: A User Profile Form
+
+Let’s bring it all together into a small project.
+
+```ts
+interface User {
+  name: string;
+  age: number;
+  isStudent: boolean;
+}
+
+function createUser(user: User): void {
+  console.log("Welcome, " + user.name);
+  if (user.isStudent) {
+    console.log("You're a student!");
+  }
+}
+
+let newUser: User = {
+  name: "Alice",
+  age: 22,
+  isStudent: true
+};
+
+createUser(newUser);
+```
+
+### What we did:
+- Used an interface
+- Created and passed an object
+- Printed a message based on values
+
+🎉 You now know the basics of TypeScript. Great job!
+""",
+        "lesson_order": 12
     }
 ]
+
 
 for lesson in lessons:
     lesson_id = str(uuid.uuid4())
@@ -430,11 +427,12 @@ INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) V
 """,
         (
             lesson_id,
-            cplusplus_course_id ,
+            typescript_course_id ,
             lesson["lesson_title"],
             lesson["content"],
             lesson["lesson_order"],
         ),
     )
     conn.commit()
+
 print("done")
