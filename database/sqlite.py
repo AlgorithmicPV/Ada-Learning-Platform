@@ -419,6 +419,351 @@ createUser(newUser);
         "lesson_order": 12
     }
 ]
+lessons = [
+    {
+        "lesson_title": "Welcome to Java Programming",
+        "content": """
+# Welcome to Java Programming
+
+Hey there! 👋 Ready to start learning Java?
+
+Java is one of the most widely-used programming languages in the world. From Android apps to enterprise systems, Java is everywhere!
+
+### Why learn Java?
+- It's beginner-friendly and strongly typed
+- It's used in mobile apps, web apps, and backend services
+- It's a great language for building solid programming foundations
+
+We’ll start from the very basics, and by the end of this course, you’ll be writing real Java programs.
+
+Let’s begin!
+""",
+        "lesson_order": 1
+    },
+    {
+        "lesson_title": "Setting Up Java",
+        "content": """
+# Setting Up Java
+
+Before writing Java code, we need to get Java installed.
+
+### Step 1: Install Java
+- Visit [https://www.oracle.com/java/technologies/javase-downloads.html](https://www.oracle.com/java/technologies/javase-downloads.html)
+- Download and install the Java Development Kit (JDK)
+
+### Step 2: Install an IDE (Optional, but helpful)
+You can write Java using any text editor, but using an IDE like:
+- IntelliJ IDEA (recommended)
+- Eclipse
+- VS Code (with Java extensions)
+
+### Step 3: Verify Java Installation
+Open your terminal and type:
+```bash
+java -version
+javac -version
+```
+If both commands show a version number, you're all set!
+""",
+        "lesson_order": 2
+    },
+    {
+        "lesson_title": "Your First Java Program",
+        "content": """
+# Your First Java Program
+
+Let’s write a simple program that says "Hello, world!"
+
+Create a file called `HelloWorld.java` with this code:
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, world!");
+    }
+}
+```
+
+### Let’s understand this:
+- `public class HelloWorld` defines a class named HelloWorld
+- `public static void main(String[] args)` is the entry point of the program
+- `System.out.println(...)` prints a line of text
+
+### How to run:
+1. Open your terminal and navigate to the file location
+2. Compile it:
+```bash
+javac HelloWorld.java
+```
+3. Run it:
+```bash
+java HelloWorld
+```
+
+🎉 You should see: `Hello, world!`
+""",
+        "lesson_order": 3
+    },
+    {
+        "lesson_title": "Variables and Data Types",
+        "content": """
+# Variables and Data Types
+
+Java is a strongly typed language. You must declare the type of each variable.
+
+```java
+String name = "Alice";
+int age = 25;
+double height = 5.6;
+boolean isStudent = true;
+```
+
+### Explanation:
+- `String` is for text
+- `int` is for whole numbers
+- `double` is for decimals
+- `boolean` is for true/false values
+
+You can print variables like this:
+```java
+System.out.println(name);
+System.out.println(age);
+```
+
+Try changing the values and running your program again!
+""",
+        "lesson_order": 4
+    },
+    {
+        "lesson_title": "Taking Input from the User",
+        "content": """
+# Taking Input from the User
+
+We can use the `Scanner` class to read input.
+
+```java
+import java.util.Scanner;
+
+public class InputExample {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter your name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter your age: ");
+        int age = scanner.nextInt();
+
+        System.out.println("Hello, " + name + ". You are " + age + " years old.");
+    }
+}
+```
+
+### Explanation:
+- `Scanner scanner = new Scanner(System.in);` creates an input reader
+- `scanner.nextLine()` reads a line of text
+- `scanner.nextInt()` reads an integer
+
+This is how we make interactive Java programs!
+""",
+        "lesson_order": 5
+    },
+    {
+        "lesson_title": "If Statements",
+        "content": """
+# If Statements
+
+If statements help your program make decisions.
+
+```java
+int age = 20;
+
+if (age >= 18) {
+    System.out.println("You are an adult.");
+} else {
+    System.out.println("You are a minor.");
+}
+```
+
+You can also chain conditions:
+```java
+if (age >= 65) {
+    System.out.println("You are a senior.");
+} else if (age >= 18) {
+    System.out.println("You are an adult.");
+} else {
+    System.out.println("You are a minor.");
+}
+```
+
+The program checks each condition in order and runs the block that matches.
+""",
+        "lesson_order": 6
+    },
+    {
+        "lesson_title": "Loops in Java",
+        "content": """
+# Loops in Java
+
+Loops let you repeat code multiple times.
+
+### For loop:
+```java
+for (int i = 0; i < 5; i++) {
+    System.out.println("Count: " + i);
+}
+```
+
+This prints numbers from 0 to 4.
+
+### While loop:
+```java
+int count = 0;
+while (count < 3) {
+    System.out.println("While count: " + count);
+    count++;
+}
+```
+
+Loops are useful when you want to run the same logic over and over.
+""",
+        "lesson_order": 7
+    },
+    {
+        "lesson_title": "Methods (Functions)",
+        "content": """
+# Methods (Functions)
+
+Methods are blocks of code that perform tasks.
+
+```java
+public class Greeter {
+    public static void greet(String name) {
+        System.out.println("Hello, " + name);
+    }
+
+    public static void main(String[] args) {
+        greet("Alice");
+        greet("Bob");
+    }
+}
+```
+
+### Explanation:
+- `public static void greet(String name)` defines a method that takes a name
+- We call it using `greet(...)`
+
+This helps organize and reuse your code.
+""",
+        "lesson_order": 8
+    },
+    {
+        "lesson_title": "Arrays",
+        "content": """
+# Arrays
+
+Arrays store multiple values of the same type.
+
+```java
+int[] numbers = {1, 2, 3, 4};
+System.out.println(numbers[0]);
+```
+
+You can loop through them:
+```java
+for (int num : numbers) {
+    System.out.println(num);
+}
+```
+
+Arrays help manage lists of data.
+""",
+        "lesson_order": 9
+    },
+    {
+        "lesson_title": "Object-Oriented Basics",
+        "content": """
+# Object-Oriented Basics
+
+Java is an object-oriented language.
+
+```java
+class Person {
+    String name;
+    int age;
+
+    void sayHello() {
+        System.out.println("Hi, I'm " + name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Person p = new Person();
+        p.name = "Alice";
+        p.age = 30;
+        p.sayHello();
+    }
+}
+```
+
+This example defines a class and creates an object.
+""",
+        "lesson_order": 10
+    },
+    {
+        "lesson_title": "Exception Handling",
+        "content": """
+# Exception Handling
+
+Exceptions let you handle errors gracefully.
+
+```java
+try {
+    int result = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("You can't divide by zero!");
+}
+```
+
+The code inside `try` runs normally. If an error occurs, `catch` handles it.
+
+This helps keep your program from crashing.
+""",
+        "lesson_order": 11
+    },
+    {
+        "lesson_title": "Final Project: Simple Contact Book",
+        "content": """
+# Final Project: Simple Contact Book
+
+Let’s wrap things up with a simple project.
+
+```java
+class Contact {
+    String name;
+    String phone;
+
+    void display() {
+        System.out.println("Name: " + name);
+        System.out.println("Phone: " + phone);
+    }
+}
+
+public class ContactBook {
+    public static void main(String[] args) {
+        Contact c1 = new Contact();
+        c1.name = "Alice";
+        c1.phone = "123-456-7890";
+        c1.display();
+    }
+}
+```
+
+You created a class, set values, and printed a contact. 🎉 Great job!
+""",
+        "lesson_order": 12
+    }
+]
 
 
 for lesson in lessons:
