@@ -77,375 +77,344 @@ cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
 lessons = [
     {
-        "lesson_title": "Welcome to JavaScript Programming",
+        "lesson_title": "Welcome to TypeScript",
         "content": """
-# Welcome to JavaScript Programming
+# Welcome to TypeScript
 
-Hey there! 👋 Welcome to your first steps into JavaScript.
+Hey there! 👋 Welcome to your TypeScript journey.
 
-JavaScript is the language of the web. You’ll find it in websites, apps, and games — basically anything interactive on the internet.
+If you’ve already touched JavaScript (even just a little), you’ll love what TypeScript brings. It adds features like type safety, better autocompletion, and more confidence in your code.
 
-### Why learn JavaScript?
-- It’s one of the most popular programming languages
-- Runs in every modern web browser
-- Lets you build interactive websites and apps
+### Why Learn TypeScript?
+- It helps catch mistakes before running your code
+- It makes your code easier to understand and maintain
+- It's widely used in professional web development
 
-Don’t worry if you’ve never coded before. This course will guide you step-by-step, like a friendly tutor. Let's dive in!
+Let’s take it step by step — no rush. Ready? Let's get started!
 """,
         "lesson_order": 1
     },
     {
-        "lesson_title": "How to Run JavaScript",
+        "lesson_title": "Setting Up TypeScript",
         "content": """
-# How to Run JavaScript
+# Setting Up TypeScript
 
-Before we can write JavaScript, we need a place to run it. Luckily, you already have it — right inside your browser!
+Let’s get your computer ready to write TypeScript!
 
-### Method 1: Using the Browser Console
-This is great for quick experiments.
+### Step 1: Install Node.js
+If you don’t already have Node.js:
+- Go to [https://nodejs.org](https://nodejs.org)
+- Download and install the LTS version
 
-1. Open Chrome, Firefox, or Edge
-2. Right-click anywhere on a webpage
-3. Choose **Inspect** > then go to the **Console** tab
-
-Now try typing this in:
-```javascript
-console.log("Hello from the console!");
+### Step 2: Install TypeScript
+Open your terminal and run:
+```bash
+npm install -g typescript
 ```
+This makes the `tsc` command (TypeScript compiler) available globally.
 
-### What happened?
-- `console.log(...)` tells the browser to print something to the console
-- The text you wrote (in quotes) shows up as a message
-
-You just ran your first line of JavaScript!
-
-### Method 2: Embedding JavaScript in HTML
-Let’s write a tiny web page that runs JavaScript.
-
-Create a file called `index.html` with this content:
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>My First JS Page</title>
-  </head>
-  <body>
-    <h1>Hello, HTML and JS!</h1>
-    <script>
-      console.log("Hello from inside the HTML!");
-    </script>
-  </body>
-</html>
+### Step 3: Check it works
+```bash
+tsc --version
 ```
+If you see a version number, you're good to go!
 
-### What’s going on here?
-- The `<script>` tag tells the browser: “Here comes some JavaScript”
-- Anything inside it will run when the page loads
-- `console.log(...)` works the same way here — it just prints to the console
-
-Open the file in your browser, go to the console, and see the message. 🎉
-
-That’s it! You’re now ready to start coding in JavaScript.
+Next up: let’s write our first TypeScript program!
 """,
         "lesson_order": 2
     },
     {
-        "lesson_title": "Variables and Data Types",
+        "lesson_title": "Your First TypeScript Program",
         "content": """
-# Variables and Data Types
+# Your First TypeScript Program
 
-Variables let us store values — like text, numbers, or true/false answers.
-
-```javascript
-let name = "Alice";
-let age = 25;
-let isStudent = true;
+Create a file named `hello.ts` and write this code:
+```ts
+let message: string = "Hello, TypeScript!";
+console.log(message);
 ```
 
-### Let’s explain:
-- `let name = "Alice";` stores the text "Alice" in a variable called `name`
-- `let age = 25;` stores the number 25
-- `let isStudent = true;` stores a boolean value (true or false)
+### What does this do?
+- We declare a variable `message`
+- `: string` tells TypeScript that `message` must always be a string
+- We print it using `console.log()`
 
-Try this:
-```javascript
-console.log(name);
-console.log(age + 5);
+### Run it:
+First, compile it:
+```bash
+tsc hello.ts
+```
+This creates `hello.js`
+
+Now run it with Node:
+```bash
+node hello.js
 ```
 
-JavaScript also supports `const` for values that don’t change, and `var` (older style).
+🎉 You just ran your first TypeScript program!
 """,
         "lesson_order": 3
     },
     {
-        "lesson_title": "Working with Strings and Numbers",
+        "lesson_title": "Variables and Types",
         "content": """
-# Working with Strings and Numbers
+# Variables and Types
 
-Strings are bits of text. Numbers are… numbers! Let’s use both.
+TypeScript makes JavaScript better by letting you specify types.
 
-```javascript
-let message = "Hello, " + "world!";
-let length = message.length;
-let upper = message.toUpperCase();
+```ts
+let name: string = "Alice";
+let age: number = 30;
+let isStudent: boolean = true;
 ```
 
-### What does this do?
-- The `+` joins (concatenates) two strings
-- `.length` gives the number of characters
-- `.toUpperCase()` makes it ALL CAPS
+### Explanation:
+- `string`, `number`, and `boolean` are basic types
+- If you try to assign a wrong type later, TypeScript will warn you
 
-With numbers:
-```javascript
-let price = 20;
-let quantity = 3;
-let total = price * quantity;
-console.log("Total:", total);
+Example:
+```ts
+age = "thirty"; // ❌ Error: 'string' is not assignable to 'number'
 ```
 
-You can add, subtract, multiply, divide — just like in math.
+This helps you catch bugs early!
 """,
         "lesson_order": 4
     },
     {
-        "lesson_title": "Getting User Input",
+        "lesson_title": "Functions with Types",
         "content": """
-# Getting User Input
+# Functions with Types
 
-In the browser, we can use `prompt()` to ask the user for input.
+Let’s write a simple function in TypeScript.
 
-```javascript
-let name = prompt("What’s your name?");
-console.log("Nice to meet you, " + name + "!");
+```ts
+function greet(name: string): void {
+  console.log("Hello, " + name);
+}
+
+greet("Bob");
 ```
 
-### What happens:
-- The browser shows a popup asking the user to type something
-- The result is saved in the `name` variable
-- Then we greet them in the console
+### What’s going on?
+- `name: string` tells us the function needs a string
+- `void` means it returns nothing
 
-Want to use numbers?
-```javascript
-let age = Number(prompt("How old are you?"));
-console.log("Next year, you’ll be", age + 1);
+Let’s try a function that returns something:
+```ts
+function add(a: number, b: number): number {
+  return a + b;
+}
+
+console.log(add(5, 3));
 ```
 
-We use `Number(...)` to convert the input from string to number.
+Adding types makes your code safer and easier to understand.
 """,
         "lesson_order": 5
     },
     {
-        "lesson_title": "If Statements",
+        "lesson_title": "Arrays and Tuples",
         "content": """
-# If Statements
+# Arrays and Tuples
 
-If statements help your program make decisions.
+Arrays hold lists of values.
 
-```javascript
-let age = Number(prompt("How old are you?"));
-
-if (age >= 18) {
-  console.log("You’re an adult.");
-} else {
-  console.log("You’re not an adult yet.");
-}
+```ts
+let fruits: string[] = ["apple", "banana", "cherry"];
+console.log(fruits[0]);
 ```
 
-You can also add more conditions:
-```javascript
-if (age >= 65) {
-  console.log("You’re a senior.");
-} else if (age >= 18) {
-  console.log("You’re an adult.");
-} else {
-  console.log("You’re a minor.");
-}
+We specify what type of items are in the array (`string[]`).
+
+### Tuples
+Tuples are like arrays, but with fixed types and order.
+```ts
+let person: [string, number] = ["Alice", 30];
 ```
 
-JavaScript checks conditions in order — and runs the first one that is true.
+- First must be a string, second a number.
+- Helps when position and type both matter.
 """,
         "lesson_order": 6
     },
     {
-        "lesson_title": "Loops (for and while)",
+        "lesson_title": "Objects and Interfaces",
         "content": """
-# Loops (for and while)
+# Objects and Interfaces
 
-Loops help you repeat actions automatically.
+Let’s define a person using an object.
 
-### for loop:
-```javascript
-for (let i = 0; i < 5; i++) {
-  console.log("Number:", i);
-}
+```ts
+let person = {
+  name: "Bob",
+  age: 28
+};
+console.log(person.name);
 ```
 
-This runs 5 times — starting at 0 and stopping before 5.
-
-### while loop:
-```javascript
-let count = 0;
-while (count < 3) {
-  console.log("Counting", count);
-  count++;
+### Adding structure with interfaces:
+```ts
+interface Person {
+  name: string;
+  age: number;
 }
+
+let student: Person = {
+  name: "Alice",
+  age: 20
+};
 ```
 
-`while` keeps going as long as the condition is true.
+Interfaces make sure the object has all required fields — and correct types.
 """,
         "lesson_order": 7
     },
     {
-        "lesson_title": "Functions",
+        "lesson_title": "Union and Literal Types",
         "content": """
-# Functions
+# Union and Literal Types
 
-Functions are reusable blocks of code.
+What if something could be more than one type?
 
-```javascript
-function greet(name) {
-  console.log("Hello, " + name);
-}
-
-greet("Alice");
-greet("Bob");
+### Union type:
+```ts
+let id: number | string;
+id = 101;
+id = "A102";
 ```
 
-This function takes a `name` and prints a greeting.
+You can use `|` to allow multiple types.
 
-You can also return values:
-```javascript
-function square(n) {
-  return n * n;
-}
-
-console.log(square(4));
+### Literal type:
+```ts
+let direction: "left" | "right";
+direction = "left"; // ✅
+direction = "up";   // ❌ Error
 ```
 
-Functions help keep your code clean and organized.
+Use these when you want exact values only.
 """,
         "lesson_order": 8
     },
     {
-        "lesson_title": "Arrays and Objects",
+        "lesson_title": "Type Aliases and Enums",
         "content": """
-# Arrays and Objects
+# Type Aliases and Enums
 
-Arrays are lists of values:
-```javascript
-let fruits = ["apple", "banana", "orange"];
-console.log(fruits[0]);
-fruits.push("grape");
+### Type Aliases
+They let you create custom type names.
+```ts
+type ID = number | string;
+let userId: ID = 123;
 ```
 
-- Access items by index (starts at 0)
-- `.push()` adds a new item to the end
+### Enums
+Great for a fixed set of values.
+```ts
+enum Color {
+  Red,
+  Green,
+  Blue
+}
 
-Objects group data with names:
-```javascript
-let person = {
-  name: "Alice",
-  age: 25,
-  isStudent: true
-};
-
-console.log(person.name);
+let myColor: Color = Color.Green;
+console.log(myColor); // prints 1
 ```
 
-Objects are like labeled boxes for data — very useful!
+Enums start at 0 by default.
 """,
         "lesson_order": 9
     },
     {
-        "lesson_title": "Events and the DOM",
+        "lesson_title": "Type Assertions and Casting",
         "content": """
-# Events and the DOM
+# Type Assertions and Casting
 
-JavaScript can make your web page interactive!
-
-Create an HTML file:
-```html
-<button onclick="sayHello()">Click Me</button>
-<script>
-  function sayHello() {
-    alert("Hello there!");
-  }
-</script>
+Sometimes, you know more than TypeScript. You can tell it:
+```ts
+let someValue: any = "this is a string";
+let strLength: number = (someValue as string).length;
 ```
 
-Clicking the button runs the `sayHello()` function.
-
-You can also access and change HTML:
-```html
-<p id="greeting"></p>
-<button onclick="showGreeting()">Say Hi</button>
-<script>
-  function showGreeting() {
-    document.getElementById("greeting").innerText = "Hi, friend!";
-  }
-</script>
+Or with angle brackets:
+```ts
+let len = (<string>someValue).length;
 ```
 
-This updates the content of the paragraph when clicked.
+This is useful when working with external data.
 """,
         "lesson_order": 10
     },
     {
-        "lesson_title": "Error Handling",
+        "lesson_title": "Classes and Inheritance",
         "content": """
-# Error Handling
+# Classes and Inheritance
 
-Let’s keep our programs from crashing!
+TypeScript supports OOP with classes.
 
-```javascript
-try {
-  let num = Number(prompt("Enter a number:"));
-  console.log(10 / num);
-} catch (error) {
-  console.log("Something went wrong:", error);
+```ts
+class Animal {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
+  }
+  move() {
+    console.log(this.name + " moves.");
+  }
 }
+
+class Dog extends Animal {
+  bark() {
+    console.log("Woof!");
+  }
+}
+
+let dog = new Dog("Buddy");
+dog.move();
+dog.bark();
 ```
 
-You can also check for specific cases:
-```javascript
-if (isNaN(num)) {
-  console.log("That’s not a number!");
-}
-```
-
-Handling errors makes your code safer and friendlier.
+Use classes to structure and reuse your code.
 """,
         "lesson_order": 11
     },
     {
-        "lesson_title": "Your Final Project: A Simple Quiz Game",
+        "lesson_title": "Your Final Project: A User Profile Form",
         "content": """
-# Your Final Project: A Simple Quiz Game
+# Your Final Project: A User Profile Form
 
-Let’s build a fun little game to test what you’ve learned!
+Let’s bring it all together into a small project.
 
-```javascript
-function startQuiz() {
-  let score = 0;
-  let answer1 = prompt("What’s 2 + 2?");
-  if (Number(answer1) === 4) score++;
-
-  let answer2 = prompt("What’s the capital of France?");
-  if (answer2.toLowerCase() === "paris") score++;
-
-  alert("You scored " + score + "/2!");
+```ts
+interface User {
+  name: string;
+  age: number;
+  isStudent: boolean;
 }
 
-startQuiz();
+function createUser(user: User): void {
+  console.log("Welcome, " + user.name);
+  if (user.isStudent) {
+    console.log("You're a student!");
+  }
+}
+
+let newUser: User = {
+  name: "Alice",
+  age: 22,
+  isStudent: true
+};
+
+createUser(newUser);
 ```
 
-You:
-- Asked questions
-- Took input
-- Checked answers
-- Showed a final score
+### What we did:
+- Used an interface
+- Created and passed an object
+- Printed a message based on values
 
-🎉 You made a working JavaScript app! Keep building more!
+🎉 You now know the basics of TypeScript. Great job!
 """,
         "lesson_order": 12
     }
@@ -460,7 +429,7 @@ INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) V
 """,
         (
             lesson_id,
-            javascript_course_id,
+            typescript_course_id,
             lesson["lesson_title"],
             lesson["content"],
             lesson["lesson_order"],
