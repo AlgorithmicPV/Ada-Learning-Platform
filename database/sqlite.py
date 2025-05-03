@@ -6,6 +6,7 @@ from datetime import datetime
 conn = sqlite3.connect("database/app.db")
 cursor = conn.cursor()
 
+
 # users = [
 #     {"email": "vidunithap@gmail.com", "full_name": "tesgt", "password": "test1234", "auth_provider" : "manual", "theme_preference" : "dark"}
 # ]
@@ -68,27 +69,27 @@ cursor = conn.cursor()
 
 # print(guid)
 
-# python_course_id = "7da7fd5f-8ff3-4ef7-9431-20c42961f16e"
-# javascript_course_id = "2b3ae171-3168-4c52-b2f6-5c318ced669a"
-# typescript_course_id = "2d9673df-902f-4771-ae46-703475f40f8d"
-# java_course_id = "dac91fc1-e6f7-4973-8ae8-b81e0047aa2b"
-# cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
+python_course_id = "7da7fd5f-8ff3-4ef7-9431-20c42961f16e"
+javascript_course_id = "2b3ae171-3168-4c52-b2f6-5c318ced669a"
+typescript_course_id = "2d9673df-902f-4771-ae46-703475f40f8d"
+java_course_id = "dac91fc1-e6f7-4973-8ae8-b81e0047aa2b"
+cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
 
 
-# for lesson in lessons:
-#     lesson_id = str(uuid.uuid4())
-#     cursor.execute(
-#         """
-# INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) VALUES (?, ?, ?, ?, ?)
-# """,
-#         (
-#             lesson_id,
-#             java_course_id,
-#             lesson["lesson_title"],
-#             lesson["content"],
-#             lesson["lesson_order"],
-#         ),
-#     )
-#     conn.commit()
-# print("done")
+for lesson in lessons:
+    lesson_id = str(uuid.uuid4())
+    cursor.execute(
+        """
+INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) VALUES (?, ?, ?, ?, ?)
+""",
+        (
+            lesson_id,
+            python_course_id,
+            lesson["lesson_title"],
+            lesson["content"],
+            lesson["lesson_order"],
+        ),
+    )
+    conn.commit()
+print("done")
