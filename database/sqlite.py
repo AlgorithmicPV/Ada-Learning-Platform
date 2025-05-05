@@ -75,362 +75,91 @@ typescript_course_id = "2d9673df-902f-4771-ae46-703475f40f8d"
 java_course_id = "dac91fc1-e6f7-4973-8ae8-b81e0047aa2b"
 cplusplus_course_id = "cc676ca0-cf8d-4370-bf19-4625bd322b02"
 
-lessons = [
+challenges = [
+    # Easy
     {
-        "lesson_title": "Welcome to TypeScript",
-        "content": """
-# Welcome to TypeScript
-
-Hey there! 👋 Welcome to your TypeScript journey.
-
-If you’ve already touched JavaScript (even just a little), you’ll love what TypeScript brings. It adds features like type safety, better autocompletion, and more confidence in your code.
-
-### Why Learn TypeScript?
-- It helps catch mistakes before running your code
-- It makes your code easier to understand and maintain
-- It's widely used in professional web development
-
-Let’s take it step by step — no rush. Ready? Let's get started!
-""",
-        "lesson_order": 1
+        "question_number": 1,
+        "challenge_title": "Print Hello World",
+        "question": "**Description**:\nWrite a program that prints `Hello, World!` to the console.\n\n**Tips**:\n- Use the `print()` function.\n- Make sure the output matches exactly.",
+        "status": "unattempted",
+        "difficulty_level": "easy"
     },
     {
-        "lesson_title": "Setting Up TypeScript",
-        "content": """
-# Setting Up TypeScript
-
-Let’s get your computer ready to write TypeScript!
-
-### Step 1: Install Node.js
-If you don’t already have Node.js:
-- Go to [https://nodejs.org](https://nodejs.org)
-- Download and install the LTS version
-
-### Step 2: Install TypeScript
-Open your terminal and run:
-```bash
-npm install -g typescript
-```
-This makes the `tsc` command (TypeScript compiler) available globally.
-
-### Step 3: Check it works
-```bash
-tsc --version
-```
-If you see a version number, you're good to go!
-""",
-        "lesson_order": 2
+        "question_number": 2,
+        "challenge_title": "Odd or Even",
+        "question": "**Description**:\nWrite a function that checks whether a given integer is odd or even.\n\n**Tips**:\n- Use the modulo operator `%` to check divisibility.\n- Return or print a clear message like 'Odd' or 'Even'.",
+        "status": "unattempted",
+        "difficulty_level": "easy"
     },
     {
-        "lesson_title": "Your First TypeScript Program",
-        "content": """
-# Your First TypeScript Program
+        "question_number": 3,
+        "challenge_title": "Sum of List",
+        "question": "**Description**:\nCreate a function that takes a list of numbers and returns the sum.\n\n**Tips**:\n- Use a loop or built-in functions.\n- Handle empty lists gracefully.",
+        "status": "unattempted",
+        "difficulty_level": "easy"
+    },
 
-Create a file named `hello.ts` and write this code:
-```ts
-let message: string = "Hello, TypeScript!";
-console.log(message);
-```
-
-### What does this do?
-- We declare a variable `message`
-- `: string` tells TypeScript that `message` must always be a string
-- We print it using `console.log()`
-
-### Run it:
-First, compile it:
-```bash
-tsc hello.ts
-```
-This creates `hello.js`
-
-Now run it with Node:
-```bash
-node hello.js
-```
-
-🎉 You just ran your first TypeScript program!
-""",
-        "lesson_order": 3
+    # Medium
+    {
+        "question_number": 4,
+        "challenge_title": "Fibonacci Sequence Generator",
+        "question": "**Description**:\nWrite a function that returns the first N numbers in the Fibonacci sequence.\n\n**Tips**:\n- Start with 0 and 1.\n- Each number is the sum of the previous two.\n- Use a loop or recursion.",
+        "status": "unattempted",
+        "difficulty_level": "medium"
     },
     {
-        "lesson_title": "Variables and Types",
-        "content": """
-# Variables and Types
-
-TypeScript makes JavaScript better by letting you specify types.
-
-```ts
-let name: string = "Alice";
-let age: number = 30;
-let isStudent: boolean = true;
-```
-
-### Explanation:
-- `string`, `number`, and `boolean` are basic types
-- If you try to assign a wrong type later, TypeScript will warn you
-
-Example:
-```ts
-age = "thirty"; // ❌ Error: 'string' is not assignable to 'number'
-```
-
-This helps you catch bugs early!
-""",
-        "lesson_order": 4
+        "question_number": 5,
+        "challenge_title": "Palindrome Checker",
+        "question": "**Description**:\nCreate a function to check if a given string is a palindrome (it reads the same forwards and backwards).\n\n**Tips**:\n- Ignore spaces and capitalization.\n- Consider using string slicing or built-in functions.",
+        "status": "unattempted",
+        "difficulty_level": "medium"
     },
     {
-        "lesson_title": "Functions with Types",
-        "content": """
-# Functions with Types
+        "question_number": 6,
+        "challenge_title": "Prime Number Generator",
+        "question": "**Description**:\nGenerate all prime numbers less than a given number N.\n\n**Tips**:\n- A prime number is only divisible by 1 and itself.\n- Use nested loops or the Sieve of Eratosthenes.",
+        "status": "unattempted",
+        "difficulty_level": "medium"
+    },
 
-Let’s write a simple function in TypeScript.
-
-```ts
-function greet(name: string): void {
-  console.log("Hello, " + name);
-}
-
-greet("Bob");
-```
-
-### What’s going on?
-- `name: string` tells us the function needs a string
-- `void` means it returns nothing
-
-Let’s try a function that returns something:
-```ts
-function add(a: number, b: number): number {
-  return a + b;
-}
-
-console.log(add(5, 3));
-```
-
-Adding types makes your code safer and easier to understand.
-""",
-        "lesson_order": 5
+    # Hard
+    {
+        "question_number": 7,
+        "challenge_title": "Merge Overlapping Intervals",
+        "question": "**Description**:\nGiven a list of intervals (like `[1,3]`, `[2,6]`), merge all overlapping intervals.\n\n**Tips**:\n- Sort the intervals first.\n- Compare current and next interval to decide if they overlap.",
+        "status": "unattempted",
+        "difficulty_level": "hard"
     },
     {
-        "lesson_title": "Arrays and Tuples",
-        "content": """
-# Arrays and Tuples
-
-Arrays hold lists of values.
-
-```ts
-let fruits: string[] = ["apple", "banana", "cherry"];
-console.log(fruits[0]);
-```
-
-We specify what type of items are in the array (`string[]`).
-
-### Tuples
-Tuples are like arrays, but with fixed types and order.
-```ts
-let person: [string, number] = ["Alice", 30];
-```
-
-- First must be a string, second a number.
-- Helps when position and type both matter.
-""",
-        "lesson_order": 6
+        "question_number": 8,
+        "challenge_title": "LRU Cache Design",
+        "question": "**Description**:\nDesign a Least Recently Used (LRU) cache that supports `get()` and `put()` operations in O(1) time.\n\n**Tips**:\n- Use a combination of a hash map and a doubly linked list.\n- Understand how cache eviction works when capacity is exceeded.",
+        "status": "unattempted",
+        "difficulty_level": "hard"
     },
     {
-        "lesson_title": "Objects and Interfaces",
-        "content": """
-# Objects and Interfaces
-
-Let’s define a person using an object.
-
-```ts
-let person = {
-  name: "Bob",
-  age: 28
-};
-console.log(person.name);
-```
-
-### Adding structure with interfaces:
-```ts
-interface Person {
-  name: string;
-  age: number;
-}
-
-let student: Person = {
-  name: "Alice",
-  age: 20
-};
-```
-
-Interfaces make sure the object has all required fields — and correct types.
-""",
-        "lesson_order": 7
-    },
-    {
-        "lesson_title": "Union and Literal Types",
-        "content": """
-# Union and Literal Types
-
-What if something could be more than one type?
-
-### Union type:
-```ts
-let id: number | string;
-id = 101;
-id = "A102";
-```
-
-You can use `|` to allow multiple types.
-
-### Literal type:
-```ts
-let direction: "left" | "right";
-direction = "left"; // ✅
-direction = "up";   // ❌ Error
-```
-
-Use these when you want exact values only.
-""",
-        "lesson_order": 8
-    },
-    {
-        "lesson_title": "Type Aliases and Enums",
-        "content": """
-# Type Aliases and Enums
-
-### Type Aliases
-They let you create custom type names.
-```ts
-type ID = number | string;
-let userId: ID = 123;
-```
-
-### Enums
-Great for a fixed set of values.
-```ts
-enum Color {
-  Red,
-  Green,
-  Blue
-}
-
-let myColor: Color = Color.Green;
-console.log(myColor); // prints 1
-```
-
-Enums start at 0 by default.
-""",
-        "lesson_order": 9
-    },
-    {
-        "lesson_title": "Type Assertions and Casting",
-        "content": """
-# Type Assertions and Casting
-
-Sometimes, you know more than TypeScript. You can tell it:
-```ts
-let someValue: any = "this is a string";
-let strLength: number = (someValue as string).length;
-```
-
-Or with angle brackets:
-```ts
-let len = (<string>someValue).length;
-```
-
-This is useful when working with external data.
-""",
-        "lesson_order": 10
-    },
-    {
-        "lesson_title": "Classes and Inheritance",
-        "content": """
-# Classes and Inheritance
-
-TypeScript supports OOP with classes.
-
-```ts
-class Animal {
-  name: string;
-  constructor(name: string) {
-    this.name = name;
-  }
-  move() {
-    console.log(this.name + " moves.");
-  }
-}
-
-class Dog extends Animal {
-  bark() {
-    console.log("Woof!");
-  }
-}
-
-let dog = new Dog("Buddy");
-dog.move();
-dog.bark();
-```
-
-Use classes to structure and reuse your code.
-""",
-        "lesson_order": 11
-    },
-    {
-        "lesson_title": "Final Project: A User Profile Form",
-        "content": """
-# Final Project: A User Profile Form
-
-Let’s bring it all together into a small project.
-
-```ts
-interface User {
-  name: string;
-  age: number;
-  isStudent: boolean;
-}
-
-function createUser(user: User): void {
-  console.log("Welcome, " + user.name);
-  if (user.isStudent) {
-    console.log("You're a student!");
-  }
-}
-
-let newUser: User = {
-  name: "Alice",
-  age: 22,
-  isStudent: true
-};
-
-createUser(newUser);
-```
-
-### What we did:
-- Used an interface
-- Created and passed an object
-- Printed a message based on values
-
-🎉 You now know the basics of TypeScript. Great job!
-""",
-        "lesson_order": 12
+        "question_number": 9,
+        "challenge_title": "Word Ladder Path Finder",
+        "question": "**Description**:\nTransform a start word into an end word by changing one letter at a time. Each transformed word must exist in the given dictionary.\n\n**Tips**:\n- Use BFS (Breadth-First Search) to find the shortest path.\n- Keep track of visited words to avoid loops.",
+        "status": "unattempted",
+        "difficulty_level": "hard"
     }
 ]
 
 
-for lesson in lessons:
-    lesson_id = str(uuid.uuid4())
+for challenge in challenges:
+    challenge_id = str(uuid.uuid4())
     cursor.execute(
         """
-INSERT INTO Lesson (lesson_id, course_id, lesson_title, content, lesson_order) VALUES (?, ?, ?, ?, ?)
+INSERT INTO Challenge (challenge_id, number, challenge_title, question, status, difficulty_level) VALUES (?, ?, ?, ?, ?, ?)
 """,
         (
-            lesson_id,
-            typescript_course_id ,
-            lesson["lesson_title"],
-            lesson["content"],
-            lesson["lesson_order"],
+            challenge_id,
+            challenge["question_number"],
+            challenge["challenge_title"],
+            challenge["question"],
+            challenge["status"],
+            challenge["difficulty_level"],
         ),
     )
     conn.commit()
