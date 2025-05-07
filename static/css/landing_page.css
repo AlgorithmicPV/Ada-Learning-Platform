@@ -2,6 +2,10 @@ html {
   scroll-behavior: smooth;
 }
 
+body {
+  margin: 0;
+}
+
 .landing-page {
   background-color: #05000e;
   height: 100%;
