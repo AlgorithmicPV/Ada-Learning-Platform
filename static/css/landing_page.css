@@ -127,15 +127,6 @@ body {
   display: none;
 }
 
-.home-circle-1 {
-  left: 50%;
-}
-
-.home-circle-2 {
-  left: 10%;
-  top: 50%;
-}
-
 .home-cont {
   top: 30%;
   width: 50%;
@@ -247,8 +238,7 @@ body {
   height: 100px;
   border-radius: 50%;
   background-color: #17013d;
-  /* background-color: red; */
-  /* opacity: 0.1; */
+  opacity: 0.7;
   filter: blur(120px);
   transform: translate(-50%, -50%);
   z-index: 0;
@@ -279,4 +269,218 @@ body {
 .circle-2 {
   left: 10%;
   top: 50%;
+}
+
+.svg-elem-15,
+.svg-elem-16,
+.svg-elem-17,
+.svg-elem-18,
+.svg-elem-19,
+.svg-elem-20,
+.svg-elem-21,
+.svg-elem-22,
+.svg-elem-23,
+.svg-elem-24,
+.svg-elem-25,
+.svg-elem-26,
+.svg-elem-27,
+.svg-elem-28,
+.svg-elem-29,
+.svg-elem-30,
+.svg-elem-11,
+.svg-elem-8,
+.svg-elem-33,
+.svg-elem-34,
+.svg-elem-37,
+.svg-elem-35,
+.svg-elem-36,
+.svg-elem-9,
+.svg-elem-38,
+.svg-elem-39,
+.svg-elem-14,
+.svg-elem-12,
+.svg-elem-32,
+.svg-elem-31 {
+  animation-duration: 0.5s;
+  animation-name: animate-fade;
+  animation-fill-mode: backwards;
+  transition: transform 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0.3;
+}
+
+.svg-elem-15,
+.svg-elem-16,
+.svg-elem-17,
+.svg-elem-18,
+.svg-elem-19,
+.svg-elem-20,
+.svg-elem-21,
+.svg-elem-22,
+.svg-elem-23,
+.svg-elem-24,
+.svg-elem-25,
+.svg-elem-26,
+.svg-elem-27,
+.svg-elem-28,
+.svg-elem-29,
+.svg-elem-30 {
+  stroke-dasharray: 300 1000;
+  stroke-dashoffset: 0;
+  animation: animate-fade 1s ease 1, draw 2s linear forwards infinite;
+  animation-delay: 1s, 0.06s;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.svg-elem-1,
+.svg-elem-3,
+.svg-elem-6,
+.svg-elem-4,
+.svg-elem-5,
+.svg-elem-2,
+.svg-elem-7 {
+  animation-name: animate-fade-box;
+  animation-duration: 0.5s;
+  opacity: 0.05;
+  animation-fill-mode: backwards;
+  transition: transform 0.2s ease;
+}
+
+.svg-elem-1 {
+  animation-delay: 1.4s;
+  opacity: 0.05;
+}
+.svg-elem-15 {
+  animation-delay: 0.07s;
+}
+.svg-elem-16 {
+  animation-delay: 0.14s;
+}
+.svg-elem-17 {
+  animation-delay: 0.21s;
+}
+.svg-elem-18 {
+  animation-delay: 0.28s;
+}
+.svg-elem-19 {
+  animation-delay: 0.35s;
+}
+.svg-elem-20 {
+  animation-delay: 0.42s;
+}
+.svg-elem-21 {
+  animation-delay: 0.49s;
+}
+.svg-elem-22 {
+  animation-delay: 0.56s;
+}
+.svg-elem-23 {
+  animation-delay: 0.63s;
+}
+.svg-elem-24 {
+  animation-delay: 0.7s;
+}
+.svg-elem-25 {
+  animation-delay: 0.77s;
+}
+.svg-elem-26 {
+  animation-delay: 0.84s;
+}
+.svg-elem-27 {
+  animation-delay: 0.91s;
+}
+.svg-elem-28 {
+  animation-delay: 0.98s;
+}
+.svg-elem-29 {
+  animation-delay: 1.05s;
+}
+.svg-elem-30 {
+  animation-delay: 1.12s;
+}
+.svg-elem-3 {
+  animation-delay: 1.19s;
+  opacity: 0.05;
+}
+.svg-elem-6 {
+  animation-delay: 1.26s;
+  opacity: 0.05;
+}
+.svg-elem-4 {
+  animation-delay: 1.33s;
+  opacity: 0.05;
+}
+.svg-elem-5 {
+  animation-delay: 1.4s;
+  opacity: 0.05;
+}
+.svg-elem-2 {
+  animation-delay: 1.47s;
+  opacity: 0.05;
+}
+.svg-elem-7 {
+  animation-delay: 1.54s;
+  opacity: 0.05;
+}
+.svg-elem-11 {
+  animation-delay: 1.61s;
+}
+.svg-elem-8 {
+  animation-delay: 1.68s;
+}
+.svg-elem-33,
+.svg-elem-34 {
+  animation-delay: 1.75s;
+}
+.svg-elem-37 {
+  animation-delay: 1.82s;
+}
+.svg-elem-35,
+.svg-elem-36 {
+  animation-delay: 1.89s;
+}
+.svg-elem-38 {
+  animation-delay: 1.96s;
+}
+.svg-elem-39 {
+  animation-delay: 2.03s;
+}
+.svg-elem-14 {
+  animation-delay: 2.1s;
+}
+.svg-elem-12 {
+  animation-delay: 2.17s;
+}
+.svg-elem-9 {
+  animation-delay: 2.24s;
+}
+.svg-elem-32,
+.svg-elem-31 {
+  animation-delay: 2.31s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: -1030;
+  }
+}
+
+@keyframes animate-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes animate-fade-box {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.05;
+  }
 }
