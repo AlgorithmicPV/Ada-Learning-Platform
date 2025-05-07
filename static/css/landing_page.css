@@ -332,6 +332,7 @@ body {
   animation-delay: 1s, 0.06s;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.5;
 }
 
 .svg-elem-1,
