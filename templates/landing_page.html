@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ada - Learning Platform</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/landing_page.css') }}"
+    />
+  </head>
+  <body>
+    <div class="landing-page">
+      <div class="landing-page-nav">
+        <img src="{logo}" alt="logo" class="logo" draggable="false" />
+        <div class="menu">
+          <p class="section-name">
+            <a href="#home">Home</a>
+          </p>
+          <p class="section-name">
+            <a href="#why_us">Why us</a>
+          </p>
+          <p class="section-name">
+            <a href="#supported_langauges">Supported Languages</a>
+          </p>
+          <p class="section-name">
+            <a href="#how_it_works">How it works</a>
+          </p>
+          <button class="sign-in-btn">Sign in</button>
+          <button class="sign-up-btn">Sign up</button>
+          <button class="landing-collapsed-menu">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 490.667 490.667"
+              class="w-6 h-6 fill-current text-white"
+            >
+              <path
+                d="M469.333,224h-448C9.551,224,0,233.551,0,245.333c0,11.782,9.551,21.333,21.333,21.333h448
+                                 c11.782,0,21.333-9.551,21.333-21.333C490.667,233.551,481.115,224,469.333,224z"
+              />
+              <path
+                d="M21.333,117.333h448c11.782,0,21.333-9.551,21.333-21.333s-9.551-21.333-21.333-21.333h-448
+                                C9.551,74.667,0,84.218,0,96S9.551,117.333,21.333,117.333z"
+              />
+              <path
+                d="M469.333,373.333h-448C9.551,373.333,0,382.885,0,394.667C0,406.449,9.551,416,21.333,416h448
+                        c11.782,0,21.333-9.551,21.333-21.333C490.667,382.885,481.115,373.333,469.333,373.333z"
+              />
+            </svg>
+          </button>
+          <button class="theme-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              id="Layer_1"
+              data-name="Layer 1"
+              viewBox="0 0 24 24"
+              width="512"
+              height="512"
+              fill="white"
+            >
+              <path
+                d="M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5-2.24,5-5,5Zm0-8c-1.65,0-3,1.35-3,3s1.35,3,3,3,3-1.35,3-3-1.35-3-3-3Zm1-5V1c0-.55-.45-1-1-1s-1,.45-1,1v3c0,.55,.45,1,1,1s1-.45,1-1Zm0,19v-3c0-.55-.45-1-1-1s-1,.45-1,1v3c0,.55,.45,1,1,1s1-.45,1-1ZM5,12c0-.55-.45-1-1-1H1c-.55,0-1,.45-1,1s.45,1,1,1h3c.55,0,1-.45,1-1Zm19,0c0-.55-.45-1-1-1h-3c-.55,0-1,.45-1,1s.45,1,1,1h3c.55,0,1-.45,1-1ZM6.71,6.71c.39-.39,.39-1.02,0-1.41l-2-2c-.39-.39-1.02-.39-1.41,0s-.39,1.02,0,1.41l2,2c.2,.2,.45,.29,.71,.29s.51-.1,.71-.29Zm14,14c.39-.39,.39-1.02,0-1.41l-2-2c-.39-.39-1.02-.39-1.41,0s-.39,1.02,0,1.41l2,2c.2,.2,.45,.29,.71,.29s.51-.1,.71-.29Zm-16,0l2-2c.39-.39,.39-1.02,0-1.41s-1.02-.39-1.41,0l-2,2c-.39,.39-.39,1.02,0,1.41,.2,.2,.45,.29,.71,.29s.51-.1,.71-.29ZM18.71,6.71l2-2c.39-.39,.39-1.02,0-1.41s-1.02-.39-1.41,0l-2,2c-.39,.39-.39,1.02,0,1.41,.2,.2,.45,.29,.71,.29s.51-.1,.71-.29Z"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <section id="home">
+        <!-- <OrbGlow class="home-circle-1" />
+        <OrbGlow class="home-circle-2" /> -->
+        <div class="home-cont">
+          <p class="home-txt-1">
+            Unlock your coding potential with Ada - where learning meets
+            innovation.
+          </p>
+          <p class="home-txt-2">
+            Ada is a dynamic platform designed to help you learn coding through
+            interactive challenges, real-time coding assistance, and a
+            supportive community. Enhance your skills and unlock your
+            programming potential
+          </p>
+          <button class="get-started-btn">Get Started</button>
+        </div>
+        <!-- <Background class="home-img" /> -->
+      </section>
+      <section id="why_us">
+        <div class="why-us-section">
+          <p class="why-us-txt-1"><span>🌟</span> Why Choose Us?</p>
+        </div>
+      </section>
+      <section id="supported_langauges"></section>
+      <section id="how_it_works"></section>
+    </div>
+  </body>
+</html>
