@@ -12,7 +12,12 @@
   <body>
     <div class="landing-page">
       <div class="landing-page-nav">
-        <img src="{logo}" alt="logo" class="logo" draggable="false" />
+        <img
+          src="{{ url_for('static', filename='images/logos/ada_logo.svg') }}"
+          alt="logo"
+          class="logo"
+          draggable="false"
+        />
         <div class="menu">
           <p class="section-name">
             <a href="#home">Home</a>
@@ -371,6 +376,13 @@
       </section>
       <section id="why_us">
         <div class="why-us-section">
+          <img
+            src="https://twemoji.maxcdn.com/v/latest/72x72/1f929.png"
+            alt="star-struck emoji"
+            width="32"
+            height="32"
+          />
+
           <p class="why-us-txt-1"><span>🌟</span> Why Choose Us?</p>
         </div>
       </section>
