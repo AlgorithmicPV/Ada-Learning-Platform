@@ -376,14 +376,25 @@
       </section>
       <section id="why_us">
         <div class="why-us-section">
-          <img
-            src="https://twemoji.maxcdn.com/v/latest/72x72/1f929.png"
-            alt="star-struck emoji"
-            width="32"
-            height="32"
-          />
-
-          <p class="why-us-txt-1"><span>🌟</span> Why Choose Us?</p>
+          <div class="why-us-cont">
+            <p class="why-us-txt-1"><span>🌟</span> Why Choose Us?</p>
+            <p class="why-us-txt-2">
+              Learn to code with an interactive, AI-powered platform:
+            </p>
+            <div class="why-us-cards">
+              <div class="circle-3"></div>
+              <div class="card-1">
+                <img
+                  src="{{ url_for('static', filename='images/assets/card_one_dark_img.svg') }}"
+                  alt="Interactive Learning"
+                />
+                <p>Interactive Learning</p>
+              </div>
+              <div class="card-2"></div>
+              <div class="card-3"></div>
+              <div class="card-4"></div>
+            </div>
+          </div>
         </div>
       </section>
       <section id="supported_langauges"></section>

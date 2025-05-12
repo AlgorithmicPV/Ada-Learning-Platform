@@ -15,6 +15,24 @@
   font-weight: normal;
 }
 
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/Poppins.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -186,6 +204,55 @@ body {
   top: 0;
   z-index: 1;
 }
+
+.why-us-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.why-us-cont {
+  width: calc(100% - 40px);
+  margin: 20px;
+}
+
+.why-us-txt-1 {
+  color: #ede3ff;
+  font-family: "Poppins";
+  font-size: 25px;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.why-us-txt-2 {
+  color: #ede3ff;
+  font-family: "Montserrat";
+  font-weight: normal;
+  font-size: medium;
+  margin-left: 50px;
+}
+
+.why-us-cards {
+  background-color: #ede3ff29;
+  width: min-content;
+  height: min-content;
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+}
+
+.circle-3 {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #17013d;
+  opacity: 1;
+  filter: blur(120px);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
 /* 1030 */
 @media only screen and (max-width: 1200px) {
   .menu p a,
