@@ -235,7 +235,16 @@ body {
 }
 
 .why-us-cards {
-  background-color: #ede3ff29;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.card-1 {
+  background: radial-gradient(circle at top left, #ede3ff, #14022c);
+  border-radius: 20px;
+  padding: 20px;
   width: min-content;
   height: min-content;
   backdrop-filter: blur(10px);
