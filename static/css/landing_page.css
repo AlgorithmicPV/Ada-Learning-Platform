@@ -235,6 +235,8 @@ body {
 }
 
 .why-us-cards {
+  /* https://css.glass/ 
+  https://cssgradient.io/*/
   display: flex;
   justify-content: center;
   align-items: center;
@@ -242,13 +244,19 @@ body {
 }
 
 .card-1 {
-  background: radial-gradient(circle at top left, #ede3ff, #14022c);
-  border-radius: 20px;
-  padding: 20px;
-  width: min-content;
-  height: min-content;
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
+  background-color: red;
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+}
+
+.card-1 img {
+  width: 90%;
+  height: auto;
 }
 
 .circle-3 {
@@ -273,7 +281,6 @@ body {
   .landing-collapsed-menu {
     display: inline;
   }
-
   .home-cont {
     width: calc(100% - 100px);
     left: 0;
