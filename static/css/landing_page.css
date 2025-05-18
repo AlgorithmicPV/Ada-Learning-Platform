@@ -1,3 +1,9 @@
+/* ================================
+   FONT-FACE DECLARATIONS
+   These load custom fonts for use across the app
+   ================================ */
+
+/* Load the Inter font for Navigation texts */
 @font-face {
   font-family: "Inter";
   src: url("../fonts/Inter.ttc") format("truetype");
@@ -6,6 +12,7 @@
   font-weight: normal;
 }
 
+/* Load the Roboto font for the title in the Home section */
 @font-face {
   font-family: "Roboto";
   src: url("../fonts/Roboto.ttf") format("truetype");
@@ -15,6 +22,7 @@
   font-weight: normal;
 }
 
+/* Load the Poppins font for the Description text in the Home section */
 @font-face {
   font-family: "Poppins";
   src: url("../fonts/Poppins.ttf") format("truetype");
@@ -24,6 +32,7 @@
   font-weight: normal;
 }
 
+/* Load the Montserrat font for the Description text in the Home section and the Why choose us Section  */
 @font-face {
   font-family: "Montserrat";
   src: url("../fonts/Montserrat.ttf") format("truetype");
@@ -33,10 +42,22 @@
   font-weight: normal;
 }
 
+/* Load the Lato font for the text in cards which are in the why choose us section */
+@font-face {
+  font-family: "Lato";
+  src: url("../fonts/Lato.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Enable smooth scrolling when the user using the anchor links */
 html {
   scroll-behavior: smooth;
 }
 
+/* Remove the defalut margin to use the full width layout */
 body {
   margin: 0;
 }
@@ -244,7 +265,6 @@ body {
 }
 
 .card-1 {
-  background-color: red;
   width: 300px;
   height: 400px;
   display: flex;
@@ -252,6 +272,11 @@ body {
   justify-content: center;
   align-items: center;
   border-radius: 15px;
+}
+
+.card-1 p {
+  font-family: "Lato";
+  color: #ede3ff;
 }
 
 .card-1 img {
