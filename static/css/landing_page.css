@@ -62,12 +62,12 @@ body {
   margin: 0;
 }
 
+/* Set the main Background colour of the landing page to dark puprle (#05000e) */
 .landing-page {
   background-color: #05000e;
-  height: 100%;
-  width: 100%;
 }
 
+/* Make each section fill the entire viewpoints */
 .landing-page section {
   height: 100vh;
   width: 100%;
@@ -237,6 +237,7 @@ body {
 .why-us-cont {
   width: calc(100% - 40px);
   margin: 20px;
+  margin-top: 50px;
 }
 
 .why-us-txt-1 {
@@ -271,7 +272,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 15px;
+  /* border-radius: 15px; */
 }
 
 .card-1 p {
