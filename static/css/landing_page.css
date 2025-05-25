@@ -173,6 +173,7 @@ body {
   background-color: transparent;
 }
 
+/* Hide the collapsed menu button when the screen's width is more than 1200px */
 .landing-collapsed-menu {
   background-color: transparent;
   display: none;
