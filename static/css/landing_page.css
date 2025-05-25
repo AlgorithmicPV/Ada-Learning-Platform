@@ -73,54 +73,62 @@ body {
   width: 100%;
 }
 
+/* Landing page Navigation bar styles */
 .landing-page-nav {
-  color: #ede3ff79;
+  color: #ede3ff79; /*Set a transparent background colour for texts */
   display: flex;
   flex-direction: row;
-  width: calc(100% - 120px);
-  justify-content: space-between;
+  width: calc(
+    100% - 120px
+  ); /* Remove 120px from the width to avoid the callapse with the window frame */
+  justify-content: space-between; /* keep the same space */
   margin: 50px;
   padding: 10px;
-  align-items: center;
-  position: fixed;
+  align-items: center; /* Verticqally align items */
+  position: fixed; /* Keep the Navigation bar at the same place while scrolling*/
   top: 0;
-  backdrop-filter: blur(10px);
-  border-radius: 50px;
-  z-index: 3;
+  backdrop-filter: blur(10px); /* Give a blur background for glass effect*/
+  border-radius: 50px; /* Rounded corners */
+  z-index: 3; /* Ensure it appears above other elements */
 }
 
 .landing-page-nav img {
   height: 40px;
-  width: auto;
+  width: auto; /* Adjust the width according to the height */
 }
 
+/* Use the flex layout out to keep the elements in the menu (home, why us, supportend languages, how it works, ...) in a row, and keep them vertically centered */
 .menu {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
+/* Styling links inside <p> tags within the .menu container */
 .menu p a {
-  margin-top: 0;
-  margin-bottom: 0;
-  margin-left: 15px;
+  margin-top: 0; /* Remove extra space above the link */
+  margin-bottom: 0; /* Remove extra space below the link */
+  margin-left: 15px; /* Add spacing between links horizontally */
   margin-right: 15px;
-  height: fit-content;
-  width: fit-content;
-  text-decoration: none;
-  color: #ede3ff7a;
-  font-size: large;
-  font-family: "Inter", sans-serif;
-  transition: all 0.3s ease-in-out;
+  height: fit-content; /* Ensure height adapts to content */
+  width: fit-content; /* Ensure width adapts to content */
+  text-decoration: none; /* Remove underline from links */
+  color: #ede3ff7a; /* Light purple color with transparency */
+  font-size: large; /* Make text slightly bigger */
+  font-family: "Inter", sans-serif; /* Use modern sans-serif font */
+  transition: all 0.3s ease-in-out; /* Smooth transition on hover effects */
 }
 
+/* Stlying when the User hovers on the links */
 .menu p a:hover {
   color: #ede3ff;
+  /* Increase the size of the element by 10% in both width and height */
   transform: scale(1.1);
 }
 
+/* Stlying two buttons in the navigation bar */
 .menu button {
-  border: none;
+  border: none; /* Remove the borders around the buttons */
   height: fit-content;
   width: fit-content;
   padding: 5px;
@@ -272,7 +280,6 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border-radius: 15px; */
 }
 
 .card-1 p {
