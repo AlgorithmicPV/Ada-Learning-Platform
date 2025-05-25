@@ -283,14 +283,25 @@ body {
   align-items: center;
 }
 
+/* Styling the Gradient circle */
+.card-1 .circle {
+  background-color: red;
+  height: 200px;
+  width: 200px;
+  position: absolute;
+  z-index: 0; /* Place the element behind the texts and images */
+}
+
 .card-1 p {
   font-family: "Lato";
   color: #ede3ff;
+  z-index: 1;
 }
 
 .card-1 img {
   width: 90%;
   height: auto;
+  z-index: 1;
 }
 
 .circle-3 {
@@ -392,6 +403,7 @@ body {
   top: 50%;
 }
 
+/* Styling the Background svg in the home page */
 .svg-elem-15,
 .svg-elem-16,
 .svg-elem-17,

@@ -8,6 +8,11 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/landing_page.css') }}"
     />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='images/logos/favicon.svg') }}"
+    />
   </head>
   <body>
     <div class="landing-page">
@@ -389,6 +394,7 @@
             <div class="why-us-cards">
               <div class="circle-3"></div>
               <div class="card-1">
+                <div class="circle"></div>
                 <img
                   src="{{ url_for('static', filename='images/assets/card_one_dark_img.svg') }}"
                   alt="Interactive Learning"
