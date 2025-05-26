@@ -395,11 +395,14 @@
               <div class="circle-3"></div>
               <div class="card-1">
                 <div class="circle"></div>
-                <img
-                  src="{{ url_for('static', filename='images/assets/card_one_dark_img.svg') }}"
-                  alt="Interactive Learning"
-                />
-                <p>Interactive Learning</p>
+                <!-- Seperate the card-1 div in two parts because it is difficult to handle circle div and other contents of the card as the circle div is to add a gradient for the card-->
+                <div class="card-cont">
+                  <img
+                    src="{{ url_for('static', filename='images/assets/card_one_dark_img.svg') }}"
+                    alt="Interactive Learning"
+                  />
+                  <p>Interactive Learning</p>
+                </div>
               </div>
               <div class="card-2"></div>
               <div class="card-3"></div>

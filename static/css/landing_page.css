@@ -78,9 +78,8 @@ body {
   color: #ede3ff79; /*Set a transparent background colour for texts */
   display: flex;
   flex-direction: row;
-  width: calc(
-    100% - 120px
-  ); /* Remove 120px from the width to avoid the callapse with the window frame */
+  /* Remove 120px from the width to avoid the callapse with the window frame */
+  width: calc(100% - 120px);
   justify-content: space-between; /* keep the same space */
   margin: 50px;
   padding: 10px;
@@ -275,6 +274,21 @@ body {
 }
 
 .card-1 {
+  height: min-content;
+  width: min-content;
+}
+
+/* Styling the Gradient circle */
+.card-1 .circle {
+  background-color: #200254;
+  height: 250px;
+  width: 250px;
+  position: absolute;
+  z-index: 0; /* Place the element behind the texts and images */
+  border-radius: 50%; /* Make it a circle */
+}
+
+.card-1 .card-cont {
   width: 300px;
   height: 400px;
   display: flex;
@@ -283,22 +297,13 @@ body {
   align-items: center;
 }
 
-/* Styling the Gradient circle */
-.card-1 .circle {
-  background-color: red;
-  height: 200px;
-  width: 200px;
-  position: absolute;
-  z-index: 0; /* Place the element behind the texts and images */
-}
-
-.card-1 p {
+.card-1 .card-cont p {
   font-family: "Lato";
   color: #ede3ff;
   z-index: 1;
 }
 
-.card-1 img {
+.card-1 .card-cont img {
   width: 90%;
   height: auto;
   z-index: 1;
