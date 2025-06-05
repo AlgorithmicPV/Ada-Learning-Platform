@@ -1,7 +1,4 @@
-/* ================================
-   FONT-FACE DECLARATIONS
-   These load custom fonts for use across the app
-   ================================ */
+/* Landing Page CSS */
 
 /* Load the Inter font for Navigation texts */
 @font-face {
@@ -52,363 +49,256 @@
   font-weight: normal;
 }
 
-/* Enable smooth scrolling when the user using the anchor links */
 html {
-  scroll-behavior: smooth;
-}
-
-/* Remove the defalut margin to use the full width layout */
-body {
-  margin: 0;
-}
-
-/* Set the main Background colour of the landing page to dark puprle (#05000e) */
-.landing-page {
+  scroll-behavior: smooth; /* Enable smooth scrolling */
   background-color: #05000e;
 }
 
-/* Make each section fill the entire viewpoints */
-.landing-page section {
-  height: 100vh;
+body {
+  margin: 0;
   width: 100%;
 }
 
-/* Landing page Navigation bar styles */
-.landing-page-nav {
-  color: #ede3ff79; /*Set a transparent background colour for texts */
+/* * {
+  outline: 1px solid red;
+} */
+
+section {
+  height: 100vh;
+  width: 100%;
+  bottom: 0;
+  position: relative;
   display: flex;
   flex-direction: row;
-  /* Remove 120px from the width to avoid the callapse with the window frame */
-  width: calc(100% - 120px);
-  justify-content: space-between; /* keep the same space */
-  margin: 50px;
-  padding: 10px;
-  align-items: center; /* Verticqally align items */
-  position: fixed; /* Keep the Navigation bar at the same place while scrolling*/
-  top: 0;
-  backdrop-filter: blur(10px); /* Give a blur background for glass effect*/
-  border-radius: 50px; /* Rounded corners */
-  z-index: 3; /* Ensure it appears above other elements */
 }
 
-.landing-page-nav img {
+/* Styling the navigation bar*/
+.navbar {
+  color: #ede3ff79;
+  display: flex;
+  flex-direction: row; /* Keep the elements in a row */
+  width: calc(100% - 120px);
+  justify-content: space-between;
+  backdrop-filter: blur(10px); /* Give a blur background for glass effect */
+  border-radius: 50px; /* Rounded corners */
+  align-items: center;
+  position: fixed; /* Keep the Navigation Bar at the same position while the user scrolls the page */
+  /* Centers content by applying equal 50px margins on left and right sides */
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-top: 20px; /* Adds space from the top to prevent the element from touching the top edge of the browser */
+  z-index: 10;
+  padding: 10px;
+}
+
+.navbar_logo {
   height: 40px;
   width: auto; /* Adjust the width according to the height */
 }
 
-/* Use the flex layout out to keep the elements in the menu (home, why us, supportend languages, how it works, ...) in a row, and keep them vertically centered */
-.menu {
+/* Styles the div that contains the navigation links */
+.navbar_links {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: center; /* Vertically centers all child elements within the container */
 }
 
-/* Styling links inside <p> tags within the .menu container */
-.menu p a {
-  margin-top: 0; /* Remove extra space above the link */
-  margin-bottom: 0; /* Remove extra space below the link */
-  margin-left: 15px; /* Add spacing between links horizontally */
+/* Styles the navigation links */
+.navbar_links a {
+  margin-left: 15px; /* Adds horizontal spacing between links to prevent them from appearing too close together */
   margin-right: 15px;
-  height: fit-content; /* Ensure height adapts to content */
-  width: fit-content; /* Ensure width adapts to content */
-  text-decoration: none; /* Remove underline from links */
-  color: #ede3ff7a; /* Light purple color with transparency */
-  font-size: large; /* Make text slightly bigger */
-  font-family: "Inter", sans-serif; /* Use modern sans-serif font */
-  transition: all 0.3s ease-in-out; /* Smooth transition on hover effects */
+  text-decoration: none; /* Remove underline from links to stop */
+  color: #ede3ff7a;
+  font-size: large;
+  font-family: "Inter", sans-serif;
+  transition: all 0.3s ease-in-out; /* Adds smooth hover effect for better user experience */
 }
 
-/* Stlying when the User hovers on the links */
-.menu p a:hover {
+/* Adds hover effect with color change and zoom for better interactivity */
+.navbar_links a:hover {
   color: #ede3ff;
-  /* Increase the size of the element by 10% in both width and height */
-  transform: scale(1.1);
+  transform: scale(
+    1.1
+  ); /* Increase the size of the element by 10% in both width and height */
 }
 
-/* Stlying two buttons in the navigation bar */
-.menu button {
-  border: none; /* Remove the borders around the buttons */
+.signin-btn,
+.signup-btn {
+  border: none; /* Removes default button borders for a cleaner, modern look */
   height: fit-content;
-  width: fit-content;
+  width: fit-content; /* Allows the button to size itself based on its content */
   padding: 5px;
   padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 5px;
+  padding-right: 10px; /* Adds inner spacing for better button appearance and readability */
+  border-radius: 5px; /* Rounds the corners to make the button look smoother */
   margin-left: 15px;
-  margin-right: 15px;
-  font-size: large;
-  cursor: pointer;
+  margin-right: 15px; /* Adds horizontal spacing between multiple buttons */
+  font-size: large; /* Increases text size for better visibility */
+  cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
 }
 
-.menu svg {
+/* Style for the sign-in button */
+.signin-btn {
+  background-color: #fd550e; /* Bright orange to grab attention for sign-in action */
+  color: #ede3ff; /* Light text color for contrast and readability */
+  transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+}
+
+.signin-btn:hover {
+  color: #ede3ff;
+  transform: scale(
+    1.1
+  ); /* Slight zoom effect on hover to enhance interactivity */
+}
+
+/* Style for the sign-up button */
+.signup-btn {
+  background-color: #ede3ff; /* Light background to contrast with sign-in button */
+  color: #fd550e; /* Orange text to match the theme */
+  transition: all 0.3s ease-in-out; /* Enables smooth animation on hover */
+}
+
+.signup-btn:hover {
+  color: #ff4d00; /* Slightly deeper orange for hover effect */
+  transform: scale(1.1); /* Same interactive zoom effect as sign-in button */
+}
+
+/* Styles SVG icons in the navigation bar to ensure consistent size and color */
+.navbar_links svg {
   height: 20px;
   width: 20px;
   fill: #ede3ff;
 }
 
-.sign-in-btn {
-  background-color: #fd550e;
-  color: #ede3ff;
+/* Shared styling for hamburger menu and theme toggle button */
+.navbar-hamburger,
+.theme-toggle {
+  background-color: transparent; /* Removes default background to blend with navbar design */
+  border: none; /* Eliminates default borders for a cleaner look */
+  padding-left: 10px; /* Adds spacing to separate from other elements */
+  cursor: pointer; /* Indicates interactivity on hover */
   transition: all 0.3s ease-in-out;
 }
 
-.sign-in-btn:hover {
-  background-color: #fd560eab;
-  color: #ede3ff;
+.theme-toggle:hover {
+  transform: scale(1.1);
 }
 
-.sign-up-btn {
-  background-color: #ede3ff;
-  color: #fd550e;
-  transition: all 0.3s ease-in-out;
+.navbar-hamburger {
+  display: none; /* Hides hamburger menu on desktop screens (only shown on smaller devices) */
 }
 
-.sign-up-btn:hover {
-  background-color: #ffffff;
-  color: #ff4d00;
+/* Glowing overlay effect used for decorative background visuals */
+.gradient-overlay {
+  position: absolute; /* Fixes the element to the viewport so it stays in place while scrolling */
+  height: 100px;
+  border-radius: 50%; /* Creates a circular shape for the glow */
+  background-color: #17013d;
+  opacity: 0.7; /* Slight transparency to blend the element into the background */
+  filter: blur(120px); /* Applies blur to simulate a glowing aura */
+  transform: translate(-50%, -50%);
+  z-index: 0; /* Sends the glow behind other elements */
+  animation-name: size_anim;
+  animation-duration: 4s; /* Sets how long one animation cycle lasts */
+  animation-iteration-count: infinite; /* Make it infinity */
 }
 
-.theme-btn {
-  background-color: transparent;
+/* Keyframes to animate the glowing element's size for a pulse effect */
+@keyframes size_anim {
+  0% {
+    width: 50px;
+    height: 50px;
+    z-index: 0;
+  }
+  50% {
+    width: 500px;
+    height: 500px;
+    z-index: 0;
+  }
+  100% {
+    width: 50px;
+    height: 50px;
+    z-index: 0;
+  }
 }
 
-/* Hide the collapsed menu button when the screen's width is more than 1200px */
-.landing-collapsed-menu {
-  background-color: transparent;
-  display: none;
+/* Places the glow horizontally at the center of the screen */
+.home-1 {
+  left: 50%;
 }
+
+/* Places the glow vertically at the center of the screen */
+.home-2 {
+  left: 0;
+  top: 50%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: auto;
+  align-items: center;
+  justify-content: center;
+  /* height: 90%; */
+}
+
+/* Styles the home section */
 
 .home-cont {
-  top: 30%;
-  width: 50%;
-  left: 10%;
-  z-index: 2;
-  position: relative;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease-in-out;
+  justify-content: center;
+  padding-left: 50px; /* Adds space between the screen's left edge and the home content container for better layout alignment */
+  margin: 0 auto; /* Applies zero margin to top and bottom, and auto to left and right.This automatically distributes equal horizontal spacing, which centers the element within its parent.It helps keep the layout balanced on large screens without needing a fixed width. */
 }
 
-.home-cont p {
-  margin: 0;
+.home-cont .title,
+.home-cont .description {
+  margin: 0; /* Remove the unwanted margins to remove extra spaces */
   color: #ede3ff;
   margin-bottom: 15px;
+  z-index: 1;
+  width: 50%;
 }
 
-.home-txt-1 {
-  font-size: 50px;
+.home-cont .title {
+  font-size: 40px;
   font-weight: bolder;
   font-family: "Roboto";
   transition: all 0.3s ease-in-out;
 }
 
-.home-txt-2 {
+.home-cont .description {
   font-family: "Roboto";
   transition: all 0.3s ease-in-out;
 }
 
 .get-started-btn {
-  padding-top: 15px;
-  padding-bottom: 15px;
-  padding-left: 40px;
-  padding-right: 40px;
+  padding-top: 10px;
+  padding-bottom: 10px; /* Adds horizontal spacing to make the button wider and easier to click */
+  padding-left: 30px;
+  padding-right: 30px;
   background-color: #ede3ff;
   color: #05000e;
   font-size: medium;
-  border-radius: 40px;
+  border-radius: 40px; /* Rounded edges for a modern, friendly appearance */
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  width: fit-content;
+  transition: all 0.3s ease-in-out; /* Smooth hover effect for better user experience */
+  width: fit-content; /* Adapts button size to the text content */
+  z-index: 2; /* Ensures button appears above background visuals */
 }
 
-.get-started-btn:hover {
-  background-color: #ede3ffc4;
-}
-
-.home-img {
-  height: 100vh;
+/* Styles the background image */
+.bg-img {
+  height: 100vh; /* Sets the element height to fill the entire viewport */
   width: auto;
   position: absolute;
   right: 0;
   top: 0;
-  z-index: 1;
 }
 
-.why-us-section {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-.why-us-cont {
-  width: calc(100% - 40px);
-  margin: 20px;
-  margin-top: 50px;
-}
-
-.why-us-txt-1 {
-  color: #ede3ff;
-  font-family: "Poppins";
-  font-size: 25px;
-  font-weight: bolder;
-  margin: 0;
-}
-
-.why-us-txt-2 {
-  color: #ede3ff;
-  font-family: "Montserrat";
-  font-weight: normal;
-  font-size: medium;
-  margin-left: 50px;
-}
-
-.why-us-cards {
-  /* https://css.glass/ 
-  https://cssgradient.io/*/
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-}
-
-.card-1 {
-  height: min-content;
-  width: min-content;
-}
-
-/* Styling the Gradient circle */
-.card-1 .circle {
-  background-color: #200254;
-  height: 250px;
-  width: 250px;
-  position: absolute;
-  z-index: 0; /* Place the element behind the texts and images */
-  border-radius: 50%; /* Make it a circle */
-}
-
-.card-1 .card-cont {
-  width: 300px;
-  height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.card-1 .card-cont p {
-  font-family: "Lato";
-  color: #ede3ff;
-  z-index: 1;
-}
-
-.card-1 .card-cont img {
-  width: 90%;
-  height: auto;
-  z-index: 1;
-}
-
-.circle-3 {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #17013d;
-  opacity: 1;
-  filter: blur(120px);
-  transform: translate(-50%, -50%);
-  z-index: 0;
-}
-
-/* 1030 */
-@media only screen and (max-width: 1200px) {
-  .menu p a,
-  .sign-in-btn,
-  .sign-up-btn {
-    display: none;
-  }
-
-  .landing-collapsed-menu {
-    display: inline;
-  }
-  .home-cont {
-    width: calc(100% - 100px);
-    left: 0;
-    padding-left: 50px;
-    padding-right: 50px;
-    justify-content: center;
-    align-items: center;
-    transition: all 0.3s ease-in-out;
-    top: 20%;
-  }
-
-  .home-txt-1,
-  .home-txt-2 {
-    text-align: center;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .home-txt-1 {
-    font-size: 45px;
-  }
-
-  .get-started-btn {
-    align-items: center;
-    transition: all 0.3s ease-in-out;
-  }
-
-  .home-img {
-    right: auto;
-    bottom: 0;
-    top: auto;
-    left: auto;
-    width: 100%;
-    height: auto;
-    position: absolute;
-  }
-}
-
-.circle-2,
-.circle-1 {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background-color: #17013d;
-  opacity: 0.7;
-  filter: blur(120px);
-  transform: translate(-50%, -50%);
-  z-index: 0;
-  animation-name: size_anim;
-  animation-duration: 4s;
-  animation-iteration-count: infinite;
-}
-
-@keyframes size_anim {
-  0% {
-    width: 50px;
-    height: 50px;
-  }
-  50% {
-    width: 500px;
-    height: 500px;
-  }
-  100% {
-    width: 50px;
-    height: 50px;
-  }
-}
-
-.circle-1 {
-  left: 50%;
-}
-
-.circle-2 {
-  left: 10%;
-  top: 50%;
-}
-
-/* Styling the Background svg in the home page */
+/* Styles the background image in the home page */
 .svg-elem-15,
 .svg-elem-16,
 .svg-elem-17,
@@ -621,5 +511,223 @@ body {
   }
   100% {
     opacity: 0.05;
+  }
+}
+/* End of the Home section */
+
+/* Styles Why Us section */
+.why_us-cont {
+  /* margin: 0 auto; Applies zero margin to top and bottom, and auto to left and right.This automatically distributes equal horizontal spacing, which centers the element within its parent.It helps keep the layout balanced on large screens without needing a fixed width. */
+  padding-left: 50px; /* Adds horizontal spacing to prevent content from touching the edges of the screen */
+  display: flex;
+  flex-direction: column;
+  width: 1300px;
+}
+
+.why_us-cont .title {
+  color: #ede3ff;
+  font-family: "Poppins";
+  font-size: 20px;
+  font: bolder;
+}
+
+.why_us-cont .description {
+  color: #ede3ff;
+  font-family: "Montserrat";
+  font-size: large;
+  margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
+}
+
+.cards-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.card {
+  height: 400px;
+  width: 300px;
+  margin: 10px; /* Adds spacing around each card to prevent them from touching and improve layout readability */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden; /* Prevents the gradient circle from overflowing outside the card boundary during movement */
+  position: relative;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.card-body img {
+  height: 50%;
+  width: auto;
+  z-index: 2;
+}
+
+.card-body p {
+  color: #ede3ff9f;
+  font-family: "Lato";
+  font-size: large;
+  z-index: 2;
+  transition: all 0.3s ease-in-out;
+}
+
+.gradient-circle {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background-color: #3d059e;
+  filter: blur(80px);
+  transition: all 0.3s ease-in-out;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  position: absolute;
+  top: 50%; /* Positions the gradient circle vertically at the center of the card */
+  left: 50%; /* Positions the gradient circle horizontally at the center of the card */
+  display: none; /* Hides the gradient circle by default until the user hovers over the card */
+}
+
+.card:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+.card:hover .gradient-circle {
+  display: block; /* Displays the gradient circle only when the user hovers over the card to create a dynamic effect */
+}
+
+.card:hover p {
+  color: #ede3ff;
+}
+/* End of the why us section */
+
+/* Styles supported languages section */
+.supported_lang-cont {
+  /*to be remve and add that comment*/ /* Applies zero margin to top and bottom, and auto to left and right.This automatically distributes equal horizontal spacing, which centers the element within its parent.It helps keep the layout balanced on large screens without needing a fixed width. */
+  padding-left: 50px; /* Adds horizontal spacing to prevent content from touching the edges of the screen */
+  display: flex;
+  flex-direction: column;
+  width: 1300px;
+}
+
+.supported_lang-cont .title {
+  color: #ede3ff;
+  font-family: "Poppins";
+  font-size: 20px;
+  font: bolder;
+}
+
+.supported_lang-cont .description {
+  color: #ede3ff;
+  font-family: "Montserrat";
+  font-size: large;
+  margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
+}
+
+.languages-wrapper {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.lang-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 200px;
+  width: 200px;
+  margin: 5px;
+  transition: all 0.3s ease-in-out;
+}
+
+.lang-img {
+  height: 30%;
+  width: auto;
+  background-color: #ede3ff1d;
+  padding: 25px; /* Adds inner spacing around the image to prevent it from touching the container edges */
+  border-radius: 25px; /* Applies rounded corners to soften the edges and improve visual appeal */
+}
+
+.lang-name {
+  font-family: "Lato";
+  color: #ede3ff;
+}
+
+.lang-block:hover {
+  transform: scale(1.2); /* Increases the size when hover */
+}
+
+.comments-section {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.comments-boxs-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  min-width: 100%;
+  align-items: center;
+  user-select: none;
+  flex-direction: row;
+  box-sizing: border-box;
+  animation: scroll_horizontal 10s linear infinite;
+}
+
+.comment-box {
+  background-color: #ede3ff20;
+  width: 400px;
+  height: 150px;
+  border-radius: 10px;
+  color: #ede3ff;
+  font-family: "Montserrat";
+  padding: 10px;
+  transition: all 0.3s ease-in-out;
+}
+
+.comment {
+  font-weight: bold;
+}
+
+.commenter {
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.comments-section:hover .comments-boxs-wrapper {
+  animation-play-state: paused;
+}
+
+@keyframes scroll_horizontal {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+#how_it_works .wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+#how_it_works img {
+  height: 20px;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1200px) {
+  .navbar_links {
+    /* display: none; */
   }
 }

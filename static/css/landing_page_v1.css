@@ -1,0 +1,644 @@
+/* ================================
+   FONT-FACE DECLARATIONS
+   These load custom fonts for use across the app
+   ================================ */
+
+/* Load the Inter font for Navigation texts */
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.ttc") format("truetype");
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Load the Roboto font for the title in the Home section */
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Load the Poppins font for the Description text in the Home section */
+@font-face {
+  font-family: "Poppins";
+  src: url("../fonts/Poppins.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Load the Montserrat font for the Description text in the Home section and the Why choose us Section  */
+@font-face {
+  font-family: "Montserrat";
+  src: url("../fonts/Montserrat.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Load the Lato font for the text in cards which are in the why choose us section */
+@font-face {
+  font-family: "Lato";
+  src: url("../fonts/Lato.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Enable smooth scrolling when the user using the anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove the defalut margin to use the full width layout */
+body {
+  margin: 0;
+}
+
+/* Set the main Background colour of the landing page to dark puprle (#05000e) */
+.landing-page {
+  background-color: #05000e;
+}
+
+/* Make each section fill the entire viewpoints */
+.landing-page section {
+  height: 100vh;
+  width: 100%;
+}
+
+/* Landing page Navigation bar styles */
+.landing-page-nav {
+  color: #ede3ff79; /*Set a transparent background colour for texts */
+  display: flex;
+  flex-direction: row;
+  /* Remove 120px from the width to avoid the callapse with the window frame */
+  width: calc(100vw - 120px);
+  justify-content: space-between; /* keep the same space */
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-top: 50px;
+  margin-top: 0px;
+  padding: 10px;
+  align-items: center; /* Verticqally align items */
+  position: fixed; /* Keep the Navigation bar at the same place while scrolling*/
+  top: 0;
+  backdrop-filter: blur(10px); /* Give a blur background for glass effect*/
+  border-radius: 50px; /* Rounded corners */
+  z-index: 3; /* Ensure it appears above other elements */
+}
+
+.landing-page-nav img {
+  height: 40px;
+  width: auto; /* Adjust the width according to the height */
+}
+
+/* Use the flex layout out to keep the elements in the menu (home, why us, supportend languages, how it works, ...) in a row, and keep them vertically centered */
+.menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Styling links inside <p> tags within the .menu container */
+.menu p a {
+  margin-top: 0; /* Remove extra space above the link */
+  margin-bottom: 0; /* Remove extra space below the link */
+  margin-left: 15px; /* Add spacing between links horizontally */
+  margin-right: 15px;
+  height: fit-content; /* Ensure height adapts to content */
+  width: fit-content; /* Ensure width adapts to content */
+  text-decoration: none; /* Remove underline from links */
+  color: #ede3ff7a; /* Light purple color with transparency */
+  font-size: large; /* Make text slightly bigger */
+  font-family: "Inter", sans-serif; /* Use modern sans-serif font */
+  transition: all 0.3s ease-in-out; /* Smooth transition on hover effects */
+}
+
+/* Stlying when the User hovers on the links */
+.menu p a:hover {
+  color: #ede3ff;
+  transform: scale(
+    1.1
+  ); /* Increase the size of the element by 10% in both width and height */
+}
+
+/* Stlying two buttons in the navigation bar */
+.menu button {
+  border: none; /* Remove the borders around the buttons */
+  height: fit-content;
+  width: fit-content;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  margin-left: 15px;
+  margin-right: 15px;
+  font-size: large;
+  cursor: pointer;
+}
+
+.menu svg {
+  height: 20px;
+  width: 20px;
+  fill: #ede3ff;
+}
+
+.sign-in-btn {
+  background-color: #fd550e;
+  color: #ede3ff;
+  transition: all 0.3s ease-in-out;
+}
+
+.sign-in-btn:hover {
+  background-color: #fd560eab;
+  color: #ede3ff;
+}
+
+.sign-up-btn {
+  background-color: #ede3ff;
+  color: #fd550e;
+  transition: all 0.3s ease-in-out;
+}
+
+.sign-up-btn:hover {
+  background-color: #ffffff;
+  color: #ff4d00;
+}
+
+.theme-btn {
+  background-color: transparent;
+}
+
+/* Hide the collapsed menu button when the screen's width is more than 1200px */
+.landing-collapsed-menu {
+  background-color: transparent;
+  display: none;
+}
+
+.home-cont {
+  top: 30%;
+  width: 50%;
+  left: 10%;
+  z-index: 2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease-in-out;
+}
+
+.home-cont p {
+  margin: 0;
+  color: #ede3ff;
+  margin-bottom: 15px;
+}
+
+.home-txt-1 {
+  font-size: 50px;
+  font-weight: bolder;
+  font-family: "Roboto";
+  transition: all 0.3s ease-in-out;
+}
+
+.home-txt-2 {
+  font-family: "Roboto";
+  transition: all 0.3s ease-in-out;
+}
+
+.get-started-btn {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 40px;
+  padding-right: 40px;
+  background-color: #ede3ff;
+  color: #05000e;
+  font-size: medium;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  width: fit-content;
+}
+
+.get-started-btn:hover {
+  background-color: #ede3ffc4;
+}
+
+.home-img {
+  height: 100vh;
+  width: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.why-us-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.why-us-cont {
+  width: calc(100% - 40px);
+  margin: 20px;
+  margin-top: 50px;
+}
+
+.why-us-txt-1 {
+  color: #ede3ff;
+  font-family: "Poppins";
+  font-size: 25px;
+  font-weight: bolder;
+  margin: 0;
+}
+
+.why-us-txt-2 {
+  color: #ede3ff;
+  font-family: "Montserrat";
+  font-weight: normal;
+  font-size: medium;
+  margin-left: 50px;
+}
+
+.why-us-cards {
+  /* https://css.glass/ 
+  https://cssgradient.io/*/
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+}
+
+.card-1,
+.card-2,
+.card-3,
+.card-4 {
+  height: min-content;
+  width: min-content;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Styling the Gradient circle */
+.card-2 .circle {
+  background-color: #351270;
+  height: 250px;
+  width: 250px;
+  position: absolute;
+  z-index: 0; /* Place the element behind the texts and images */
+  border-radius: 50%; /* Make it a circle */
+  filter: blur(80px);
+}
+
+.card-cont {
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1; /* Place above the circle */
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  transition: 0.3s ease-in-out;
+}
+
+.card-cont p {
+  font-family: "Lato";
+  color: #ede3ff;
+  z-index: 1;
+}
+
+.card-cont img {
+  width: 90%;
+  height: auto;
+  z-index: 1;
+}
+
+.circle-3 {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #17013d;
+  opacity: 1;
+  filter: blur(120px);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+/* 1030 */
+@media only screen and (max-width: 1200px) {
+  .menu p a,
+  .sign-in-btn,
+  .sign-up-btn {
+    display: none;
+  }
+
+  .landing-collapsed-menu {
+    display: inline;
+    z-index: 3;
+  }
+  .home-cont {
+    width: calc(100% - 100px);
+    left: 0;
+    padding-left: 50px;
+    padding-right: 50px;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+    top: 20%;
+  }
+
+  .home-txt-1,
+  .home-txt-2 {
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .home-txt-1 {
+    font-size: 45px;
+  }
+
+  .get-started-btn {
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .home-img {
+    right: auto;
+    bottom: 0;
+    top: auto;
+    left: auto;
+    width: 100%;
+    height: auto;
+    position: absolute;
+  }
+}
+
+.circle-2,
+.circle-1 {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #17013d;
+  opacity: 0.7;
+  filter: blur(120px);
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  animation-name: size_anim;
+  animation-duration: 4s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes size_anim {
+  0% {
+    width: 50px;
+    height: 50px;
+    z-index: 0;
+  }
+  50% {
+    width: 500px;
+    height: 500px;
+    z-index: 0;
+  }
+  100% {
+    width: 50px;
+    height: 50px;
+    z-index: 0;
+  }
+}
+
+.circle-1 {
+  left: 50%;
+}
+
+.circle-2 {
+  left: 10%;
+  top: 50%;
+}
+
+/* Styling the Background svg in the home page */
+.svg-elem-15,
+.svg-elem-16,
+.svg-elem-17,
+.svg-elem-18,
+.svg-elem-19,
+.svg-elem-20,
+.svg-elem-21,
+.svg-elem-22,
+.svg-elem-23,
+.svg-elem-24,
+.svg-elem-25,
+.svg-elem-26,
+.svg-elem-27,
+.svg-elem-28,
+.svg-elem-29,
+.svg-elem-30,
+.svg-elem-11,
+.svg-elem-8,
+.svg-elem-33,
+.svg-elem-34,
+.svg-elem-37,
+.svg-elem-35,
+.svg-elem-36,
+.svg-elem-9,
+.svg-elem-38,
+.svg-elem-39,
+.svg-elem-14,
+.svg-elem-12,
+.svg-elem-32,
+.svg-elem-31 {
+  animation-duration: 0.5s;
+  animation-name: animate-fade;
+  animation-fill-mode: backwards;
+  transition: transform 0.2s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0.3;
+}
+
+.svg-elem-15,
+.svg-elem-16,
+.svg-elem-17,
+.svg-elem-18,
+.svg-elem-19,
+.svg-elem-20,
+.svg-elem-21,
+.svg-elem-22,
+.svg-elem-23,
+.svg-elem-24,
+.svg-elem-25,
+.svg-elem-26,
+.svg-elem-27,
+.svg-elem-28,
+.svg-elem-29,
+.svg-elem-30 {
+  stroke-dasharray: 300 1000;
+  stroke-dashoffset: 0;
+  animation: animate-fade 1s ease 1, draw 2s linear forwards infinite;
+  animation-delay: 1s, 0.06s;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.5;
+}
+
+.svg-elem-1,
+.svg-elem-3,
+.svg-elem-6,
+.svg-elem-4,
+.svg-elem-5,
+.svg-elem-2,
+.svg-elem-7 {
+  animation-name: animate-fade-box;
+  animation-duration: 0.5s;
+  opacity: 0.05;
+  animation-fill-mode: backwards;
+  transition: transform 0.2s ease;
+}
+
+.svg-elem-1 {
+  animation-delay: 1.4s;
+  opacity: 0.05;
+}
+.svg-elem-15 {
+  animation-delay: 0.07s;
+}
+.svg-elem-16 {
+  animation-delay: 0.14s;
+}
+.svg-elem-17 {
+  animation-delay: 0.21s;
+}
+.svg-elem-18 {
+  animation-delay: 0.28s;
+}
+.svg-elem-19 {
+  animation-delay: 0.35s;
+}
+.svg-elem-20 {
+  animation-delay: 0.42s;
+}
+.svg-elem-21 {
+  animation-delay: 0.49s;
+}
+.svg-elem-22 {
+  animation-delay: 0.56s;
+}
+.svg-elem-23 {
+  animation-delay: 0.63s;
+}
+.svg-elem-24 {
+  animation-delay: 0.7s;
+}
+.svg-elem-25 {
+  animation-delay: 0.77s;
+}
+.svg-elem-26 {
+  animation-delay: 0.84s;
+}
+.svg-elem-27 {
+  animation-delay: 0.91s;
+}
+.svg-elem-28 {
+  animation-delay: 0.98s;
+}
+.svg-elem-29 {
+  animation-delay: 1.05s;
+}
+.svg-elem-30 {
+  animation-delay: 1.12s;
+}
+.svg-elem-3 {
+  animation-delay: 1.19s;
+  opacity: 0.05;
+}
+.svg-elem-6 {
+  animation-delay: 1.26s;
+  opacity: 0.05;
+}
+.svg-elem-4 {
+  animation-delay: 1.33s;
+  opacity: 0.05;
+}
+.svg-elem-5 {
+  animation-delay: 1.4s;
+  opacity: 0.05;
+}
+.svg-elem-2 {
+  animation-delay: 1.47s;
+  opacity: 0.05;
+}
+.svg-elem-7 {
+  animation-delay: 1.54s;
+  opacity: 0.05;
+}
+.svg-elem-11 {
+  animation-delay: 1.61s;
+}
+.svg-elem-8 {
+  animation-delay: 1.68s;
+}
+.svg-elem-33,
+.svg-elem-34 {
+  animation-delay: 1.75s;
+}
+.svg-elem-37 {
+  animation-delay: 1.82s;
+}
+.svg-elem-35,
+.svg-elem-36 {
+  animation-delay: 1.89s;
+}
+.svg-elem-38 {
+  animation-delay: 1.96s;
+}
+.svg-elem-39 {
+  animation-delay: 2.03s;
+}
+.svg-elem-14 {
+  animation-delay: 2.1s;
+}
+.svg-elem-12 {
+  animation-delay: 2.17s;
+}
+.svg-elem-9 {
+  animation-delay: 2.24s;
+}
+.svg-elem-32,
+.svg-elem-31 {
+  animation-delay: 2.31s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: -1030;
+  }
+}
+
+@keyframes animate-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes animate-fade-box {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.05;
+  }
+}
