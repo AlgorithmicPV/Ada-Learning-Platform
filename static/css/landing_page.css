@@ -611,7 +611,6 @@ section {
 
 /* Styles supported languages section */
 .supported_lang-cont {
-  /*to be remve and add that comment*/ /* Applies zero margin to top and bottom, and auto to left and right.This automatically distributes equal horizontal spacing, which centers the element within its parent.It helps keep the layout balanced on large screens without needing a fixed width. */
   padding-left: 50px; /* Adds horizontal spacing to prevent content from touching the edges of the screen */
   display: flex;
   flex-direction: column;
@@ -667,15 +666,16 @@ section {
   transform: scale(1.2); /* Increases the size when hover */
 }
 
+/* Styles for comment section */
 .comments-section {
   display: flex;
   flex-direction: row;
-  overflow: hidden;
+  overflow: hidden; /* Hides any overflowing child elements that move horizontally */
 }
 
 .comments-boxs-wrapper {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Aligns first child to the start and last to the end, distributing equal space between items */
   gap: 2rem;
   min-width: 100%;
   align-items: center;
@@ -707,7 +707,7 @@ section {
   align-items: flex-end;
 }
 .comments-section:hover .comments-boxs-wrapper {
-  animation-play-state: paused;
+  animation-play-state: paused; /* Stops the animation when the use hovers on it*/
 }
 
 @keyframes scroll_horizontal {
@@ -717,17 +717,85 @@ section {
 }
 
 #how_it_works .wrapper {
+  justify-content: center;
+  align-items: center;
   display: flex;
+  color: #ede3ff;
+}
+
+.how_it_works-cont {
+  padding-left: 50px; /* Adds horizontal spacing to prevent content from touching the edges of the screen */
+  display: flex;
+  flex-direction: column;
+  width: 1300px;
+  height: 100%;
+}
+
+.upper-wrapper {
+  display: flex;
+  width: 100%;
   flex-direction: column;
 }
 
+.upper-wrapper .title {
+  font-family: "Poppins";
+  font-size: 20px;
+  font: bolder;
+}
+
+.upper-wrapper .description {
+  color: #ede3ff;
+  font-family: "Montserrat";
+  font-size: large;
+  margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
+}
+
+.down-wrapper {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-family: "Lato";
+  gap: 15px;
+}
+
+.step {
+  background-color: #ede3ff23;
+  padding: 10px;
+  font-size: 20px;
+  border-radius: 50px;
+  cursor: default;
+  transition: all 0.3s ease-in-out;
+}
+
+.step:hover {
+  transform: scale(1.1);
+}
+
 #how_it_works img {
-  height: 20px;
+  height: 500px;
+}
+
+/*Styles the footer */
+
+.footer {
+  width: 100%;
+  height: 200px;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer p {
+  color: #ede3ff;
+  font-family: "Lato";
+  font-size: 15px;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1200px) {
   .navbar_links {
-    /* display: none; */
   }
 }
