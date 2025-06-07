@@ -17,12 +17,28 @@
   <body>
     <!-- Navigation Bar of the landing page-->
     <div class="navbar">
-      <img
-        src="{{ url_for('static', filename='images/logos/ada_logo.svg') }}"
-        alt="logo"
+      <svg
         class="navbar_logo"
-        draggable="false"
-      />
+        width="84"
+        height="54"
+        viewBox="0 0 84 54"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M33.118 36.1183C36.1909 34.5232 38.634 31.9356 40.0502 28.7762C41.4664 25.6168 41.7725 22.0713 40.9187 18.716C40.0648 15.3606 38.1013 12.3927 35.3471 10.2945C32.593 8.19637 29.2103 7.09135 25.7486 7.15905C22.287 7.22676 18.95 8.46323 16.2801 10.6675C13.6101 12.8717 11.7641 15.9142 11.0422 19.3004C10.3202 22.6865 10.7646 26.2174 12.3033 29.319C13.842 32.4205 16.3844 34.9106 19.5174 36.3844L22.4338 30.1847C20.6998 29.369 19.2926 27.9908 18.441 26.2741C17.5893 24.5575 17.3433 22.6032 17.7429 20.7291C18.1425 18.8549 19.1642 17.171 20.642 15.951C22.1198 14.731 23.9667 14.0466 25.8826 14.0091C27.7986 13.9717 29.6708 14.5833 31.1952 15.7446C32.7195 16.9058 33.8063 18.5485 34.2789 20.4056C34.7515 22.2627 34.5821 24.2251 33.7982 25.9737C33.0144 27.7224 31.6622 29.1545 29.9614 30.0374L33.118 36.1183Z"
+          fill="#ede3ff"
+        />
+        <path
+          d="M20.734 45.894C24.3786 47.2397 28.3978 47.1527 31.9808 45.6508L26.0487 31.5L20.734 45.894Z"
+          fill="#ede3ff"
+        />
+        <path
+          d="M49 31.8831L52.8 17.2831H55.22L59 31.8831H57.18L56.22 28.0031H51.8L50.84 31.8831H49ZM52.16 26.4831H55.84L54.72 21.9831C54.5067 21.1297 54.34 20.4164 54.22 19.8431C54.1 19.2697 54.0267 18.8964 54 18.7231C53.9733 18.8964 53.9 19.2697 53.78 19.8431C53.66 20.4164 53.4933 21.1231 53.28 21.9631L52.16 26.4831ZM65.3522 32.0831C64.2589 32.0831 63.3722 31.7164 62.6922 30.9831C62.0255 30.2497 61.6922 29.2564 61.6922 28.0031V24.7831C61.6922 23.5164 62.0255 22.5164 62.6922 21.7831C63.3589 21.0497 64.2455 20.6831 65.3522 20.6831C66.2589 20.6831 66.9855 20.9297 67.5322 21.4231C68.0789 21.9164 68.3522 22.5764 68.3522 23.4031L67.9922 22.9831H68.3922L68.3522 20.4831V17.2831H70.1522V31.8831H68.3522V29.7831H67.9922L68.3522 29.3631C68.3522 30.2031 68.0789 30.8697 67.5322 31.3631C66.9855 31.8431 66.2589 32.0831 65.3522 32.0831ZM65.9522 30.5231C66.6989 30.5231 67.2855 30.2897 67.7122 29.8231C68.1389 29.3564 68.3522 28.7097 68.3522 27.8831V24.8831C68.3522 24.0564 68.1389 23.4097 67.7122 22.9431C67.2855 22.4764 66.6989 22.2431 65.9522 22.2431C65.1922 22.2431 64.5922 22.4697 64.1522 22.9231C63.7122 23.3764 63.4922 24.0297 63.4922 24.8831V27.8831C63.4922 28.7364 63.7122 29.3897 64.1522 29.8431C64.5922 30.2964 65.1922 30.5231 65.9522 30.5231ZM77.0244 32.0831C75.8644 32.0831 74.951 31.7897 74.2844 31.2031C73.6177 30.6031 73.2844 29.7964 73.2844 28.7831C73.2844 27.7564 73.6177 26.9497 74.2844 26.3631C74.951 25.7764 75.851 25.4831 76.9844 25.4831H80.3844V24.3831C80.3844 23.7031 80.1777 23.1831 79.7644 22.8231C79.3644 22.4497 78.791 22.2631 78.0444 22.2631C77.391 22.2631 76.8444 22.4031 76.4044 22.6831C75.9644 22.9497 75.711 23.3164 75.6444 23.7831H73.8444C73.9644 22.8364 74.411 22.0831 75.1844 21.5231C75.9577 20.9631 76.9244 20.6831 78.0844 20.6831C79.351 20.6831 80.351 21.0097 81.0844 21.6631C81.8177 22.3164 82.1844 23.2031 82.1844 24.3231V31.8831H80.4244V29.7831H80.1244L80.4244 29.4831C80.4244 30.2831 80.111 30.9164 79.4844 31.3831C78.871 31.8497 78.051 32.0831 77.0244 32.0831ZM77.4644 30.6631C78.3177 30.6631 79.0177 30.4497 79.5644 30.0231C80.111 29.5964 80.3844 29.0497 80.3844 28.3831V26.8231H77.0244C76.4244 26.8231 75.951 26.9897 75.6044 27.3231C75.2577 27.6564 75.0844 28.1097 75.0844 28.6831C75.0844 29.2964 75.291 29.7831 75.7044 30.1431C76.131 30.4897 76.7177 30.6631 77.4644 30.6631Z"
+          fill="#ede3ff"
+        />
+      </svg>
+
       <div class="navbar_links">
         <a href="#home">Home</a>
         <a href="#why_us">Why us</a>
@@ -417,9 +433,16 @@
                 <!--Contain of the card-->
                 <div class="card-body">
                   <img
+                    class="dark-theme-img"
                     src="{{ url_for('static', filename='images/assets/card_one_dark_img.svg') }}"
                     alt="image for Interactive Learning"
                   />
+                  <img
+                    src="{{ url_for('static', filename='images/assets/card_one_light_img.svg') }}"
+                    alt="image for Interactive Learning"
+                    class="light-theme-img"
+                  />
+
                   <p>Interactive Learning</p>
                 </div>
               </div>
@@ -432,9 +455,16 @@
                 <!--Contain of the card-->
                 <div class="card-body">
                   <img
+                    class="dark-theme-img"
                     src="{{ url_for('static', filename='images/assets/ai_assitance_dark_img.svg') }}"
                     alt="image for AI Assistance"
                   />
+                  <img
+                    src="{{ url_for('static', filename='images/assets/ai_assitance_light_img.svg') }}"
+                    alt="image for AI Assistanc"
+                    class="light-theme-img"
+                  />
+
                   <p>AI Assistance</p>
                 </div>
               </div>
@@ -447,9 +477,16 @@
                 <!--Contain of the card-->
                 <div class="card-body">
                   <img
+                    class="dark-theme-img"
                     src="{{ url_for('static', filename='images/assets/community_support_dark_img.svg') }}"
                     alt="image for community support"
                   />
+                  <img
+                    src="{{ url_for('static', filename='images/assets/community_support_light_img.svg') }}"
+                    alt="image for community support"
+                    class="light-theme-img"
+                  />
+
                   <p>Community Support</p>
                 </div>
               </div>
@@ -462,8 +499,14 @@
                 <!--Contain of the card-->
                 <div class="card-body">
                   <img
+                    class="dark-theme-img"
                     src="{{ url_for('static', filename='images/assets/progress_tracking_dark_img.svg') }}"
                     alt="image for progress tracking"
+                  />
+                  <img
+                    src="{{ url_for('static', filename='images/assets/progress_tracking_light_img.svg') }}"
+                    alt="image for progress tracking"
+                    class="light-theme-img"
                   />
                   <p>Progress Tracking</p>
                 </div>
@@ -633,7 +676,13 @@
               </p>
             </div>
             <img
+              class="dark-theme-img"
               src="{{ url_for('static', filename='images/assets/a-person-sitting-on-a-desk.svg') }}"
+              alt="A person sitting on a desk image"
+            />
+            <img
+              class="light-theme-img"
+              src="{{ url_for('static', filename='images/assets/a-person-sitting-on-a-desk-light.svg') }}"
               alt="A person sitting on a desk image"
             />
           </div>

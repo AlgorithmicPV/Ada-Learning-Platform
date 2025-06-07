@@ -167,3 +167,55 @@ for (let i = 0; i < menu_links.length; i++) {
     }
   });
 }
+
+const light_theme = () => {
+  document.documentElement.style.setProperty("--light-text-color", "#09001a2e");
+  document.documentElement.style.setProperty("--dark-text-color", "#09001A");
+  document.documentElement.style.setProperty("--background-color", "#F5F0FF");
+  document.documentElement.style.setProperty("--gradient-color", "#DECDFD");
+  document.documentElement.style.setProperty("--gradient-color-two", "#DECDFD");
+  document.documentElement.style.setProperty("--footer-color", "#FFFFFF");
+
+  const dark_theme_images = document.querySelectorAll(".dark-theme-img");
+  for (let i = 0; i < dark_theme_images.length; i++) {
+    dark_theme_images[i].style.display = "none";
+  }
+
+  const light_theme_images = document.querySelectorAll(".light-theme-img");
+  for (let i = 0; i < light_theme_images.length; i++) {
+    light_theme_images[i].style.display = "flex";
+  }
+
+  is_dark_theme = false;
+};
+
+const dark_theme = () => {
+  document.documentElement.style.setProperty("--light-text-color", "#ede3ff2b");
+  document.documentElement.style.setProperty("--dark-text-color", "#ede3ff");
+  document.documentElement.style.setProperty("--background-color", "#05000e");
+  document.documentElement.style.setProperty("--gradient-color", "#17013d");
+  document.documentElement.style.setProperty("--gradient-color-two", "#3d059e");
+  document.documentElement.style.setProperty("--footer-color", "#000000");
+
+  const dark_theme_images = document.querySelectorAll(".dark-theme-img");
+  for (let i = 0; i < dark_theme_images.length; i++) {
+    dark_theme_images[i].style.display = "flex";
+  }
+
+  const light_theme_images = document.querySelectorAll(".light-theme-img");
+  for (let i = 0; i < light_theme_images.length; i++) {
+    light_theme_images[i].style.display = "none";
+  }
+
+  is_dark_theme = true;
+};
+
+let is_dark_theme = true;
+
+document.querySelector(".theme-toggle").addEventListener("click", () => {
+  if (is_dark_theme) {
+    light_theme();
+  } else {
+    dark_theme();
+  }
+});

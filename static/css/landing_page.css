@@ -49,9 +49,19 @@
   font-weight: normal;
 }
 
+:root {
+  --dark-text-color: #ede3ff;
+  --light-text-color: #ede3ff2b;
+  --accent-color: #fd550e;
+  --background-color: #05000e;
+  --gradient-color: #17013d;
+  --footer-color: #000000;
+  --gradient-color-two: #3d059e;
+}
+
 html {
   scroll-behavior: smooth; /* Enable smooth scrolling */
-  background-color: #05000e;
+  background-color: var(--background-color);
 }
 
 body {
@@ -70,7 +80,7 @@ section {
 
 /* Styling the navigation bar*/
 .navbar {
-  color: #ede3ff79;
+  color: var(--light-text-color);
   display: flex;
   flex-direction: row; /* Keep the elements in a row */
   width: calc(100% - 120px);
@@ -92,6 +102,10 @@ section {
   width: auto; /* Adjust the width according to the height */
 }
 
+.navbar_logo path {
+  fill: var(--dark-text-color);
+}
+
 /* Styles the div that contains the navigation links */
 .navbar_links {
   display: flex;
@@ -104,18 +118,34 @@ section {
   margin-left: 15px; /* Adds horizontal spacing between links to prevent them from appearing too close together */
   margin-right: 15px;
   text-decoration: none; /* Remove underline from links to stop */
-  color: #ede3ff7a;
+  color: var(--light-text-color);
   font-size: large;
   font-family: "Inter", sans-serif;
   transition: all 0.3s ease-in-out; /* Adds smooth hover effect for better user experience */
 }
 
+.navbar_links a:before {
+  content: "";
+  position: absolute;
+  bottom: -5px; /* Keeps the underline the <a> tags */
+  height: 3px;
+  width: 0;
+  background-color: var(--dark-text-color);
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
 /* Adds hover effect with color change and zoom for better interactivity */
 .navbar_links a:hover {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   transform: scale(
     1.1
   ); /* Increase the size of the element by 10% in both width and height */
+}
+
+/* Shows a line under the <a> tags when hovers */
+.navbar_links a:hover:before {
+  width: 100%;
 }
 
 .signin-btn,
@@ -135,13 +165,17 @@ section {
 
 /* Style for the sign-in button */
 .signin-btn {
-  background-color: #fd550e; /* Bright orange to grab attention for sign-in action */
-  color: #ede3ff; /* Light text color for contrast and readability */
+  background-color: var(
+    --accent-color
+  ); /* Bright orange to grab attention for sign-in action */
+  color: var(
+    --dark-text-color
+  ); /* Light text color for contrast and readability */
   transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
 }
 
 .signin-btn:hover {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   transform: scale(
     1.1
   ); /* Slight zoom effect on hover to enhance interactivity */
@@ -149,8 +183,10 @@ section {
 
 /* Style for the sign-up button */
 .signup-btn {
-  background-color: #ede3ff; /* Light background to contrast with sign-in button */
-  color: #fd550e; /* Orange text to match the theme */
+  background-color: var(
+    --dark-text-color
+  ); /* Light background to contrast with sign-in button */
+  color: var(--accent-color); /* Orange text to match the theme */
   transition: all 0.3s ease-in-out; /* Enables smooth animation on hover */
 }
 
@@ -163,7 +199,7 @@ section {
 .navbar_links svg {
   height: 20px;
   width: 20px;
-  fill: #ede3ff;
+  fill: var(--dark-text-color);
 }
 
 /* Shared styling for hamburger menu and theme toggle button */
@@ -189,7 +225,7 @@ section {
   position: absolute; /* Fixes the element to the viewport so it stays in place while scrolling */
   height: 100px;
   border-radius: 50%; /* Creates a circular shape for the glow */
-  background-color: #17013d;
+  background-color: var(--gradient-color);
   opacity: 0.7; /* Slight transparency to blend the element into the background */
   filter: blur(120px); /* Applies blur to simulate a glowing aura */
   transform: translate(-50%, -50%);
@@ -236,7 +272,6 @@ section {
   margin-top: auto;
   align-items: center;
   justify-content: center;
-  /* height: 90%; */
 }
 
 /* Styles the home section */
@@ -252,7 +287,7 @@ section {
 .home-cont .title,
 .home-cont .description {
   margin: 0; /* Remove the unwanted margins to remove extra spaces */
-  color: #ede3ff;
+  color: var(--dark-text-color);
   margin-bottom: 15px;
   z-index: 1;
   width: 50%;
@@ -275,8 +310,8 @@ section {
   padding-bottom: 10px; /* Adds horizontal spacing to make the button wider and easier to click */
   padding-left: 30px;
   padding-right: 30px;
-  background-color: #ede3ff;
-  color: #05000e;
+  background-color: var(--dark-text-color);
+  color: var(--background-color);
   font-size: medium;
   border-radius: 40px; /* Rounded edges for a modern, friendly appearance */
   cursor: pointer;
@@ -521,14 +556,14 @@ section {
 }
 
 .why_us-cont .title {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Poppins";
   font-size: 20px;
-  font: bolder;
+  font-weight: bold;
 }
 
 .why_us-cont .description {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Montserrat";
   font-size: large;
   margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
@@ -577,7 +612,7 @@ section {
 }
 
 .card-body p {
-  color: #ede3ff9f;
+  color: var(--light-text-color);
   font-family: "Lato";
   font-size: large;
   z-index: 2;
@@ -588,9 +623,9 @@ section {
   width: 250px;
   height: 250px;
   border-radius: 50%;
-  background-color: #3d059e;
+  background-color: var(--gradient-color-two);
   filter: blur(80px);
-  transition: all 0.3s ease-in-out;
+  transition: all 0.3s linear;
   transform: translate(-50%, -50%);
   z-index: 1;
   position: absolute;
@@ -600,7 +635,7 @@ section {
 }
 
 .card:hover {
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 30px var(--light-text-color);
 }
 
 .card:hover .gradient-circle {
@@ -608,7 +643,7 @@ section {
 }
 
 .card:hover p {
-  color: #ede3ff;
+  color: var(--dark-text-color);
 }
 /* End of the why us section */
 
@@ -621,14 +656,14 @@ section {
 }
 
 .supported_lang-cont .title {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Poppins";
   font-size: 20px;
-  font: bolder;
+  font-weight: bold;
 }
 
 .supported_lang-cont .description {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Montserrat";
   font-size: large;
   margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
@@ -655,14 +690,14 @@ section {
 .lang-img {
   height: 30%;
   width: auto;
-  background-color: #ede3ff1d;
+  background-color: var(--light-text-color);
   padding: 25px; /* Adds inner spacing around the image to prevent it from touching the container edges */
   border-radius: 25px; /* Applies rounded corners to soften the edges and improve visual appeal */
 }
 
 .lang-name {
   font-family: "Lato";
-  color: #ede3ff;
+  color: var(--dark-text-color);
 }
 
 .lang-block:hover {
@@ -689,11 +724,11 @@ section {
 }
 
 .comment-box {
-  background-color: #ede3ff20;
+  background-color: var(--light-text-color);
   width: 400px;
   height: 150px;
   border-radius: 10px;
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Montserrat";
   padding: 10px;
   transition: all 0.3s ease-in-out;
@@ -723,7 +758,7 @@ section {
   justify-content: center;
   align-items: center;
   display: flex;
-  color: #ede3ff;
+  color: var(--dark-text-color);
 }
 
 .how_it_works-cont {
@@ -743,11 +778,11 @@ section {
 .upper-wrapper .title {
   font-family: "Poppins";
   font-size: 20px;
-  font: bolder;
+  font-weight: bold;
 }
 
 .upper-wrapper .description {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Montserrat";
   font-size: large;
   margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
@@ -764,7 +799,7 @@ section {
 }
 
 .step {
-  background-color: #ede3ff23;
+  background-color: var(--light-text-color);
   padding: 10px;
   font-size: 20px;
   border-radius: 50px;
@@ -785,21 +820,21 @@ section {
 .footer {
   width: 100%;
   height: 200px;
-  background-color: black;
+  background-color: var(--footer-color);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .footer p {
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Lato";
   font-size: 15px;
 }
 
 .mobile-menu {
   position: fixed;
-  background-color: #05000e;
+  background-color: var(--background-color);
   bottom: 0;
   /* top: 0; */
   width: 100%;
@@ -823,20 +858,24 @@ section {
 .mobile-menu a {
   font-size: xx-large;
   text-decoration: none;
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Inter";
 }
 
 .mobile-menu button {
   font-size: xx-large;
   text-decoration: none;
-  color: #ede3ff;
+  color: var(--dark-text-color);
   font-family: "Inter";
   /* Makes the button same as <a> tags in the <div> mobile-menu for better appearance */
   border: none;
   background-color: transparent;
   align-content: flex-start;
   display: flex;
+}
+
+.light-theme-img {
+  display: none;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
@@ -951,7 +990,7 @@ section {
   }
 
   .card-body p {
-    color: #ede3ff;
+    color: var(--dark-text-color);
   }
 
   .slider-nav {
@@ -1016,8 +1055,8 @@ section {
 
   .comment-box {
     all: unset; /* Removes all the prev css stylings to add css that suits to a small screen */
-    background-color: #ede3ff20;
-    color: #ede3ff;
+    background-color: var(--light-text-color);
+    color: var(--dark-text-color);
     font-family: "Montserrat";
     border-radius: 15px;
     height: 180px;
@@ -1056,7 +1095,7 @@ section {
   }
 
   .upper-wrapper .description {
-    color: #ede3ff;
+    color: var(--dark-text-color);
     font-family: "Montserrat";
     margin-top: 0; /* Removes default top margin to tighten spacing between the title and description */
   }
