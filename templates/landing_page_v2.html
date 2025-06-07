@@ -36,7 +36,7 @@
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 490.667 490.667"
-            class="hamburger-icon"
+            class="w-6 h-6 fill-current text-white"
           >
             <path
               d="M469.333,224h-448C9.551,224,0,233.551,0,245.333c0,11.782,9.551,21.333,21.333,21.333h448
@@ -49,18 +49,6 @@
             <path
               d="M469.333,373.333h-448C9.551,373.333,0,382.885,0,394.667C0,406.449,9.551,416,21.333,416h448
                         c11.782,0,21.333-9.551,21.333-21.333C490.667,382.885,481.115,373.333,469.333,373.333z"
-            />
-          </svg>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            id="Outline"
-            viewBox="0 0 24 24"
-            width="512"
-            height="512"
-            class="cross-icon"
-          >
-            <path
-              d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z"
             />
           </svg>
         </button>
@@ -470,12 +458,12 @@
               </div>
               <!--End of the fourth card-->
             </div>
-            <div class="slider-nav">
-              <div class="card-1-circle"></div>
-              <div class="card-2-circle"></div>
-              <div class="card-3-circle"></div>
-              <div class="card-4-circle"></div>
-            </div>
+          </div>
+          <div class="slider-nav">
+            <a href="#card-1"></a>
+            <a href="#card-2"></a>
+            <a href="#card-3"></a>
+            <a href="#card-4"></a>
           </div>
         </div>
       </div>
@@ -605,12 +593,35 @@
         </div>
       </div>
     </div>
-    <!--End of the comment section-->
 
     <!-- How it works section-->
     <section id="how_it_works">
       <div class="wrapper">
         <div class="how_it_works-cont">
+          <!-- <div class="texts">
+            <p class="title">🧠 How It Works</p>
+            <p class="description">
+              Kickstart your coding journey in just a few simple steps:
+            </p>
+            <div class="steps-wrapper">
+              <p class="step">
+                ✨ Create an Account - Sign up for free and get started.
+              </p>
+              <p class="step">
+                🔧 Pick a Language - Choose from popular programming languages.
+              </p>
+              <p class="step">
+                💻 Write Code - Code in real-time and get AI feedback.
+              </p>
+              <p class="step">
+                🏆 Track Your Progress - Earn badges and level up your skills.
+              </p>
+            </div>
+          </div>
+          <img
+            src="{{ url_for('static', filename='images/assets/a-person-sitting-on-a-desk.svg') }}"
+            alt="A person sitting on a desk image"
+          /> -->
           <div class="upper-wrapper">
             <p class="title">🧠 How It Works</p>
             <p class="description">
@@ -640,24 +651,9 @@
         </div>
       </div>
     </section>
-    <!--End of the how it works section-->
-
     <div class="footer">
       <p>© 2025 Pasindu Vidunitha | Ada . All rights reserved.</p>
     </div>
-
-    <!-- Mobile Navigation Drawer for small screens -->
-    <div class="mobile-menu">
-      <div class="mobile-menu-texts-wrapper">
-        <a href="#home">Home</a>
-        <a href="#why_us">Why us</a>
-        <a href="#supported_languages">Supported Languages</a>
-        <a href="#how_it_works">How it works</a>
-        <button class="sign-in-btn">Sign in</button>
-        <button class="sign-up-btn">Sign up</button>
-      </div>
-    </div>
-    <!-- End of the Mobile Navigation Drawer-->
     <script src="{{ url_for('static', filename='js/landing_page.js') }}"></script>
   </body>
 </html>
