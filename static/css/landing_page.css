@@ -313,11 +313,15 @@ section {
   background-color: var(--dark-text-color);
   color: var(--background-color);
   font-size: medium;
-  border-radius: 40px; /* Rounded edges for a modern, friendly appearance */
+  border-radius: 10px; /* Rounded edges for a modern, friendly appearance */
   cursor: pointer;
   transition: all 0.3s ease-in-out; /* Smooth hover effect for better user experience */
   width: fit-content; /* Adapts button size to the text content */
   z-index: 2; /* Ensures button appears above background visuals */
+}
+
+.get-started-btn:hover {
+  transform: scale(1.1);
 }
 
 /* Styles the background image */
@@ -832,6 +836,7 @@ section {
   font-size: 15px;
 }
 
+/* Styles for Mobile Navigation Drawer */
 .mobile-menu {
   position: fixed;
   background-color: var(--background-color);
@@ -874,6 +879,7 @@ section {
   display: flex;
 }
 
+/* Hides all the images with the classname of the  light-theme-img */
 .light-theme-img {
   display: none;
 }
@@ -915,6 +921,7 @@ section {
     margin: 15px;
   }
 
+  /* Hides the close button which is appearing when mobile navigatopn drawer opens */
   .cross-icon {
     display: none;
   }
@@ -1007,7 +1014,7 @@ section {
     width: 10px;
     border-radius: 50%;
     background-color: transparent;
-    border: 2px solid white;
+    border: 2px solid var(--dark-text-color);
     transition: all 0.3s ease-in-out;
   }
 

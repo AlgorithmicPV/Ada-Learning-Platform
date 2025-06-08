@@ -82,7 +82,7 @@ const show_card = (x) => {
   // Identifies the selected slider_dot among other dots using a for loop, and according to that, changes its background colour and shows the relevant card
   for (let i = 0; i < slider_dots.length; i++) {
     if (slider_dots[x] == slider_dots[i]) {
-      slider_dots[x].style.backgroundColor = "#ede3ff";
+      slider_dots[x].style.backgroundColor = "var(--dark-text-color)";
       cards[x].style.display = "flex";
       cards[x].style.visibility = "visible";
     } else {
