@@ -13,7 +13,6 @@ const adjust_height_wrapper = () => {
     let height_sections = sections[wrapper].offsetHeight; // Gets the original height of the current section
     let new_height = height_sections - height_navigationbar; // Calculates the new height by subtracting the navbar height
     wrappers[wrapper].style.height = `${new_height - 20}px`; // Applies the new height to the wrapper div to prevent overflow behind the navbar
-
     mobile_menu.style.height = `${new_height}px`;
   }
 };
@@ -168,6 +167,8 @@ for (let i = 0; i < menu_links.length; i++) {
   });
 }
 
+let is_dark_theme;
+
 const light_theme = () => {
   document.documentElement.style.setProperty("--light-text-color", "#09001a2e");
   document.documentElement.style.setProperty("--dark-text-color", "#09001A");
@@ -187,6 +188,8 @@ const light_theme = () => {
   }
 
   is_dark_theme = false;
+  theme_preference = "light";
+  localStorage.setItem("theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
 };
 
 const dark_theme = () => {
@@ -208,9 +211,10 @@ const dark_theme = () => {
   }
 
   is_dark_theme = true;
-};
 
-let is_dark_theme = true;
+  theme_preference = "dark";
+  localStorage.setItem("theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
+};
 
 document.querySelector(".theme-toggle").addEventListener("click", () => {
   if (is_dark_theme) {
@@ -219,3 +223,14 @@ document.querySelector(".theme-toggle").addEventListener("click", () => {
     dark_theme();
   }
 });
+
+// Gets the prefered_theme if user has selected from the local storage
+var prefered_theme = localStorage.getItem("theme-preference");
+
+if (prefered_theme == "dark") {
+  dark_theme();
+} else if (prefered_theme == "light") {
+  light_theme();
+} else {
+  light_theme();
+}

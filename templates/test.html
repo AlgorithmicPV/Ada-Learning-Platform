@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+  </head>
+  <body>
+    <form method="post" action="/signup" class="create-an-account-form-wrapper">
+      <p class="title">CREATE AN ACCOUNT</p>
+
+      <div class="email-entry-wrapper">
+        <input
+          type="text"
+          name="email"
+          id="email"
+          required="required"
+          value="{{ email }}"
+        />
+        <label for="name">Email</label>
+      </div>
+
+      <div class="name-entry-wrapper">
+        <input
+          type="text"
+          name="name"
+          id="name"
+          required="required"
+          value="{{ name }}"
+        />
+        <label for="name">Name</label>
+      </div>
+
+      <div class="password-entry-wrapper">
+        <input type="password" name="password" id="password" required="" />
+        <label for="name">Password</label>
+        <!--Added svg code directly because it is easy to handle with css and JS, rather than adding as <img> tag-->
+      </div>
+
+      <div class="confirm-password-entry-wrapper">
+        <input
+          type="password"
+          name="confirm-password"
+          id="confirm-password"
+          required="required"
+        />
+        <label for="name">Comfirm Password</label>
+      </div>
+
+      <button type="submit" class="submit">Create Account</button>
+    </form>
+  </body>
+</html>
