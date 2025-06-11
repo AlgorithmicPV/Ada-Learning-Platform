@@ -1,7 +1,7 @@
 // Javascript codes for the Signup page
 
 const hide_password_img = document.querySelector(".closed-eye-img-pass");
-const open_password_img = document.querySelector(".eye-img-pass");
+const show_password_img = document.querySelector(".eye-img-pass");
 
 const hide_confirm_password_img = document.querySelector(
   ".closed-eye-img-confirm-pass"
@@ -13,14 +13,14 @@ const open_confirm_password_img = document.querySelector(
 // Hides the password
 hide_password_img.addEventListener("click", () => {
   hide_password_img.style.display = "none";
-  open_password_img.style.display = "flex";
+  show_password_img.style.display = "flex";
   document.getElementById("password").type = "password";
 });
 
 // Shows the password
-open_password_img.addEventListener("click", () => {
+show_password_img.addEventListener("click", () => {
   hide_password_img.style.display = "flex";
-  open_password_img.style.display = "none";
+  show_password_img.style.display = "none";
   document.getElementById("password").type = "text";
 });
 

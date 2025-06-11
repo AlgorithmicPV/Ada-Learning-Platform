@@ -38,11 +38,11 @@
 # else:
 #     print("not valid")
 
-name = "d"
-email = ""
+# name = "d"
+# email = ""
 
-if not name or not email:
-    print("no name")
+# if not name or not email:
+#     print("no name")
 
 
 
@@ -103,3 +103,32 @@ if not name or not email:
 #         return redirect(url_for("test"))
 
 #     return render_template("test.html")
+
+# from argon2 import PasswordHasher
+# from argon2.exceptions import VerifyMismatchError, InvalidHash
+
+# ph = PasswordHasher()
+
+# hash = ph.hash("1234")
+
+# x = input("type the password: ")
+
+# try:
+#     if (ph.verify(hash, x)):
+#         print("password is correct")
+# except VerifyMismatchError:
+#     print("Password is not correct")
+# except InvalidHash:
+#     print("Invalid hash format. The hash may be corrupted")
+# # print(x)
+
+import sqlite3
+
+conn = sqlite3.connect("database/app.db")
+cursor = conn.cursor()
+email = "vidunithap@gmail.com"
+cursor.execute('SELECT password FROM User WHERE email = ?', (email,))
+
+stored_has_password = cursor.fetchone()
+
+print(stored_has_password[0])
