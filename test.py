@@ -122,13 +122,20 @@
 #     print("Invalid hash format. The hash may be corrupted")
 # # print(x)
 
-import sqlite3
+# import sqlite3
 
-conn = sqlite3.connect("database/app.db")
-cursor = conn.cursor()
-email = "vidunithap@gmail.com"
-cursor.execute('SELECT password FROM User WHERE email = ?', (email,))
+# conn = sqlite3.connect("database/app.db")
+# cursor = conn.cursor()
+# email = "vidunithap@gmail.com"
+# cursor.execute('SELECT password FROM User WHERE email = ?', (email,))
 
-stored_has_password = cursor.fetchone()
+# stored_has_password = cursor.fetchone()
 
-print(stored_has_password[0])
+# print(stored_has_password[0])
+
+import secrets
+
+secret_key = secrets.token_hex(32)
+
+print(secret_key)
+

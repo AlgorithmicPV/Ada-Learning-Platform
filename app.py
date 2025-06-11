@@ -4,14 +4,21 @@ from datetime import datetime
 import uuid
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
+import os
+#create the google Auth
 
+load_dotenv()
 
 app = Flask(__name__)
-
-app.secret_key = "test123"
+app.secret_key = os.getenv("app_secret_key")
 
 ph = PasswordHasher()
 
+auth = OAuth(app)
+
+# google = auth.register()
 
 # Landing Page
 @app.route("/")
