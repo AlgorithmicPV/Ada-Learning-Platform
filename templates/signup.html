@@ -17,7 +17,11 @@
 
   <body>
     <!--Form for creating new accounts-->
-    <form method="post" action="/signup" class="create-an-account-form-wrapper">
+    <form
+      method="post"
+      action="{{ url_for('signup') }}"
+      class="create-an-account-form-wrapper"
+    >
       <img
         class="logo"
         src="{{ url_for('static', filename='images/logos/ada_logo_vertical.svg') }}"

@@ -218,4 +218,8 @@ button:hover {
   .laptop-img {
     display: none; /* Hides the image as the main purpose of this page is making a new account */
   }
+
+  .error-box-wrapper {
+    width: 90%;
+  }
 }

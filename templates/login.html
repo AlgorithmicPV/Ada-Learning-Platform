@@ -21,7 +21,7 @@
       alt="An image of a laptop with some written codes"
     />
     <div class="wrapper">
-      <form method="post" action="/login" class="login-wrapper">
+      <form method="post" action="{{ url_for('login') }}" class="login-wrapper">
         <img
           class="logo"
           src="{{ url_for('static', filename='images/logos/ada_logo_vertical.svg') }}"
@@ -67,9 +67,15 @@
         </div>
         <button type="submit" class="submit">Login</button>
       </form>
-      <a href="/signup">CREATE AN ACCOUNT</a>
+      <a href="{{ url_for('signup') }}">CREATE AN ACCOUNT</a>
       <p>or</p>
-      <button>Google signin</button>
+      <button onclick="window.location.href= '{{ url_for('login_google') }}'">
+        <img
+          src="{{ url_for('static', filename='images/logos/google_logo.svg') }}"
+          alt=""
+        />
+        Sign in with Google
+      </button>
     </div>
     <!--Error box -->
     {% with messages = get_flashed_messages(with_categories=true) %} {% if

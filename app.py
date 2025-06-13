@@ -1,24 +1,32 @@
 from flask import Flask, render_template, redirect, request, url_for, flash, session
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 import os
-#create the google Auth
+import json
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("app_secret_key")
+app.permanent_session_lifetime = timedelta(days=1)
 
 ph = PasswordHasher()
 
-auth = OAuth(app)
+oauth = OAuth(app)
 
-# google = auth.register()
+google = oauth.register(
+    "Ada",
+    client_id=os.getenv("Client_ID"),
+    client_secret=os.getenv("Client_secret"),
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
+
 
 # Landing Page
 @app.route("/")
@@ -44,6 +52,19 @@ def login():
         if stored_hash_password:
             try:
                 if ph.verify(stored_hash_password[0], password):
+                    session["email"] = email
+                    conn = sqlite3.connect("database/app.db")
+                    cursor = conn.cursor()
+                    cursor.execute(
+                        "SELECT full_name FROM User Where email = ?", (email,)
+                    )
+                    stored_username = cursor.fetchone()
+                    username = stored_username[0]
+                    session["username"] = username
+                    cursor.execute("SELECT user_id FROM User Where email = ?", (email,))
+                    stored_user_id = cursor.fetchone()
+                    user_id = stored_user_id[0]
+                    session["user_id"] = user_id
                     return redirect(url_for("dashboard"))
             except VerifyMismatchError:
                 flash("Password is not correct", category="error")
@@ -52,6 +73,9 @@ def login():
                 flash(
                     "Invalid hash format. The hash may be corrupted", category="error"
                 )
+                return redirect(url_for("login"))
+            except Exception as e:
+                flash(f"An error occured: {e}", category="error")
                 return redirect(url_for("login"))
         else:
             flash("Username doesn't exist", category="error")
@@ -139,9 +163,61 @@ def signup():
     return render_template("signup.html")
 
 
+# login for google
+@app.route("/login/google")
+def login_google():
+    try:
+        redirect_uri = url_for("authorize_google", _external=True)
+        return google.authorize_redirect(redirect_uri)
+    except Exception as e:
+        app.logger.error(f"Error during the logon: {str(e)}")
+        return "Error occured during login", 500
+
+
+# Dashboard of the application
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    if "username" in session:
+        return render_template("dashboard.html", username=session["username"])
+    return redirect(url_for('login'))
+
+
+@app.route("/authorize/google")
+def authorize_google():
+    token = google.authorize_access_token()
+    session["user"] = token
+    conn = sqlite3.connect("database/app.db")
+    cursor = conn.cursor()
+
+    userToken = session.get("user")
+    userInfo = userToken["userinfo"]
+    username = userInfo["given_name"]
+    email = userInfo["email"]
+    cursor.execute("SELECT email FROM User")
+    email_list = cursor.fetchall()
+
+    saved_emails = []  # An array to collect all the emails from the database
+
+    # # Converts the email list into a flat array to easily check if the entered email is valid or not. email_list is a list of 1-element tuples
+    for email_tuple in email_list:
+        for email_from_db in email_tuple:
+            saved_emails.append(email_from_db)
+
+    user_id = str(uuid.uuid4())  # Creates a new primary key
+
+    timestamp = datetime.now().isoformat(timespec="seconds")  # Gets the current time
+
+    if email not in saved_emails:
+        cursor.execute(
+            """INSERT INTO User (user_id, email, full_name, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?)""",
+            (user_id, email, username, "google", "dark", timestamp),
+        )
+
+        conn.commit()
+
+    session["username"] = username
+
+    return redirect(url_for("dashboard"))
 
 
 if __name__ == "__main__":
