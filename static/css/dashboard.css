@@ -13,14 +13,17 @@
   font-style: normal;
   font-weight: normal;
 }
+
 body {
   margin: 0;
   background-color: #010104;
   color: #ebe9fc;
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: 100vh;
   width: 100%;
+  font-family: "Inter";
+  overflow: hidden;
 }
 
 .navigation-bar-wrapper {
@@ -51,6 +54,14 @@ body {
   font-size: medium;
 }
 
+.menu-cloppased-button {
+  width: min-content !important; /* Fixes the width of the image as this is the menu close button */
+}
+
+.menu-cloppased-button svg {
+  margin: 0 !important; /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
+}
+
 .home-btn {
   background-color: #3a31d8 !important;
   color: #ebe9fc !important;
@@ -69,10 +80,6 @@ body {
   width: 20px;
   margin-right: 10px;
   transition: 0.2s ease-in-out all;
-  fill: #ebe9fc94;
-}
-
-.navigation-bar-wrapper button:hover svg {
   fill: #ebe9fc;
 }
 
@@ -106,7 +113,7 @@ body {
 
 .top-bar button svg {
   fill: #ebe9fc;
-  height: 25px;
+  height: 20px;
   width: auto;
 }
 
@@ -114,26 +121,240 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 5px;
+  margin-right: 15px;
 }
 
 .profile-pic {
   background-color: aqua;
-  height: 40px;
-  width: 40px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
 }
 
 .app_logo {
-  height: 45px;
+  height: 40px;
+}
+
+.dashboard-cont-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: auto;
+}
+
+.dashboard-cont {
+  padding-left: 30px;
+  padding-right: 15px;
+  width: calc(
+    100% - 30px
+  ); /* Removes 30px from the full width because of the padding otherwise it will over flow*/
+  max-width: 1500px;
+  margin: 0 auto; /* This helps center on very small screens too */
 }
 
 .greeting-wrapper {
-  background-color: red;
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
   width: 100%;
-  /* align-self: center; */
+}
+
+.greeting-txt-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 15px;
 }
 
 .greeting-txt {
   font-family: "Konkhmer";
+  font-size: xx-large;
+  margin: 0; /* Removes extra spaces for better appearance */
+}
+
+.greeting-txt-wrapper img {
+  height: 45px;
+}
+
+.welcome-txt {
+  margin: 0; /* Removes extra spaces for better appearance */
+  text-wrap: wrap;
+  width: 350px;
+  font-size: large;
+}
+
+.block-wrapper {
+  width: calc(100% - 30px);
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 50px;
+}
+
+.blocks {
+  display: flex;
+  flex-direction: row;
+  gap: 35px;
+  margin-bottom: 35px;
+}
+
+.block {
+  background-color: #0d0d11;
+  display: flex;
+  flex-direction: column;
+  width: 45%;
+  border-radius: 25px;
+  padding: 15px;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.block .title {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  font-size: large;
+  font-weight: bold;
+}
+
+.block .title img {
+  height: 20px;
+}
+
+.block p {
+  margin: 5px;
+}
+
+.description,
+.progress-bar,
+.completed-amount {
+  margin-left: 20px !important;
+}
+
+.progress-bar {
+  background-color: #ebe9fc;
+  height: 8px;
+  border-radius: 50px;
+  position: relative;
+}
+
+/* Styles the line in the progress bar */
+.progress-line {
+  position: absolute;
+  height: 8px;
+  border-radius: 50px;
+}
+
+.completed-amount {
+  font-size: small;
+  color: #ebe9fc7d;
+}
+
+.continue-learning-wrapper .progress-line {
+  background-color: #d8b731;
+}
+
+.problem-solved-wrapper .progress-line {
+  background-color: #d87f31;
+}
+
+.problem-solved-wrapper {
+  justify-content: center;
+  gap: 15px;
+}
+
+.streak-wrapper,
+.community-Buzz-wrapper {
+  height: 100px;
+  gap: 10px;
+}
+
+.wrapper-3 {
+  padding-bottom: 35px;
+}
+
+table {
+  font-size: medium;
+  border-collapse: separate;
+  border-spacing: 0 1em;
+}
+
+tr {
+  text-align: center; /* Adds vertical spacing of 1em between table rows while keeping columns tightly aligned */
+  cursor: pointer;
+}
+
+tr:nth-child(2) {
+  color: #ffd700;
+}
+
+tr:nth-child(3) {
+  color: #eeeeee;
+}
+
+tr:nth-child(4) {
+  color: #ffa500;
+}
+
+tr:nth-child(n + 5) {
+  color: #ffffff6e;
+}
+
+.latest-achievement-wrapper {
+  justify-content: space-evenly;
+}
+
+.achievement-block-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 15px; /* Keeps some space between the achievements blocks and the title of thie block */
+  gap: 15px;
+}
+
+.achievements-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 25%;
+  background-color: #ebe9fc35;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.achievement-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+
+.achievement-type p {
+  font-size: medium;
+  font-weight: bold;
+}
+
+.number-of-achievements {
+  font-size: xx-large;
+  font-weight: bolder;
+}
+
+.achievements-block .description {
+  color: #ebe9fc73;
+  font-weight: normal;
+  font-size: smaller;
+  margin-left: 0 !important;
+  text-align: center;
+}
+
+.achievements-block img {
+  height: 25px;
 }

@@ -3,9 +3,10 @@ from datetime import timedelta
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
 import os
+from extensions import oauth
 from routes.landing_page import landing_page_bp
 from routes.auth_routes import auth_bp
-from extensions import oauth
+from routes.dashboard import dashboard_bp
 
 load_dotenv()
 
@@ -24,12 +25,8 @@ app.register_blueprint(landing_page_bp)
 app.register_blueprint(auth_bp)
 
 # Dashboard of the application
-@app.route("/dashboard")
-def dashboard():
-    # if "username" in session:
-    #     return render_template("dashboard.html", username=session["username"])
-    # return redirect(url_for('login'))
-    return render_template("dashboard.html")
+app.register_blueprint(dashboard_bp)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

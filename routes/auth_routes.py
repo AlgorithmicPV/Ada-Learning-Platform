@@ -1,4 +1,14 @@
-from flask import Blueprint, render_template , render_template, redirect, request, url_for, flash, session, current_app
+from flask import (
+    Blueprint,
+    render_template,
+    render_template,
+    redirect,
+    request,
+    url_for,
+    flash,
+    session,
+    current_app,
+)
 import os
 import sqlite3
 from datetime import datetime, timedelta
@@ -11,7 +21,7 @@ from extensions import oauth
 
 load_dotenv()
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
 
 ph = PasswordHasher()
 
@@ -23,7 +33,8 @@ google = oauth.register(
     client_kwargs={"scope": "openid email profile"},
 )
 
-@auth_bp.route('/login', methods = ['GET', 'POST'])
+
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form.get("email")
@@ -52,7 +63,7 @@ def login():
                     stored_user_id = cursor.fetchone()
                     user_id = stored_user_id[0]
                     session["user_id"] = user_id
-                    return redirect(url_for("dashboard"))
+                    return redirect(url_for("dashboard.dashboard"))
             except VerifyMismatchError:
                 flash("Password is not correct", category="error")
                 return redirect(url_for("auth.login"))
@@ -69,6 +80,7 @@ def login():
             return redirect(url_for("auth.login"))
 
     return render_template("login.html")
+
 
 # Create an account page
 @auth_bp.route("/signup", methods=["GET", "POST"])
@@ -195,4 +207,4 @@ def authorize_google():
 
     session["username"] = username
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("dashboard.dashboard"))
