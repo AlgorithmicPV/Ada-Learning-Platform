@@ -1,0 +1,139 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.ttc") format("truetype");
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Konkhmer";
+  src: url("../fonts/Konkhmer.ttf") format("truetype");
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+body {
+  margin: 0;
+  background-color: #010104;
+  color: #ebe9fc;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+
+.navigation-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(
+    100vh - 30px
+  ); /* Removes 30px from the hieght as there is a padding of 15px from top and down */
+  padding: 15px;
+  border-right: #ebe9fc4a 1px solid;
+  width: 200px;
+}
+
+.navigation-bar-wrapper button {
+  border: none;
+  background-color: transparent;
+  color: #ebe9fc94;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 150px;
+  transition: 0.2s ease-in-out all;
+  cursor: pointer;
+  font-family: "Inter";
+  font-size: medium;
+}
+
+.home-btn {
+  background-color: #3a31d8 !important;
+  color: #ebe9fc !important;
+}
+
+.home-btn svg {
+  fill: #ebe9fc !important;
+}
+
+.navigation-bar-wrapper button:hover {
+  color: #ebe9fc;
+}
+
+.navigation-bar-wrapper svg {
+  height: 20px;
+  width: 20px;
+  margin-right: 10px;
+  transition: 0.2s ease-in-out all;
+  fill: #ebe9fc94;
+}
+
+.navigation-bar-wrapper button:hover svg {
+  fill: #ebe9fc;
+}
+
+.logout-btn {
+  margin-top: auto; /* Keeps the logout button at the bottom of the vertical navigation bar, to prevent users from accidentally clicking on the logout button */
+}
+
+.dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(
+    100vw - 200px
+  ); /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
+}
+
+.top-bar {
+  margin: 15px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.top-bar button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.top-bar button svg {
+  fill: #ebe9fc;
+  height: 25px;
+  width: auto;
+}
+
+.top-bar .right-part {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.profile-pic {
+  background-color: aqua;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.app_logo {
+  height: 45px;
+}
+
+.greeting-wrapper {
+  background-color: red;
+  width: 100%;
+  /* align-self: center; */
+}
+
+.greeting-txt {
+  font-family: "Konkhmer";
+}

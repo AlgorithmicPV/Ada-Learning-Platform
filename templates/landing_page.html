@@ -47,14 +47,14 @@
         <a href="#how_it_works">How it works</a>
         <button
           class="signin-btn"
-          onclick="window.location.href='{{ url_for('login') }}'"
+          onclick="window.location.href='{{ url_for('auth.login') }}'"
         >
           Sign in
         </button>
 
         <button
           class="signup-btn"
-          onclick="window.location.href='{{ url_for('signup') }}'"
+          onclick="window.location.href='{{ url_for('auth.signup') }}'"
         >
           Sign up
         </button>
