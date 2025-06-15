@@ -731,8 +731,18 @@
         <a href="#why_us">Why us</a>
         <a href="#supported_languages">Supported Languages</a>
         <a href="#how_it_works">How it works</a>
-        <button class="sign-in-btn">Sign in</button>
-        <button class="sign-up-btn">Sign up</button>
+        <button
+          class="sign-in-btn"
+          onclick="window.location.href='{{ url_for('auth.login') }}'"
+        >
+          Sign in
+        </button>
+        <button
+          class="sign-up-btn"
+          onclick="window.location.href='{{ url_for('auth.signup') }}'"
+        >
+          Sign up
+        </button>
       </div>
     </div>
     <!-- End of the Mobile Navigation Drawer-->

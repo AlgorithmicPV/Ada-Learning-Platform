@@ -179,12 +179,14 @@ const light_theme = () => {
 
   const dark_theme_images = document.querySelectorAll(".dark-theme-img");
   for (let i = 0; i < dark_theme_images.length; i++) {
-    dark_theme_images[i].style.display = "none";
+    dark_theme_images[i].style.display =
+      "none"; /* Hides all images that appear in dark theme */
   }
 
   const light_theme_images = document.querySelectorAll(".light-theme-img");
   for (let i = 0; i < light_theme_images.length; i++) {
-    light_theme_images[i].style.display = "flex";
+    light_theme_images[i].style.display =
+      "flex"; /* Shows all images that appear in light theme */
   }
 
   is_dark_theme = false;
@@ -202,12 +204,14 @@ const dark_theme = () => {
 
   const dark_theme_images = document.querySelectorAll(".dark-theme-img");
   for (let i = 0; i < dark_theme_images.length; i++) {
-    dark_theme_images[i].style.display = "flex";
+    dark_theme_images[i].style.display =
+      "flex"; /* Shows all images that appear in dark theme */
   }
 
   const light_theme_images = document.querySelectorAll(".light-theme-img");
   for (let i = 0; i < light_theme_images.length; i++) {
-    light_theme_images[i].style.display = "none";
+    light_theme_images[i].style.display =
+      "none"; /* Hides all images that appear in light theme */
   }
 
   is_dark_theme = true;
