@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Inter";
-  src: url("../fonts/Inter.ttc") format("truetype");
+  src: url("../../fonts/Inter.ttc") format("truetype");
   font-style: normal;
   font-style: normal;
   font-weight: normal;
@@ -19,8 +19,7 @@ body {
   height: 100px;
 }
 
-.wrapper,
-.login-wrapper {
+.create-an-account-form-wrapper {
   width: 100%;
   display: flex;
   justify-content: center;
@@ -28,7 +27,12 @@ body {
   flex-direction: column;
   font-family: "Inter";
   gap: 15px;
+}
+
+.title {
+  font-size: large;
   font-family: "Inter";
+  color: #ebe9fc;
 }
 
 .email-entry-wrapper,
@@ -85,8 +89,8 @@ input:valid {
 .laptop-img {
   height: 100vh;
   margin-left: auto;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
 }
 
 button {
@@ -99,18 +103,14 @@ button {
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s ease all;
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
 }
 
 button:hover {
   transform: scale(1.1);
 }
 
-/* Styles the Hide password icons in password box */
+/* Styles the Hide password icons in password box and confirm password box */
+.closed-eye-img-confirm-pass,
 .closed-eye-img-pass {
   fill: #ebe9fc7a;
   height: 20px;
@@ -124,11 +124,13 @@ button:hover {
   display: none;
 }
 
+.closed-eye-img-confirm-pass:hover,
 .closed-eye-img-pass:hover {
   fill: #ebe9fc;
 }
 
-/* Styles the Show password icons in password box */
+/* Styles the Show password icons in password box and confirm password box */
+.eye-img-confirm-pass,
 .eye-img-pass {
   fill: #ebe9fc7a;
   height: 20px;
@@ -141,21 +143,9 @@ button:hover {
   width: min-content;
 }
 
+.eye-img-confirm-pass:hover,
 .eye-img-pass:hover {
   fill: #ebe9fc;
-}
-
-p,
-a {
-  margin-top: 20px;
-  text-decoration: none;
-  color: #ebe9fc7f;
-  transition: 0.3s ease all;
-}
-
-p:hover,
-a:hover {
-  color: #ebe9fc;
 }
 
 /* Styles the error boxes */
@@ -195,12 +185,6 @@ a:hover {
   fill: #ebe9fc;
 }
 
-/* Styles the google logo in the button */
-button img {
-  height: 30px;
-  width: auto;
-}
-
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1200px) {
   body {
@@ -209,30 +193,15 @@ button img {
     align-items: center;
     height: 100vh; /* Gets the full avaialbe height of the screen to center the elements */
     width: 100%;
-    flex-direction: column;
-    margin: 0;
-    padding: 0;
   }
 
-  .laptop-img {
-    all: unset;
-    border-radius: 15px;
-    height: 300px;
-    width: 300px;
-    margin: 0;
-    margin-top: 15px;
-    object-fit: cover;
-    overflow: hidden;
-    margin-bottom: 15px;
-  }
-
-  .login-wrapper {
+  .create-an-account-form-wrapper {
     all: unset;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding: 0;
+    padding: 30px;
     width: 100%;
     gap: 20px;
   }
@@ -242,8 +211,12 @@ button img {
   .password-entry-wrapper,
   .confirm-password-entry-wrapper {
     width: calc(
-      100% - 100px
+      100% - 60px
     ); /* Keeps some spaces beween screen edge and the <div>s for better appearance */
+  }
+
+  .laptop-img {
+    display: none; /* Hides the image as the main purpose of this page is making a new account */
   }
 
   .error-box-wrapper {

@@ -122,10 +122,10 @@
 #     print("Invalid hash format. The hash may be corrupted")
 # # print(x)
 
-# import sqlite3
+import sqlite3
 
-# conn = sqlite3.connect("database/app.db")
-# cursor = conn.cursor()
+conn = sqlite3.connect("database/app.db")
+cursor = conn.cursor()
 # email = "vidunithap@gmail.com"
 # cursor.execute('SELECT password FROM User WHERE email = ?', (email,))
 
@@ -133,9 +133,82 @@
 
 # print(stored_has_password[0])
 
-import secrets
 
-secret_key = secrets.token_hex(32)
+cursor.execute("SELECT course_id, course_name, language_image, course_image, language FROM Course")
 
-print(secret_key)
+all_courses_data = cursor.fetchall()
 
+course_data_with_percentage = []
+
+for i in all_courses_data:
+    user_id = '5bd134f5-327e-4f3e-8c76-13da3c6f07b5'
+    cursor.execute("""SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""", (user_id,i[0],))
+    number_of_completed_lessons =  cursor.fetchall()
+
+    number_of_completed_lessons = number_of_completed_lessons[0][0]
+
+    cursor.execute("""SELECT COUNT(*) FROM Lesson WHERE course_id =?""", (i[0],))
+
+    number_of_all_lessons = cursor.fetchall()
+
+    number_of_all_lessons = number_of_all_lessons[0][0]
+
+    if number_of_all_lessons and number_of_completed_lessons:
+        percentage_of_the_completion = (number_of_completed_lessons/number_of_all_lessons) * 100
+    else:
+        percentage_of_the_completion = 0
+
+    for j in range(1 ,5):
+        course_data_with_percentage.append(i[j])
+
+    course_data_with_percentage.append(percentage_of_the_completion)
+
+
+def divide_array_into_chunks(divding_array, chunk_size):
+    new_array = []
+    for i in range(int((len(divding_array)) / (chunk_size))):
+        new_array.append(divding_array[(chunk_size * i): (chunk_size + (chunk_size * i))])
+    return new_array
+
+cursor.execute("""SELECT COUNT(*) FROM  Course""")
+
+number_of_courses = cursor.fetchall()[0][0]
+
+divided_array = (divide_array_into_chunks(course_data_with_percentage, number_of_courses ))
+
+for t in divided_array:
+    print(t)
+
+
+
+#  # cursor.execute(
+#         #     """
+#         #         SELECT 
+#         #           c.course_id,
+#         #           c.course_name, 
+#         #           c.course_image, 
+#         #           c.language, 
+#         #           c.language_image,
+#         #           ROUND(
+#         #             COUNT(ul.lesson_id) * 100.0 / 
+#         #             NULLIF((SELECT COUNT(*) FROM Lesson WHERE course_id = c.course_id), 0), 
+#         #             0
+#         #           ) AS progress_percent
+#         #         FROM 
+#         #           Course c
+#         #         LEFT JOIN 
+#         #           Lesson l ON l.course_id = c.course_id
+#         #         LEFT JOIN 
+#         #           user_lesson ul ON ul.lesson_id = l.lesson_id 
+#         #           AND ul.user_id = ?
+#         #           AND ul.status = 'completed'
+#         #         GROUP BY 
+#         #           c.course_id;
+
+#         #     """,
+#         #     (session["user_id"],),
+#         # )
+
+#         # all_courses_data = cursor.fetchall()
+
+#         cursor.execute()

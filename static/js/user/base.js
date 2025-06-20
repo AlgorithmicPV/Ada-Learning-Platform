@@ -1,8 +1,8 @@
-// Javascript codes for the Dashboard
+// Javascript codes for the Base template
 
 const navigation_bar = document.querySelector(".navigation-bar-wrapper");
 const menu_cloppased_button = document.querySelector(".menu-cloppased-button");
-const dashboard_wrapper = document.querySelector(".dashboard-wrapper");
+const dashboard_wrapper = document.querySelector(".main-wrapper");
 const close_button_small_screen_menu =
   document.querySelector(".close-menu-button");
 const small_screen_menu = document.querySelector(".menu-wrapper-small-screen");
@@ -82,6 +82,30 @@ close_button_small_screen_menu.addEventListener("click", () => {
     small_menu_showing = false;
   }
 });
+
+// let colour_variables = [
+//   "--background-color",
+//   "--text-color",
+//   "--border-color",
+//   "--second-text-color",
+//   "--primary-color",
+// ];
+
+// let dark_theme_colours = [
+//   "#010104",
+//   "#ebe9fc",
+//   "#ebe9fc22",
+//   "#ebe9fc70",
+//   "#3a31d8",
+// ];
+
+// let white_theme_colours = [
+//   "#FBFBFE",
+//   "#050316",
+//   "#0503161e",
+//   "#0503167a",
+//   "#2F27CE",
+// ];
 
 let colour_variables = [
   "--background-color",

@@ -3,7 +3,7 @@
 /* Load the Inter font for Navigation texts */
 @font-face {
   font-family: "Inter";
-  src: url("../fonts/Inter.ttc") format("truetype");
+  src: url("../../fonts/Inter.ttc") format("truetype");
   font-style: normal;
   font-style: normal;
   font-weight: normal;
@@ -12,7 +12,7 @@
 /* Load the Roboto font for the title in the Home section */
 @font-face {
   font-family: "Roboto";
-  src: url("../fonts/Roboto.ttf") format("truetype");
+  src: url("../../fonts/Roboto.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-style: normal;
@@ -22,7 +22,7 @@
 /* Load the Poppins font for the Description text in the Home section */
 @font-face {
   font-family: "Poppins";
-  src: url("../fonts/Poppins.ttf") format("truetype");
+  src: url("../../fonts/Poppins.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-style: normal;
@@ -32,7 +32,7 @@
 /* Load the Montserrat font for the Description text in the Home section and the Why choose us Section  */
 @font-face {
   font-family: "Montserrat";
-  src: url("../fonts/Montserrat.ttf") format("truetype");
+  src: url("../../fonts/Montserrat.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-style: normal;
@@ -42,7 +42,7 @@
 /* Load the Lato font for the text in cards which are in the why choose us section */
 @font-face {
   font-family: "Lato";
-  src: url("../fonts/Lato.ttf") format("truetype");
+  src: url("../../fonts/Lato.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-style: normal;

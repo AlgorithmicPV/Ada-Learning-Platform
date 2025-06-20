@@ -1,0 +1,290 @@
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter.ttc") format("truetype");
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Konkhmer";
+  src: url("../../fonts/Konkhmer.ttf") format("truetype");
+  font-style: normal;
+  font-style: normal;
+  font-weight: normal;
+}
+
+:root {
+  --background-color: #010104;
+  --text-color: #ebe9fc;
+  --border-color: #ebe9fc22;
+  --second-text-color: #ebe9fc70;
+  --primary-color: #3a31d8;
+  --blocks-color: #0d0d11;
+  --home-text-color: #ebe9fc;
+}
+
+* {
+  transition: background-color 0.4s ease, fill 0.4s ease, color 0.4s ease;
+}
+
+body {
+  margin: 0; /* Removes default margin because it is easy to customize */
+  background-color: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100%;
+  font-family: "Inter";
+  overflow: hidden;
+}
+
+/* Styles the navigation bar */
+.navigation-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(
+    100vh - 30px
+  ); /* Removes 30px from the height as there is a padding of 15px from top and down */
+  padding: 15px; /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
+  border-right: var(--border-color) 1px solid; /* Adds a border to only the right side to separate from the dashboard */
+  width: 200px;
+  transition: 0.2s ease-in-out all;
+}
+
+.navigation-bar-wrapper button {
+  border: none; /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
+  background-color: transparent; /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
+  color: var(--second-text-color);
+  margin-bottom: 10px; /* Sets some spaces between buttons in the navigation bar */
+  padding: 10px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 150px;
+  transition: 0.2s ease-in-out all;
+  cursor: pointer;
+  font-family: "Inter";
+  font-size: medium;
+}
+
+.navigation-bar-wrapper button p {
+  margin: 0; /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
+  transition: 0.2s ease-in-out all;
+}
+
+.menu-cloppased-button {
+  width: min-content !important; /* Fixes the width of the image as this is the menu close button */
+}
+
+.menu-cloppased-button svg {
+  margin: 0 !important; /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
+}
+
+.active {
+  background-color: var(
+    --primary-color
+  ) !important; /* Adds a background colour to show that user in the dashboard */
+  color: var(--home-text-color) !important;
+}
+
+.active svg {
+  fill: var(--home-text-color) !important;
+}
+
+.navigation-bar-wrapper button:hover {
+  color: var(--text-color);
+}
+
+.navigation-bar-wrapper svg {
+  height: 20px;
+  width: 20px;
+  margin-right: 10px; /* Adds some space between the icon and  text in each button for better visualization */
+  transition: 0.2s ease-in-out all;
+  fill: var(--text-color);
+}
+
+.logout-btn {
+  margin-top: auto; /* Keeps the logout button at the bottom of the vertical navigation bar, to prevent users from accidentally clicking on the logout button */
+}
+
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(
+    100vw - 200px
+  ); /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
+}
+
+.top-bar {
+  margin: 15px; /* Adds some space around the top bar to prevent it from touching the top of the screen and other <div>s */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.app_logo path {
+  fill: var(--text-color);
+}
+
+.top-bar button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.top-bar button svg {
+  fill: var(--second-text-color);
+  height: 20px;
+  width: auto;
+  transition: all 0.5s ease;
+}
+
+.top-bar button:hover svg {
+  fill: var(--text-color);
+}
+
+.top-bar .right-part {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-right: 15px; /* Adds some space between this div and the corner of the screen */
+}
+
+.profile-pic {
+  background-color: aqua;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+}
+
+.app_logo {
+  height: 40px;
+}
+
+.cont-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: auto;
+}
+
+/* Target the vertical scrollbar thumb */
+.cont-wrapper::-webkit-scrollbar-thumb {
+  background-color: transparent; /* Thumb color */
+  border: 1px solid var(--second-text-color); /* White border around the thumb */
+  border-radius: 10px; /* Rounded corners (optional) */
+}
+
+/* Track area behind the thumb */
+.cont-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Scrollbar width */
+.cont-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cont {
+  padding-left: 30px;
+  padding-right: 15px;
+  width: calc(
+    100% - 30px
+  ); /* Removes 30px from the full width because of the padding otherwise it will over flow*/
+  max-width: 1500px;
+  margin: 0 auto; /* This helps center on very small screens too */
+}
+
+/* Styles menu collapsed button for smaller screens */
+.small-screen {
+  display: none; /* Hides in the larger screen */
+}
+
+.menu-wrapper-small-screen {
+  display: none;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .navigation-bar-wrapper {
+    display: none; /* Hides the vertical navigation bar */
+  }
+
+  .cont {
+    /* padding-left: 15px; */
+    padding: 0;
+    margin: 0;
+  }
+
+  .main-wrapper {
+    width: 100vw;
+  }
+
+  /* Styles menu collapsed button for smaller screens */
+  .small-screen {
+    display: flex; /* Shows this button */
+  }
+
+  /* Styles the menu screen in small screens */
+  .menu-wrapper-small-screen {
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    background-color: var(--background-color);
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    display: none;
+  }
+
+  .logout-btn {
+    all: unset;
+  }
+
+  .menu-wrapper-small-screen button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    border: none;
+    background-color: transparent;
+    font-size: xx-large;
+    justify-content: center;
+    color: var(--second-text-color);
+  }
+
+  .menu-wrapper-small-screen button svg {
+    all: unset;
+    height: 50px;
+    width: 50px;
+    fill: var(--second-text-color);
+  }
+
+  .menu-wrapper-small-screen .active,
+  .menu-wrapper-small-screen .active svg {
+    color: var(--text-color) !important;
+    fill: var(--text-color) !important;
+    background-color: transparent !important;
+  }
+
+  /* Styles the clossing button for the menu screen for small screens */
+  .close-menu-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+  }
+
+  .close-menu-button svg {
+    height: 35px !important;
+    width: 35px !important;
+  }
+}

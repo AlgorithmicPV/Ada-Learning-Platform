@@ -21,10 +21,12 @@ from extensions import oauth
 
 load_dotenv()
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__)  # Blueprint for authentication routes
+auth_bp.permanent_session_lifetime = timedelta(days=1)  # Set session lifetime to 1 day
 
-ph = PasswordHasher()
+ph = PasswordHasher()  # Password hasher for secure password storage
 
+# Initialize OAuth for Google login
 google = oauth.register(
     "Ada",
     client_id=os.getenv("Client_ID"),
@@ -36,50 +38,61 @@ google = oauth.register(
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == "POST":
+    if (
+        request.method == "POST"
+    ):  # If the request method is POST, it means the user is trying to log in
         email = request.form.get("email")
         password = request.form.get("password")
 
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
-        cursor.execute("SELECT password FROM User WHERE email = ?", (email,))
-        stored_hash_password = cursor.fetchone()
-
-        cursor.close()
+        cursor.execute(
+            "SELECT password FROM User WHERE email = ?", (email,)
+        )  # Fetch the stored password hash for the given email
+        stored_hash_password = (
+            cursor.fetchone()
+        )  # stored_hash_password is a tuple, so we need to access the first element
 
         if stored_hash_password:
             try:
-                if ph.verify(stored_hash_password[0], password):
+                if ph.verify(stored_hash_password[0], password):  # Verify the password
                     session["email"] = email
                     conn = sqlite3.connect("database/app.db")
                     cursor = conn.cursor()
                     cursor.execute(
                         "SELECT full_name FROM User Where email = ?", (email,)
-                    )
-                    stored_username = cursor.fetchone()
+                    )  # Fetch the username associated with the email
+                    stored_username = (
+                        cursor.fetchone()
+                    )  # stored_username is a tuple, so we need to access the first element
                     username = stored_username[0]
-                    session["username"] = username
-                    cursor.execute("SELECT user_id FROM User Where email = ?", (email,))
+                    session["username"] = username  # Store the username in the session
+                    cursor.execute(
+                        "SELECT user_id FROM User Where email = ?", (email,)
+                    )  # Fetch the user_id associated with the email
                     stored_user_id = cursor.fetchone()
                     user_id = stored_user_id[0]
-                    session["user_id"] = user_id
+                    session["user_id"] = user_id  # Store the user_id in the session
+                    cursor.close()  # Close the database connection
                     return redirect(url_for("dashboard.dashboard"))
-            except VerifyMismatchError:
+            except (
+                VerifyMismatchError
+            ):  # If the password does not match the stored hash
                 flash("Password is not correct", category="error")
                 return redirect(url_for("auth.login"))
-            except InvalidHash:
+            except InvalidHash:  # If the password hash is invalid
                 flash(
                     "Invalid hash format. The hash may be corrupted", category="error"
                 )
                 return redirect(url_for("auth.login"))
-            except Exception as e:
+            except Exception as e:  # Catch any other exceptions
                 flash(f"An error occured: {e}", category="error")
                 return redirect(url_for("auth.login"))
-        else:
+        else:  # If the email does not exist in the database
             flash("Username doesn't exist", category="error")
             return redirect(url_for("auth.login"))
 
-    return render_template("login.html")
+    return render_template("auth/login.html")
 
 
 # Create an account page
@@ -150,7 +163,15 @@ def signup():
 
             cursor.execute(
                 """INSERT INTO User (user_id, email, full_name, password, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                (user_id, email, name, ph.hash(password), "manual", "dark", timestamp),
+                (
+                    user_id,
+                    email,
+                    name,
+                    ph.hash(password),
+                    "manual",
+                    "dark",
+                    datetime.fromisoformat(timestamp),
+                ),
             )
 
             conn.commit()
@@ -158,7 +179,7 @@ def signup():
 
             return redirect(url_for("auth.login"))
 
-    return render_template("signup.html")
+    return render_template("auth/signup.html")
 
 
 # login for google
@@ -206,5 +227,12 @@ def authorize_google():
         conn.commit()
 
     session["username"] = username
+    cursor.execute(
+        "SELECT user_id FROM User Where email = ?", (email,)
+    )  # Fetch the user_id associated with the email
+    stored_user_id = cursor.fetchone()
+    user_id = stored_user_id[0]
+    session["user_id"] = user_id  # Store the user_id in the session
+    cursor.close()  # Close the database connection
 
     return redirect(url_for("dashboard.dashboard"))

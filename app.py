@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask
 from datetime import timedelta
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
@@ -7,6 +7,7 @@ from extensions import oauth
 from routes.landing_page import landing_page_bp
 from routes.auth_routes import auth_bp
 from routes.dashboard import dashboard_bp
+from routes.my_courses import my_courses_bp
 
 load_dotenv()
 
@@ -27,6 +28,8 @@ app.register_blueprint(auth_bp)
 # Dashboard of the application
 app.register_blueprint(dashboard_bp)
 
+# My Courses Page
+app.register_blueprint(my_courses_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
