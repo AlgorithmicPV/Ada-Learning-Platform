@@ -55,8 +55,9 @@ def all_course():
             else:
                 percentage_of_the_completion = 0
 
-            for j in range(1, 5):  # Appends the course data into a new array
+            for j in range(5):  # Appends the course data into a new array
                 course_data_with_percentage.append(one_course_set[j])
+                # print(one_course_set[5])
 
             course_data_with_percentage.append(
                 percentage_of_the_completion
@@ -84,10 +85,10 @@ def all_course():
 
         number_of_courses = cursor.fetchall()[0][0]  # Gets the total number of courses available in the database, and this is used to divide the array into chunks
         divided_array = divide_array_into_chunks(
-            course_data_with_percentage, number_of_courses
+            course_data_with_percentage, int((len(course_data_with_percentage) / number_of_courses)) # Divdes the length of the course_data_with_percentage by number_of_courses to get the chunk size
         )
 
-        return render_template("user/my_courses/my_courses_base.html", all_courses_data=divided_array)
+        return render_template("user/my_courses/all_courses.html", all_courses_data=divided_array)
     else:
         return redirect(url_for("auth.login"))
 

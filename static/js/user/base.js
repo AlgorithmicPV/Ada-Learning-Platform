@@ -120,6 +120,7 @@ let colour_variables = [
   "--text-color-second",
   "--text-color-third",
   "--text-color-rest",
+  "--course-card-background-color",
 ];
 
 let dark_theme_colours = [
@@ -135,6 +136,7 @@ let dark_theme_colours = [
   "#eeeeee",
   "#ffa500",
   "#ffffff99",
+  "#000000ac",
 ];
 
 let white_theme_colours = [
@@ -150,6 +152,7 @@ let white_theme_colours = [
   "#000000",
   "#FFA500",
   "#000000c8",
+  "#ffffffac",
 ];
 
 const dark_theme = () => {

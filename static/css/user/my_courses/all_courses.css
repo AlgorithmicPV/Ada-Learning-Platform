@@ -1,0 +1,142 @@
+:root {
+  --second-text-color: #ebe9fc70;
+  --course-card-background-color: #000000ac;
+  --background-color: #010104;
+  --text-color: #ebe9fc;
+}
+
+.all-courses-wrapper {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 35px;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* Styles for the course card */
+.all-courses-wrapper .course-wrapper {
+  width: 300px;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 15px;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  position: relative;
+}
+
+.img-wrapper {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: 6px;
+  bottom: 25px;
+  background-color: var(--background-color);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-wrapper img {
+  width: 28px;
+}
+
+.course-detail-wrapper {
+  backdrop-filter: blur(10px); /* Give a blur background for glass effect */
+  background-color: var(--course-card-background-color);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 60px;
+  flex-direction: row;
+  height: min-content;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  width: 100%;
+  position: relative;
+}
+
+.course-detail-wrapper p {
+  margin: 3px;
+}
+
+.course-title {
+  font-weight: bold;
+  font-size: large;
+  margin-top: 10px !important;
+}
+
+.completed-amt {
+  font-size: small;
+  color: var(--second-text-color);
+  margin-bottom: 10px !important;
+}
+
+.hover {
+  position: absolute;
+  width: 300px;
+  height: 150px;
+  background-color: var(--course-card-background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  display: none;
+}
+
+.hover form {
+  background-color: transparent;
+}
+
+.start-the-course-btn {
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.start-the-course-btn svg {
+  fill: var(--text-color);
+  height: 45px;
+}
+
+/* Styles for the course card on hover */
+/* When the user hovers over the course card, it shows the start course button */
+.course-wrapper:hover .hover {
+  display: flex;
+}
+
+/* Hides the course start button on larger screens */
+.small-screen-start-course {
+  display: none;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .small-screen-start-course {
+    border: 2px solid var(--text-color);
+    border-radius: 50%;
+    align-self: center;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 10px;
+    background-color: transparent;
+    display: flex;
+  }
+
+  .small-screen-start-course button {
+    height: 20px;
+    padding: 0;
+  }
+
+  .small-screen-start-course svg {
+    height: 20px;
+  }
+
+  .course-wrapper:hover .hover {
+    display: none;
+  }
+}

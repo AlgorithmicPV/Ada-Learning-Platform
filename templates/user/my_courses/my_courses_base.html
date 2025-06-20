@@ -6,9 +6,9 @@ block extra_css %}
       href="{{ url_for('static', filename = 'css/user/my_courses/my_courses_base.css') }}" />
 {% endblock %}
 {% block content %}
-<!-- Sub Navigation Bar -->
+    <!-- Sub Navigation Bar -->
     <div class="sub-navigation-bar-my-courses">
-      <!--navigation buttons-->
+        <!--navigation buttons-->
         <div class="menu">
             <button class="{% if request.path == '/my-courses' %}sub-active{% endif %}"
                     onclick="window.location.href='{{ url_for("my_courses.all_course") }}'">Courses</button>
@@ -24,7 +24,7 @@ block extra_css %}
         <!--End navigation buttons-->
         <!--Search bar-->
         <form action="">
-          <!--Below button only apears in the small screen to show the input box-->
+            <!--Below button only apears in the small screen to show the input box-->
             <button class="show-the-input-box" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
@@ -47,7 +47,7 @@ block extra_css %}
         </form>
         <!--End Search bar-->
     </div>
-  <!--End Sub Navigation Bar-->
+    <!--End Sub Navigation Bar-->
 {% endblock %}
 {% block extra_js %}
     <script src="{{ url_for('static', filename = 'js/user/my_courses/my_courses_base.js')}}"></script>
