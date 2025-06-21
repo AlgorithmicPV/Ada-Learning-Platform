@@ -24,3 +24,9 @@ document
   .addEventListener("click", () => {
     document.querySelector(".error-box-wrapper").style.display = "none";
   });
+
+const clearinput = () => {
+  document.getElementById("search").value = "";
+};
+
+window.addEventListener("pageshow", clearinput);

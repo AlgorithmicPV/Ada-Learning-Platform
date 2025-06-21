@@ -17,7 +17,8 @@
         <div class="wrapper">
             <form method="post"
                   action="{{ url_for("auth.login") }}"
-                  class="login-wrapper">
+                  class="login-wrapper"
+                  autocomplete="off">
                 <img class="logo"
                      src="{{ url_for('static', filename='images/logos/ada_logo_vertical.svg') }}"
                      alt="" />
@@ -53,7 +54,7 @@
             <p>or</p>
             <button onclick="window.location.href= '{{ url_for("auth.login_google") }}'">
                 <img src="{{ url_for('static', filename='images/logos/google_logo.svg') }}"
-                     alt="" />
+                     alt="Google logo" />
                 Sign in with Google
             </button>
         </div>

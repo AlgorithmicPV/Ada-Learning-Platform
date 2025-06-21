@@ -52,3 +52,12 @@ window.addEventListener("load", show_the_search_Box, false); // Show the search 
 window.addEventListener("resize", show_the_search_Box, false); // Show the search box when the window is resized
 // Also call the function on window resize to ensure the search box is displayed correctly
 window.onresize = show_the_search_Box;
+
+// Function to clear the search input when the page is shown
+const clearinput = () => {
+  document.getElementById("search").value = "";
+};
+
+// Add an event listener to clear the input when the page is shown, this is useful for when the user navigates back to this page
+// The user doesn't clear the input manually
+window.addEventListener("pageshow", clearinput);

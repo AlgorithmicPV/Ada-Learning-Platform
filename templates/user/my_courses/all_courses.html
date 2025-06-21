@@ -1,3 +1,4 @@
+{% set form_action = url_for('my_courses.search_courses') %}
 {% extends 'user/my_courses/my_courses_base.html' %}
 {% block title %}
     All
@@ -11,7 +12,7 @@
 {% block content %}
     {{ super() }}
     <div class="all-courses-wrapper">
-        {% for course_data in all_courses_data %}
+        {% for course_data in courses_data %}
             <!-- course_data is a list containing course details -->
             <!-- course_data[0] = course_name -->
             <!-- course_data[1] = course_title -->
@@ -32,8 +33,10 @@
                         <p class="completed-amt">{{ course_data[5] }}% complete</p>
                     </div>
                     <!-- This form is for small screens and this hides in large screens -->
-                    <form class="small-screen-start-course" action="" method="post">
-                        <input type="hidden" name="course_name" value="{{ course_data[0] }}" />
+                    <form class="small-screen-start-course"
+                          action="{{ url_for("my_courses.all_course") }}"
+                          method="post">
+                        <input type="hidden" name="course_id" value="{{ course_data[0] }}" />
                         <button class="start-the-course-btn" type="submit">
                             <svg width="50"
                                  height="50"
@@ -60,8 +63,8 @@
                 </div>
                 <!-- This shows when the user hovers over the course card -->
                 <div class="hover">
-                    <form action="" method="post">
-                        <input type="hidden" name="course_name" value="{{ course_data[0] }}" />
+                    <form action="{{ url_for("my_courses.all_course") }}"  method="post">
+                        <input type="hidden" name="course_id" value="{{ course_data[0] }}" />
                         <button class="start-the-course-btn" type="submit">
                             <svg width="50"
                                  height="50"

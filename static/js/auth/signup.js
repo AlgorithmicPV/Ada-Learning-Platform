@@ -53,3 +53,9 @@ document
 //       ".wrapper_error_fields_are_not_completed"
 //     ).style.display = "none";
 //   });
+
+const clearinput = () => {
+  document.getElementById("search").value = "";
+};
+
+window.addEventListener("pageshow", clearinput);
