@@ -10,54 +10,97 @@ const menu_cloppased_button_small_Screen = document.querySelector(
   ".menu-cloppased-button.small-screen"
 );
 const theme_toggle_button = document.querySelector(".theme-toggle-btn");
+const buttons = document.querySelectorAll(".navigation-bar-wrapper button");
+const texts_in_buttons = document.querySelectorAll(
+  ".navigation-bar-wrapper button p"
+);
+const button_svgs = document.querySelectorAll(
+  ".navigation-bar-wrapper button svg"
+);
 
 let collapsed_menu = false;
 let small_menu_showing = false;
 let is_dark_theme = true;
 
+const collapsed_menu_func = () => {
+  collapsed_menu = true;
+
+  for (let i = 1; i < buttons.length; i++) {
+    buttons[i].style.width = "min-content";
+  }
+
+  for (let i = 0; i < texts_in_buttons.length; i++) {
+    texts_in_buttons[i].style.display = "none";
+  }
+
+  for (let i = 0; i < button_svgs.length; i++) {
+    button_svgs[i].style.marginRight = "0";
+  }
+  navigation_bar.style.width = "min-content";
+  dashboard_wrapper.style.width = "100vw";
+};
+
+const expanded_menu_func = () => {
+  collapsed_menu = false;
+
+  for (let i = 0; i < texts_in_buttons.length; i++) {
+    texts_in_buttons[i].style.display = "block";
+  }
+
+  for (let i = 1; i < buttons.length; i++) {
+    buttons[i].style.width = "150px";
+  }
+
+  for (let i = 0; i < button_svgs.length; i++) {
+    button_svgs[i].style.marginRight = "10px";
+  }
+
+  navigation_bar.style.width = "200px";
+  dashboard_wrapper.style.width = "calc(100vw - 200px)";
+};
+
+window.addEventListener("load", () => {
+  if (window.innerWidth > 1280) {
+    // Runs only in large screens
+    var menu_mode = localStorage.getItem("menu-mode");
+    if (menu_mode == "collapsed") {
+      collapsed_menu_func();
+    } else if (menu_mode == "expanded") {
+      expanded_menu_func();
+    } else {
+      expanded_menu_func();
+    }
+  } else {
+    dashboard_wrapper.style.width = "100vw";
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 1280) {
+    // Runs only in large screens
+    var menu_mode = localStorage.getItem("menu-mode");
+    if (menu_mode == "collapsed") {
+      collapsed_menu_func();
+    } else if (menu_mode == "expanded") {
+      expanded_menu_func();
+    } else {
+      expanded_menu_func();
+    }
+  } else {
+    dashboard_wrapper.style.width = "100vw";
+  }
+});
+
 /* Collpases and Opens the veritcal navigation bar when the collpased button clicks */
 menu_cloppased_button.addEventListener("click", () => {
-  const buttons = document.querySelectorAll(".navigation-bar-wrapper button");
-  const texts_in_buttons = document.querySelectorAll(
-    ".navigation-bar-wrapper button p"
-  );
-  const button_svgs = document.querySelectorAll(
-    ".navigation-bar-wrapper button svg"
-  );
-
   if (collapsed_menu != true) {
-    collapsed_menu = true;
-
-    for (let i = 1; i < buttons.length; i++) {
-      buttons[i].style.width = "min-content";
-    }
-
-    for (let i = 0; i < texts_in_buttons.length; i++) {
-      texts_in_buttons[i].style.display = "none";
-    }
-
-    for (let i = 0; i < button_svgs.length; i++) {
-      button_svgs[i].style.marginRight = "0";
-    }
-    navigation_bar.style.width = "min-content";
-    dashboard_wrapper.style.width = "100vw";
+    collapsed_menu_func();
+    menu_mode = "collapsed";
+    localStorage.setItem("menu-mode", menu_mode);
   } else {
-    collapsed_menu = false;
-
-    for (let i = 0; i < texts_in_buttons.length; i++) {
-      texts_in_buttons[i].style.display = "block";
-    }
-
-    for (let i = 1; i < buttons.length; i++) {
-      buttons[i].style.width = "150px";
-    }
-
-    for (let i = 0; i < button_svgs.length; i++) {
-      button_svgs[i].style.marginRight = "10px";
-    }
-
-    navigation_bar.style.width = "200px";
-    dashboard_wrapper.style.width = "calc(100vw - 200px)";
+    expanded_menu_func();
+    menu_mode = "expanded";
+    localStorage.setItem("menu-mode", menu_mode);
   }
 });
 
@@ -82,30 +125,6 @@ close_button_small_screen_menu.addEventListener("click", () => {
     small_menu_showing = false;
   }
 });
-
-// let colour_variables = [
-//   "--background-color",
-//   "--text-color",
-//   "--border-color",
-//   "--second-text-color",
-//   "--primary-color",
-// ];
-
-// let dark_theme_colours = [
-//   "#010104",
-//   "#ebe9fc",
-//   "#ebe9fc22",
-//   "#ebe9fc70",
-//   "#3a31d8",
-// ];
-
-// let white_theme_colours = [
-//   "#FBFBFE",
-//   "#050316",
-//   "#0503161e",
-//   "#0503167a",
-//   "#2F27CE",
-// ];
 
 let colour_variables = [
   "--background-color",
@@ -164,7 +183,7 @@ const dark_theme = () => {
   }
   is_dark_theme = true;
   theme_preference = "dark";
-  localStorage.setItem("theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
+  localStorage.setItem("app-theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
 };
 
 const light_theme = () => {
@@ -176,7 +195,7 @@ const light_theme = () => {
   }
   is_dark_theme = false;
   theme_preference = "light";
-  localStorage.setItem("theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
+  localStorage.setItem("app-theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
 };
 
 /* Changes the theme when the user clicks on theme toggle button */
@@ -189,7 +208,7 @@ theme_toggle_button.addEventListener("click", () => {
 });
 
 // Gets the prefered_theme if user has selected from the local storage
-var prefered_theme = localStorage.getItem("theme-preference");
+var prefered_theme = localStorage.getItem("app-theme-preference");
 
 if (prefered_theme == "dark") {
   dark_theme();

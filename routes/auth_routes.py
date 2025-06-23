@@ -38,6 +38,7 @@ google = oauth.register(
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    session.clear()
     if (
         request.method == "POST"
     ):  # If the request method is POST, it means the user is trying to log in
@@ -98,6 +99,7 @@ def login():
 # Create an account page
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
+    session.clear()
     conn = sqlite3.connect("database/app.db")
     cursor = conn.cursor()
 
@@ -185,6 +187,7 @@ def signup():
 # login for google
 @auth_bp.route("/login/google")
 def login_google():
+    session.clear()
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
         return google.authorize_redirect(redirect_uri)
@@ -195,6 +198,7 @@ def login_google():
 
 @auth_bp.route("/authorize/google")
 def authorize_google():
+    session.clear()
     token = google.authorize_access_token()
     session["user"] = token
     conn = sqlite3.connect("database/app.db")

@@ -1,74 +1,26 @@
-# data = [
-#     1,
-#     "Course A",
-#     "img/course_a1.png",
-#     "img/course_a2.png",
-#     "English",
-#     75,
-#     2,
-#     "Course B",
-#     "img/course_b1.png",
-#     "img/course_b2.png",
-#     "Spanish",
-#     40,
-#     3,
-#     "Course C",
-#     "img/course_c1.png",
-#     "img/course_c2.png",
-#     "French",
-#     90,
-#     4,
-#     "Course D",
-#     "img/course_d1.png",
-#     "img/course_d2.png",
-#     "German",
-#     60,
-#     5,
-#     "Course E",
-#     "img/course_e1.png",
-#     "img/course_e2.png",
-#     "Japanese",
-#     25,
-# ]
+# import sqlite3
 
+# conn = sqlite3.connect("database/app.db")
+# cursor = conn.cursor()
 
-# def divide_array_into_chunks(
-#     dividing_array, chunk_size
-# ):  # Divides an array into chunks of a specified size
-#     new_array = []
-#     for i in range(
-#         int((len(dividing_array)) / (chunk_size))
-#     ):  # Iterates over the array in chunks
-#         new_array.append(
-#             dividing_array[(chunk_size * i) : (chunk_size + (chunk_size * i))]
-#         )  # Appends the chunk to the new array,
-#     return new_array
+# course_id = "7da7fd5f-8ff3-4ef7-9431-20c42961f16e"
 
+# cursor.execute(
+#     "SELECT lesson_id, lesson_title FROM Lesson WHERE course_id = ?", (course_id,)
+# )
+# lessons_rows = cursor.fetchall()
 
-# test = divide_array_into_chunks(data, 6)
+# print(len(lessons_rows))
 
-# print(test)
+# # for lesson_row in lessons_rows:
+# #     print(lesson_row[1])
 
+import markdown
 
-all_course = [
-    [1, "Course A", "img/course_a1.png", "img/course_a2.png", "English", 75],
-    [2, "Course B", "img/course_b1.png", "img/course_b2.png", "Spanish", 40],
-    [3, "Course C", "img/course_c1.png", "img/course_c2.png", "French", 90],
-    [4, "Course D", "img/course_d1.png", "img/course_d2.png", "German", 60],
-    [5, "Course E", "img/course_e1.png", "img/course_e2.png", "Japanese", 25],
-]
+test = """
+# Setting Up Python Before we start coding, we need to make sure Python is installed. ### Step 1: Install Python 1. Go to [https://www.python.org/downloads](https://www.python.org/downloads) 2. Download the latest version for your computer 3. During installation, make sure you tick the box that says **“Add Python to PATH”** ### Step 2: Try it out! Open your terminal (or command prompt) and type: ```bash python --version ``` You should see something like `Python 3.11.2` — that means it’s working! ### Optional: Use an Editor You can write code in: - **VS Code** (recommended) - **Thonny** (super beginner-friendly) - Or even just Notepad for now! You’re ready! Let’s write your first program.
+"""
 
+ouput = markdown.markdown(test)
 
-search_key = input("search: ").lower()
-
-
-test_two = []
-
-for course_block in all_course:
-    for word in course_block:
-        word = str(word).lower()
-        if search_key in word:
-            print(course_block)
-            # test_two.append(course_block)
-
-print(test_two)
+print(ouput)

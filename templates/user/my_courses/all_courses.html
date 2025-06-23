@@ -34,7 +34,7 @@
                     </div>
                     <!-- This form is for small screens and this hides in large screens -->
                     <form class="small-screen-start-course"
-                          action="{{ url_for("my_courses.all_course") }}"
+                          action="{{ url_for("my_courses.all_courses") }}"
                           method="post">
                         <input type="hidden" name="course_id" value="{{ course_data[0] }}" />
                         <button class="start-the-course-btn" type="submit">
@@ -63,7 +63,7 @@
                 </div>
                 <!-- This shows when the user hovers over the course card -->
                 <div class="hover">
-                    <form action="{{ url_for("my_courses.all_course") }}"  method="post">
+                    <form action="{{ url_for("my_courses.all_courses") }}"  method="post">
                         <input type="hidden" name="course_id" value="{{ course_data[0] }}" />
                         <button class="start-the-course-btn" type="submit">
                             <svg width="50"

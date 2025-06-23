@@ -1,0 +1,18 @@
+{% extends 'user/base.html' %}
+{% block title %}Code Editor{% endblock %}
+{%
+block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/user/code_editor.css') }}" />
+{% endblock %}
+<div class="coding-env">
+    <div class="code-editor">
+        <wc-monaco-editor language="{{ language }}"></wc-monaco-editor>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script type="module"
+        src="https://cdn.jsdelivr.net/gh/vanillawc/wc-monaco-editor@1/index.js"></script>

@@ -25,7 +25,7 @@ def divide_array_into_chunks(
 
 # This route is used to display all the courses available in the application
 @my_courses_bp.route("/my-courses", methods=["GET", "POST"])
-def all_course():
+def all_courses():
     if "user_id" in session:
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
@@ -77,7 +77,6 @@ def all_course():
 
             for j in range(5):  # Appends the course data into a new array
                 course_data_with_percentage.append(one_course_set[j])
-                # print(one_course_set[5])
 
             course_data_with_percentage.append(
                 percentage_of_the_completion
@@ -98,37 +97,16 @@ def all_course():
         session["all_courses_data"] = divided_array
 
         if request.method == "POST":
+            # remember put an if statement check the validity of the course_id
             course_id = request.form.get("course_id")
-            print(course_id)
-            conn = sqlite3.connect("database/app.db")
-            cursor = conn.cursor()
 
-            cursor.execute(
-                "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
-            )
+            session["course_id"] = course_id
 
-            course_name = cursor.fetchone()[0]
-            formated_course_name = "-".join(
-                course_name.split()
-            )  # Formats the course name to be used in the URL
-            return redirect(
-                url_for("my_courses.course", formated_course_name=formated_course_name)
-            )
-
+            return redirect(url_for("my_courses.intermediate_route"))
+        conn.close()
         return render_template(
             "user/my_courses/all_courses.html", courses_data=divided_array
         )
-    else:
-        return redirect(url_for("auth.login"))
-
-
-@my_courses_bp.route("/my-courses/<formated_course_name>")
-def course(formated_course_name):
-    if "user_id" in session:
-        course_name = " ".join(
-            formated_course_name.split("-")
-        )  # Converts the formatted course name back to the original course name by replacing '-' with ' '
-        return render_template("user/my_courses/course.html", course_name=course_name)
     else:
         return redirect(url_for("auth.login"))
 
@@ -145,7 +123,7 @@ def search_courses():
             keyword = request.args.get(
                 "search"
             ).lower()  # Gets the keyword entered by the user and converts it to lowercase for case-insensitive search
-            if keyword:
+            if keyword != " " and keyword != "":
                 for course_block in all_courses_data:
                     for word in course_block:
                         word = str(
@@ -157,17 +135,105 @@ def search_courses():
                             filtered_courses.append(course_block)
                             break
 
-        return render_template(
-            "user/my_courses/search_result_all_courses.html",
-            courses_data=filtered_courses,
-        )  # Uses the same variable name as the original route to reduce the repetition of code in the template
+                return render_template(
+                    "user/my_courses/search_result_all_courses.html",
+                    courses_data=filtered_courses,
+                )  # Uses the same variable name as the original route to reduce the repetition of code in the template
+            else:
+                return redirect(url_for("my_courses.all_courses"))
+    else:
+        return redirect(url_for("auth.login"))
 
 
-# This route is used to display the courses that the user has completed
-@my_courses_bp.route("/my-courses/completed", methods=["GET", "POST"])
-def completed_courses():
+@my_courses_bp.route("/my-courses/intermediate", methods=["GET", "POST"])
+def intermediate_route():
     if "user_id" in session:
-        return render_template("user/my_courses/completed_courses.html")
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+        course_id = session.get("course_id")
+        if request.method == "POST":
+            lesson_id = request.form.get("lesson_id")
+        else:
+            cursor.execute(
+                "SELECT lesson_id FROM Lesson WHERE course_id = ?", (course_id,)
+            )
+            lesson_id = cursor.fetchone()[0]
+
+        cursor.execute("SELECT language FROM Course WHERE  course_id = ?", (course_id,))
+        language = cursor.fetchone()[0].lower()
+        session['language'] = language
+        
+
+        cursor.execute(
+            "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
+        )
+        lesson_title = cursor.fetchone()[0]
+        session["lesson_title"] = lesson_title
+
+        cursor.execute(
+            "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
+        )
+        course_name = cursor.fetchone()[0]
+        session["course_name"] = course_name
+
+        user_id = session.get("user_id")
+
+        cursor.execute(
+            "SELECT lesson_id, lesson_title FROM Lesson WHERE course_id = ?",
+            (course_id,),
+        )
+        lessons_data = cursor.fetchall()
+        session["lessons_data"] = lessons_data
+
+        cursor.execute(
+            """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
+            (
+                user_id,
+                course_id,
+            ),
+        )
+        number_of_completed_lessons = cursor.fetchall()[0][0]
+        percentage_of_completion = round(
+            (number_of_completed_lessons / len(lessons_data)) * 100
+        )
+        session["percentage_of_completion"] = percentage_of_completion
+
+        cursor.execute(
+            "SELECT content FROM Lesson WHERE lesson_id = ? AND course_id = ?",
+            (lesson_id, course_id),
+        )
+        lesson_content = cursor.fetchall()
+        session["lesson_content"] = lesson_content[0][0]
+
+        formated_course_name = "-".join(
+                course_name.split(" ")
+            ) 
+        
+        formated_lesson_name = "-".join(
+                lesson_title.split(" ")
+            ) 
+
+        return redirect(
+            url_for(
+                "my_courses.lesson", course_name=formated_course_name, lesson_name=formated_lesson_name
+            )
+        )
+
+
+@my_courses_bp.route("/my-courses/<course_name>/<lesson_name>", methods=["GET", "POST"])
+def lesson(course_name, lesson_name):
+    if "user_id" in session:
+        return render_template(
+            "user/my_courses/lesson.html",
+            course_name=session.get("course_name"),
+            lesson_title=session.get("lesson_title"),
+            lessons_data=session.get("lessons_data"),
+            percentage_of_completion=session.get("percentage_of_completion"),
+            lesson_content=session.get("lesson_content"),
+            language = session.get("language")
+        )
+    else:
+        return redirect(url_for("auth.login"))
 
 
 # This route is used to display the AI-generated courses
@@ -175,3 +241,14 @@ def completed_courses():
 def ai_courses():
     if "user_id" in session:
         return render_template("user/my_courses/ai_generated_courses.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route is used to display the courses that the user has completed
+@my_courses_bp.route("/my-courses/completed-courses", methods=["GET", "POST"])
+def completed_courses():
+    if "user_id" in session:
+        return render_template("user/my_courses/completed_courses.html")
+    else:
+        return redirect(url_for("auth.login"))

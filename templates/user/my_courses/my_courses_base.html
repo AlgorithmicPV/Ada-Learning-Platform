@@ -11,7 +11,7 @@ block extra_css %}
         <!--navigation buttons-->
         <div class="menu">
             <button class="{% if request.path == '/my-courses' %}sub-active{% endif %}"
-                    onclick="window.location.href='{{ url_for("my_courses.all_course") }}'">Courses</button>
+                    onclick="window.location.href='{{ url_for("my_courses.all_courses") }}'">Courses</button>
             <button class="{% if request.path == '/my-courses/completed' %}sub-active{% endif %}"
                     onclick="window.location.href='{{ url_for("my_courses.completed_courses") }}'">
                 Completed Courses
