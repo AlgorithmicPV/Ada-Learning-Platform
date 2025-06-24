@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 import sqlite3
+from datetime import datetime
+import uuid
+
 
 my_courses_bp = Blueprint("my_courses", __name__)
 
@@ -102,7 +105,10 @@ def all_courses():
 
             session["course_id"] = course_id
 
+            session["lesson_order"] = 1
+
             return redirect(url_for("my_courses.intermediate_route"))
+        
         conn.close()
         return render_template(
             "user/my_courses/all_courses.html", courses_data=divided_array
@@ -154,15 +160,19 @@ def intermediate_route():
         if request.method == "POST":
             lesson_id = request.form.get("lesson_id")
         else:
+            
+            lesson_order_numer = session.get("lesson_order")
+
             cursor.execute(
-                "SELECT lesson_id FROM Lesson WHERE course_id = ?", (course_id,)
+                "SELECT lesson_id FROM Lesson WHERE course_id = ? AND lesson_order = ?", (course_id, lesson_order_numer,)
             )
             lesson_id = cursor.fetchone()[0]
 
+        session["lesson_id"] = lesson_id
+
         cursor.execute("SELECT language FROM Course WHERE  course_id = ?", (course_id,))
         language = cursor.fetchone()[0].lower()
-        session['language'] = language
-        
+        session["language"] = language
 
         cursor.execute(
             "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
@@ -205,19 +215,131 @@ def intermediate_route():
         lesson_content = cursor.fetchall()
         session["lesson_content"] = lesson_content[0][0]
 
-        formated_course_name = "-".join(
-                course_name.split(" ")
-            ) 
-        
-        formated_lesson_name = "-".join(
-                lesson_title.split(" ")
-            ) 
+        formated_course_name = "-".join(course_name.split(" "))
+
+        formated_lesson_name = "-".join(lesson_title.split(" "))
+
+        cursor.execute(
+            "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
+            (course_id,),
+        )
+
+        number_of_lessons = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
+            (lesson_id, course_id),
+        )
+
+        current_lesson_order_number = cursor.fetchone()[0]
+
+        next_lesson_order_number = current_lesson_order_number + 1
+
+        prev_lesson_order_number = current_lesson_order_number - 1
+
+        if next_lesson_order_number <= number_of_lessons:
+            cursor.execute(
+                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
+                (next_lesson_order_number, course_id),
+            )
+            next_lesson_id = cursor.fetchone()[0]
+            session["next_lesson_id"] = next_lesson_id
+        else:
+            session["next_lesson_id"] = lesson_id
+
+        if prev_lesson_order_number != 0:
+            cursor.execute(
+                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
+                (prev_lesson_order_number, course_id),
+            )
+            prev_lesson_id = cursor.fetchone()[0]
+            session["prev_lesson_id"] = prev_lesson_id
+        else:
+            session["prev_lesson_id"] = lesson_id
+
+        cursor.close()
 
         return redirect(
             url_for(
-                "my_courses.lesson", course_name=formated_course_name, lesson_name=formated_lesson_name
+                "my_courses.lesson",
+                course_name=formated_course_name,
+                lesson_name=formated_lesson_name,
             )
         )
+
+
+@my_courses_bp.route("/my-courses/lesson-completed", methods=["GET", "POST"])
+def lesson_completed():
+    if "user_id" in session:
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        lesson_id = session.get("lesson_id")
+        course_id = session.get("course_id")
+
+
+        if request.method == "POST":
+            completed = request.form.get("completed")
+
+            if completed == "completed":
+
+                cursor.execute(
+                    "SELECT lesson_id FROM user_lesson WHERE status ='completed' "
+                )
+
+                completed_lessons_id = cursor.fetchall()
+
+                lesson_ids = []
+
+                for tuple_item in completed_lessons_id:
+                    for uuid in tuple_item:
+                        lesson_ids.append(uuid)
+
+
+                if lesson_id not in lesson_ids:
+
+                    user_id = session.get("user_id")
+
+                    import uuid
+
+                    user_lesson_id = str(uuid.uuid4())
+
+                    timestamp = datetime.now().isoformat(timespec="seconds")
+
+                    cursor.execute(
+                        "INSERT INTO user_lesson (id, lesson_id, user_id, status, completed_at) VALUES (?, ?, ?, ?, ?)",
+                        (user_lesson_id, lesson_id, user_id, "completed", timestamp),
+                    )
+                    
+                     
+
+                    session["lesson_id"] = session.get("next_lesson_id")
+                    conn.commit()
+
+
+        cursor.execute("SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?", (lesson_id, course_id),)
+
+        current_lesson_order_number = cursor.fetchone()[0] 
+        
+        cursor.execute("SELECT COUNT(lesson_order) FROM Lesson WHERE course_id = ? ", (course_id,),)
+
+        total_number_of_lessons  = cursor.fetchone()[0]
+        
+
+
+
+        if current_lesson_order_number < total_number_of_lessons:
+            session["lesson_order"] = current_lesson_order_number + 1
+        else:
+            session["lesson_order"] = current_lesson_order_number
+        
+        cursor.close()
+
+
+        return redirect(url_for("my_courses.intermediate_route"))
+
+    else:
+        return redirect(url_for("auth.login"))
 
 
 @my_courses_bp.route("/my-courses/<course_name>/<lesson_name>", methods=["GET", "POST"])
@@ -230,7 +352,9 @@ def lesson(course_name, lesson_name):
             lessons_data=session.get("lessons_data"),
             percentage_of_completion=session.get("percentage_of_completion"),
             lesson_content=session.get("lesson_content"),
-            language = session.get("language")
+            language=session.get("language"),
+            next_lesson_id=session.get("next_lesson_id"),
+            prev_lesson_id=session.get("prev_lesson_id"),
         )
     else:
         return redirect(url_for("auth.login"))

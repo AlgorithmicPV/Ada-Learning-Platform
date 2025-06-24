@@ -15,12 +15,22 @@
 # # for lesson_row in lessons_rows:
 # #     print(lesson_row[1])
 
-import markdown
+import sqlite3
 
-test = """
-# Setting Up Python Before we start coding, we need to make sure Python is installed. ### Step 1: Install Python 1. Go to [https://www.python.org/downloads](https://www.python.org/downloads) 2. Download the latest version for your computer 3. During installation, make sure you tick the box that says **“Add Python to PATH”** ### Step 2: Try it out! Open your terminal (or command prompt) and type: ```bash python --version ``` You should see something like `Python 3.11.2` — that means it’s working! ### Optional: Use an Editor You can write code in: - **VS Code** (recommended) - **Thonny** (super beginner-friendly) - Or even just Notepad for now! You’re ready! Let’s write your first program.
-"""
+conn = sqlite3.connect("database/app.db")
+cursor = conn.cursor()
 
-ouput = markdown.markdown(test)
+cursor.execute("SELECT lesson_id FROM user_lesson WHERE status ='completed' ")
 
-print(ouput)
+completed_lessons_id = cursor.fetchall()
+
+lesson_ids = []
+
+for tuple_item in completed_lessons_id:
+    for uuid in tuple_item:
+        lesson_ids.append(uuid)
+
+
+
+if "03e1fcbe-406b-4494-b5as7-a4f7d0b935ae" not in lesson_ids:
+    print("fine")

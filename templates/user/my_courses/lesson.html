@@ -1,17 +1,21 @@
 {% extends 'user/base.html' %}
-{% block title %}{{ course_name }} - {{ lesson_title }}{% endblock %}
+{% block title %}
+    {{ course_name }} - {{
+    lesson_title }}
+{% endblock %}
 {% block content %}
     {% block extra_css %}
         <link rel="stylesheet"
               href="{{ url_for('static', filename='css/user/my_courses/course.css') }}" />
         <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+              href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
+        <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     {% endblock %}
     <div class="lesson-cont-wrapper">
         <!--Lesson top bar with course name and percentage completion-->
         <div class="lesson-cont-top-bar">
             <p class="course-name">{{ course_name }}</p>
-            <p class="percentage-completion">{{ percentage_of_completion }}</p>
+            <p class="percentage-completion">{{ percentage_of_completion }}%</p>
         </div>
         <!--End of lesson top bar-->
         <!--Lesson content-->
@@ -20,7 +24,7 @@
             <div class="lesson-menu-bar">
                 {% for lesson_data in lessons_data %}
                     <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
-                        <input type="hidden" name="lesson_id" value="{{ lesson_data[0] }}">
+                        <input type="hidden" name="lesson_id" value="{{ lesson_data[0] }}" />
                         <button type="submit"
                                 class="{% if lesson_data[1] == lesson_title %} active-lesson {% else %} lesson-btn {% endif %}">
                             {{ lesson_data[1] }}
@@ -43,48 +47,57 @@
                         </svg>
                     </button>
                     <div class="next-prev-btns-wrapper">
-                        <button class="prev-btn">
-                            <svg width="20"
-                                 height="20"
-                                 viewBox="0 0 20 20"
-                                 fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_239_2130)">
-                                <path d="M14.3077 20.0005C14.198 20.0011 14.0893 19.9801 13.9878 19.9386C13.8863 19.8972 13.7939 19.836 13.716 19.7588L6.90771 12.9505C6.51968 12.5634 6.21182 12.1036 6.00177 11.5974C5.79172 11.0912 5.68359 10.5485 5.68359 10.0005C5.68359 9.45242 5.79172 8.90974 6.00177 8.40353C6.21182 7.89732 6.51968 7.43753 6.90771 7.05048L13.716 0.242147C13.7937 0.164448 13.886 0.102814 13.9875 0.0607636C14.089 0.0187133 14.1978 -0.00292969 14.3077 -0.00292969C14.4176 -0.00292969 14.5264 0.0187133 14.6279 0.0607636C14.7294 0.102814 14.8217 0.164448 14.8994 0.242147C14.9771 0.319845 15.0387 0.412087 15.0808 0.513606C15.1228 0.615124 15.1445 0.723931 15.1445 0.833813C15.1445 0.943696 15.1228 1.0525 15.0808 1.15402C15.0387 1.25554 14.9771 1.34778 14.8994 1.42548L8.09104 8.23381C7.62287 8.70256 7.35991 9.33798 7.35991 10.0005C7.35991 10.663 7.62287 11.2984 8.09104 11.7671L14.8994 18.5755C14.9775 18.6529 15.0395 18.7451 15.0818 18.8467C15.1241 18.9482 15.1459 19.0571 15.1459 19.1671C15.1459 19.2772 15.1241 19.3861 15.0818 19.4876C15.0395 19.5892 14.9775 19.6813 14.8994 19.7588C14.8215 19.836 14.7292 19.8972 14.6276 19.9386C14.5261 19.9801 14.4174 20.0011 14.3077 20.0005Z" fill="#EBE9FC" />
-                                </g>
-                                <defs>
-                                <clipPath id="clip0_239_2130">
-                                <rect width="20" height="20" fill="white" />
-                                </clipPath>
-                                </defs>
-                            </svg>
-                        </button>
-                        <button class="next-btn">
-                            <svg width="20"
-                                 height="20"
-                                 viewBox="0 0 20 20"
-                                 fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <g clip-path="url(#clip0_239_2132)">
-                                <path d="M5.69229 20.0005C5.80196 20.0011 5.91068 19.9801 6.01221 19.9386C6.11375 19.8972 6.20609 19.836 6.28396 19.7588L13.0923 12.9505C13.4803 12.5634 13.7882 12.1036 13.9982 11.5974C14.2083 11.0912 14.3164 10.5485 14.3164 10.0005C14.3164 9.45242 14.2083 8.90974 13.9982 8.40353C13.7882 7.89732 13.4803 7.43753 13.0923 7.05048L6.28396 0.242147C6.20626 0.164448 6.11402 0.102814 6.0125 0.0607636C5.91098 0.0187133 5.80217 -0.00292969 5.69229 -0.00292969C5.58241 -0.00292969 5.4736 0.0187133 5.37208 0.0607636C5.27057 0.102814 5.17832 0.164448 5.10063 0.242147C5.02293 0.319845 4.96129 0.412087 4.91924 0.513606C4.87719 0.615124 4.85555 0.723931 4.85555 0.833813C4.85555 0.943696 4.87719 1.0525 4.91924 1.15402C4.96129 1.25554 5.02293 1.34778 5.10063 1.42548L11.909 8.23381C12.3771 8.70256 12.6401 9.33798 12.6401 10.0005C12.6401 10.663 12.3771 11.2984 11.909 11.7671L5.10063 18.5755C5.02252 18.6529 4.96052 18.7451 4.91821 18.8467C4.87591 18.9482 4.85413 19.0571 4.85413 19.1671C4.85413 19.2772 4.87591 19.3861 4.91821 19.4876C4.96052 19.5892 5.02252 19.6813 5.10063 19.7588C5.17849 19.836 5.27084 19.8972 5.37237 19.9386C5.4739 19.9801 5.58262 20.0011 5.69229 20.0005Z" fill="#EBE9FC" />
-                                </g>
-                                <defs>
-                                <clipPath id="clip0_239_2132">
-                                <rect width="20" height="20" fill="white" transform="matrix(-1 0 0 1 20 0)" />
-                                </clipPath>
-                                </defs>
+                        <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
+                            <input type="hidden" name="lesson_id" value="{{ prev_lesson_id }}">
+                            <button class="prev-btn">
+                                <svg width="20"
+                                     height="20"
+                                     viewBox="0 0 20 20"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_239_2130)">
+                                    <path d="M14.3077 20.0005C14.198 20.0011 14.0893 19.9801 13.9878 19.9386C13.8863 19.8972 13.7939 19.836 13.716 19.7588L6.90771 12.9505C6.51968 12.5634 6.21182 12.1036 6.00177 11.5974C5.79172 11.0912 5.68359 10.5485 5.68359 10.0005C5.68359 9.45242 5.79172 8.90974 6.00177 8.40353C6.21182 7.89732 6.51968 7.43753 6.90771 7.05048L13.716 0.242147C13.7937 0.164448 13.886 0.102814 13.9875 0.0607636C14.089 0.0187133 14.1978 -0.00292969 14.3077 -0.00292969C14.4176 -0.00292969 14.5264 0.0187133 14.6279 0.0607636C14.7294 0.102814 14.8217 0.164448 14.8994 0.242147C14.9771 0.319845 15.0387 0.412087 15.0808 0.513606C15.1228 0.615124 15.1445 0.723931 15.1445 0.833813C15.1445 0.943696 15.1228 1.0525 15.0808 1.15402C15.0387 1.25554 14.9771 1.34778 14.8994 1.42548L8.09104 8.23381C7.62287 8.70256 7.35991 9.33798 7.35991 10.0005C7.35991 10.663 7.62287 11.2984 8.09104 11.7671L14.8994 18.5755C14.9775 18.6529 15.0395 18.7451 15.0818 18.8467C15.1241 18.9482 15.1459 19.0571 15.1459 19.1671C15.1459 19.2772 15.1241 19.3861 15.0818 19.4876C15.0395 19.5892 14.9775 19.6813 14.8994 19.7588C14.8215 19.836 14.7292 19.8972 14.6276 19.9386C14.5261 19.9801 14.4174 20.0011 14.3077 20.0005Z" fill="#EBE9FC" />
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0_239_2130">
+                                    <rect width="20" height="20" fill="white" />
+                                    </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
+                        </form>
+                        <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
+                            <input type="hidden" name="lesson_id" value="{{ next_lesson_id }}">
+                            <button class="next-btn" type="submit">
+                                <svg width="20"
+                                     height="20"
+                                     viewBox="0 0 20 20"
+                                     fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <g clip-path="url(#clip0_239_2132)">
+                                    <path d="M5.69229 20.0005C5.80196 20.0011 5.91068 19.9801 6.01221 19.9386C6.11375 19.8972 6.20609 19.836 6.28396 19.7588L13.0923 12.9505C13.4803 12.5634 13.7882 12.1036 13.9982 11.5974C14.2083 11.0912 14.3164 10.5485 14.3164 10.0005C14.3164 9.45242 14.2083 8.90974 13.9982 8.40353C13.7882 7.89732 13.4803 7.43753 13.0923 7.05048L6.28396 0.242147C6.20626 0.164448 6.11402 0.102814 6.0125 0.0607636C5.91098 0.0187133 5.80217 -0.00292969 5.69229 -0.00292969C5.58241 -0.00292969 5.4736 0.0187133 5.37208 0.0607636C5.27057 0.102814 5.17832 0.164448 5.10063 0.242147C5.02293 0.319845 4.96129 0.412087 4.91924 0.513606C4.87719 0.615124 4.85555 0.723931 4.85555 0.833813C4.85555 0.943696 4.87719 1.0525 4.91924 1.15402C4.96129 1.25554 5.02293 1.34778 5.10063 1.42548L11.909 8.23381C12.3771 8.70256 12.6401 9.33798 12.6401 10.0005C12.6401 10.663 12.3771 11.2984 11.909 11.7671L5.10063 18.5755C5.02252 18.6529 4.96052 18.7451 4.91821 18.8467C4.87591 18.9482 4.85413 19.0571 4.85413 19.1671C4.85413 19.2772 4.87591 19.3861 4.91821 19.4876C4.96052 19.5892 5.02252 19.6813 5.10063 19.7588C5.17849 19.836 5.27084 19.8972 5.37237 19.9386C5.4739 19.9801 5.58262 20.0011 5.69229 20.0005Z" fill="#EBE9FC" />
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0_239_2132">
+                                    <rect width="20" height="20" fill="white" transform="matrix(-1 0 0 1 20 0)" />
+                                    </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="search-keywords-wrapper">
+                        <input type="text" id="searchBox" class="searchBox" placeholder="Search..." />
+                        <button class="search-btn" onclick="show_search_box()">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 id="Outline"
+                                 viewBox="0 0 24 24"
+                                 width="512"
+                                 height="512">
+                                <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
                             </svg>
                         </button>
                     </div>
-                    <button class="search-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg"
-                             id="Outline"
-                             viewBox="0 0 24 24"
-                             width="512"
-                             height="512">
-                            <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
-                        </svg>
-                    </button>
                 </div>
                 <!--End of top bar-->
                 <!--Lesson title, content and buttons to hear the sound of the lesson content-->
@@ -101,13 +114,17 @@
                         </svg>
                     </button>
                 </div>
+                <!-- <div id="lessonContent"></div> -->
                 <!--End of lesson title and buttons-->
                 <!--Lesson content area where the lesson content is displayed-->
-                <div class="content">{{ lesson_content | safe }}</div>
+                <div class="content" id="content">{{ lesson_content | safe }}</div>
                 <!-- Using safe filter to render HTML content -->
                 <div class="down-btn-wrapper">
                     <button class="open-code-editor-btn">Open Editor</button>
-                    <button class="done-btn">Done</button>
+                    <form action="{{ url_for("my_courses.lesson_completed") }}" method="post">
+                        <input type="hidden" name="completed" value="completed">
+                        <button class="done-btn" type="submit">Done</button>
+                    </form>
                 </div>
             </div>
             <!--End of lesson content area-->
@@ -122,4 +139,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
     <script>hljs.highlightAll();</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
+    <script>
+  const searchBox = document.getElementById("searchBox");
+  const contentEl = document.querySelector(".content");
+  const markInstance = new Mark(contentEl);
+
+  searchBox.addEventListener("input", () => {
+    const keyword = searchBox.value.trim();
+    markInstance.unmark({
+      done: () => {
+        if (keyword !== "") {
+          markInstance.mark(keyword);
+        }
+      }
+    });
+  });
+    </script>
 {% endblock %}

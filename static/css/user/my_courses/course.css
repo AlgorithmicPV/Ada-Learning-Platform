@@ -178,6 +178,31 @@ code {
   border-radius: 15px; /* Adds rounded corners for a smoother look for code blocks */
 }
 
+.speak-btn:hover {
+  background-color: var(--border-color) !important;
+}
+
+mark {
+  background-color: lightblue !important;
+}
+
+.search-keywords-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+}
+
+.searchBox {
+  visibility: hidden;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: medium;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--text-color);
+  padding: 5px;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .lesson-menu-bar {
