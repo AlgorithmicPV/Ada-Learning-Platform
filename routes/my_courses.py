@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for, request, abort
 import sqlite3
 from datetime import datetime
 import uuid
@@ -100,15 +100,29 @@ def all_courses():
         session["all_courses_data"] = divided_array
 
         if request.method == "POST":
-            # remember put an if statement check the validity of the course_id
+
+            cursor.execute("SELECT course_id FROM Course")
+
+            course_id_tuple = cursor.fetchall()
+
+            course_ids = []
+
+            for element in course_id_tuple:
+                for course_id in element:
+                    course_ids.append(course_id)
+
+            
             course_id = request.form.get("course_id")
+
+            if course_id not in course_ids:
+                abort(404)
 
             session["course_id"] = course_id
 
             session["lesson_order"] = 1
 
             return redirect(url_for("my_courses.intermediate_route"))
-        
+
         conn.close()
         return render_template(
             "user/my_courses/all_courses.html", courses_data=divided_array
@@ -150,34 +164,45 @@ def search_courses():
     else:
         return redirect(url_for("auth.login"))
 
-
+# This route is to process all the lesson data and works as an intermediate route between the all_courses route and the lesson route.
+# It fetches the lesson data from the database and stores it in the session for later use
 @my_courses_bp.route("/my-courses/intermediate", methods=["GET", "POST"])
 def intermediate_route():
     if "user_id" in session:
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
         course_id = session.get("course_id")
-        if request.method == "POST":
+        if request.method == "POST": # If the request method is POST, it means the user has selected a lesson
             lesson_id = request.form.get("lesson_id")
-        else:
-            
-            lesson_order_numer = session.get("lesson_order")
+        else: # else, it means the user has not selected a lesson yet
+
+            lesson_order_number = session.get("lesson_order") # Gets the lesson order number from the session, which is set to 1 by default but can be changed by the user
 
             cursor.execute(
-                "SELECT lesson_id FROM Lesson WHERE course_id = ? AND lesson_order = ?", (course_id, lesson_order_numer,)
+                "SELECT lesson_id FROM Lesson WHERE course_id = ? AND lesson_order = ?",
+                (
+                    course_id,
+                    lesson_order_number,
+                ),
             )
             lesson_id = cursor.fetchone()[0]
 
         session["lesson_id"] = lesson_id
 
         cursor.execute("SELECT language FROM Course WHERE  course_id = ?", (course_id,))
-        language = cursor.fetchone()[0].lower()
+        language = cursor.fetchone()[0]
         session["language"] = language
 
         cursor.execute(
             "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
         )
-        lesson_title = cursor.fetchone()[0]
+        lesson_titles = cursor.fetchone()
+
+        if not lesson_titles:
+            abort(404)
+        
+        lesson_title = lesson_titles[0]
+
         session["lesson_title"] = lesson_title
 
         cursor.execute(
@@ -215,9 +240,9 @@ def intermediate_route():
         lesson_content = cursor.fetchall()
         session["lesson_content"] = lesson_content[0][0]
 
-        formated_course_name = "-".join(course_name.split(" "))
+        formated_course_name = "-".join(course_name.split(" ")) # Formats the course name by replacing spaces with hyphens for URL compatibility
 
-        formated_lesson_name = "-".join(lesson_title.split(" "))
+        formated_lesson_name = "-".join(lesson_title.split(" ")) # Formats the lesson name by replacing spaces with hyphens for URL compatibility
 
         cursor.execute(
             "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
@@ -231,12 +256,15 @@ def intermediate_route():
             (lesson_id, course_id),
         )
 
+        # Find the next and previous lesson IDs based on the current lesson order number
+        # This is used to navigate between lessons in the course , which is useful for the user to navigate through the lessons easily
         current_lesson_order_number = cursor.fetchone()[0]
 
         next_lesson_order_number = current_lesson_order_number + 1
 
         prev_lesson_order_number = current_lesson_order_number - 1
-
+        
+        # If the next lesson order number is less than or equal to the total number of lessons, fetch the next lesson ID otherwise set it to the current lesson ID
         if next_lesson_order_number <= number_of_lessons:
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
@@ -247,6 +275,8 @@ def intermediate_route():
         else:
             session["next_lesson_id"] = lesson_id
 
+        # If the previous lesson order number is greater than 0, fetch the previous lesson ID otherwise set it to the current lesson ID
+        # This is to ensure that the user can navigate back to the previous lesson if they are not on the first lesson
         if prev_lesson_order_number != 0:
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
@@ -268,6 +298,8 @@ def intermediate_route():
         )
 
 
+# This route is used to mark a lesson as completed and update the user's progress in the course
+# It checks if the user has already completed the lesson and updates the database accordingly
 @my_courses_bp.route("/my-courses/lesson-completed", methods=["GET", "POST"])
 def lesson_completed():
     if "user_id" in session:
@@ -277,11 +309,14 @@ def lesson_completed():
         lesson_id = session.get("lesson_id")
         course_id = session.get("course_id")
 
-
+        # when the user clicks on the button "Done" in the lesson page, it sends a POST request to this route
+        # This route checks if the user has already completed the lesson and if not, it marks the lesson as completed
+        # and updates the user's progress in the course
+        # It also updates the session variables to reflect the changes made
         if request.method == "POST":
             completed = request.form.get("completed")
 
-            if completed == "completed":
+            if completed == "completed": # If the user has completed the lesson, check if the lesson is already marked as completed
 
                 cursor.execute(
                     "SELECT lesson_id FROM user_lesson WHERE status ='completed' "
@@ -295,53 +330,59 @@ def lesson_completed():
                     for uuid in tuple_item:
                         lesson_ids.append(uuid)
 
-
+                # If the lesson is not already marked as completed, insert a new record in the user_lesson table
+                # This is to ensure that the user can mark the lesson as completed only once
                 if lesson_id not in lesson_ids:
 
                     user_id = session.get("user_id")
 
                     import uuid
 
-                    user_lesson_id = str(uuid.uuid4())
-
-                    timestamp = datetime.now().isoformat(timespec="seconds")
+                    user_lesson_id = str(uuid.uuid4()) # Generates a unique ID for the user_lesson record
+ 
+                    timestamp = datetime.now().isoformat(timespec="seconds") # Gets the current timestamp in ISO format with seconds precision
 
                     cursor.execute(
                         "INSERT INTO user_lesson (id, lesson_id, user_id, status, completed_at) VALUES (?, ?, ?, ?, ?)",
                         (user_lesson_id, lesson_id, user_id, "completed", timestamp),
                     )
-                    
-                     
 
                     session["lesson_id"] = session.get("next_lesson_id")
                     conn.commit()
 
+    
+        cursor.execute(
+            "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
+            (lesson_id, course_id),
+        )
 
-        cursor.execute("SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?", (lesson_id, course_id),)
+        current_lesson_order_number = cursor.fetchone()[0]
 
-        current_lesson_order_number = cursor.fetchone()[0] 
-        
-        cursor.execute("SELECT COUNT(lesson_order) FROM Lesson WHERE course_id = ? ", (course_id,),)
+        cursor.execute(
+            "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id = ? ",
+            (course_id,),
+        )
 
-        total_number_of_lessons  = cursor.fetchone()[0]
-        
+        total_number_of_lessons = cursor.fetchone()[0]
 
-
-
+        # Update the lesson order number in the session
+        # This is to ensure that the user can navigate to the next lesson after completing the current lesson
+        # If the current lesson order number is less than the total number of lessons, increment the lesson order number by 1
+        # Otherwise, keep the lesson order number the same
         if current_lesson_order_number < total_number_of_lessons:
             session["lesson_order"] = current_lesson_order_number + 1
         else:
             session["lesson_order"] = current_lesson_order_number
-        
-        cursor.close()
 
+        cursor.close()
 
         return redirect(url_for("my_courses.intermediate_route"))
 
     else:
         return redirect(url_for("auth.login"))
 
-
+# This route shows the lesson content for a specific course and lesson
+# It retrieves the lesson content from the session and displays it on the lesson page
 @my_courses_bp.route("/my-courses/<course_name>/<lesson_name>", methods=["GET", "POST"])
 def lesson(course_name, lesson_name):
     if "user_id" in session:
@@ -374,5 +415,14 @@ def ai_courses():
 def completed_courses():
     if "user_id" in session:
         return render_template("user/my_courses/completed_courses.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+@my_courses_bp.route("/my-courses/code-editor", methods=["GET", "POST"])
+def code_editor():
+    if "user_id" in session:
+        language = session.get("language")
+        return render_template("user/my_courses/code_editor.html", language = language)
     else:
         return redirect(url_for("auth.login"))

@@ -1,175 +1,156 @@
-{% extends 'base.html' %}
-{% block title %}test{% endblock %}
-{% block
-    extra_css %}
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/dashboard.css') }}" />
-{% endblock %}
-{% block content %}
-    <div class="greeting-wrapper">
-        <div class="greeting-txt-wrapper">
-            <p class="greeting-txt">Hello {{ username }}!</p>
-            <img src="{{ url_for('static', filename = 'images/icons/wave_hand.svg') }}"
-                 alt="👋" />
-        </div>
-        <p class="welcome-txt">Welcome to Ada — ready to level up your coding skills today?</p>
-    </div>
-    <div class="block-wrapper">
-        <div class="blocks wrapper-1">
-            <div class="block continue-learning-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/book.svg') }}"
-                         alt="📘" />
-                    <p>Continue Learning</p>
-                </div>
-                <p class="description">“Python Basics - Loops”</p>
-                <div class="progress-bar">
-                    <div class="progress-line"></div>
-                </div>
-                <p class="completed-amount">50% completed</p>
-            </div>
-            <div class="block problem-solved-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/goal.svg') }}"
-                         alt="🎯" />
-                    <p>Problem Solved</p>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-line"></div>
-                </div>
-                <div class="progress-circle">
-                    <div class="line"></div>
-                </div>
-                <p class="completed-amount">13 Questions completed</p>
-            </div>
-        </div>
-        <div class="blocks wrapper-2">
-            <div class="block streak-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/fire.svg') }}"
-                         alt="🔥" />
-                    <p>Streak</p>
-                </div>
-                <p class="description">You're on a 4-day streak! Keep it going!</p>
-            </div>
-            <div class="block community-Buzz-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/speech-bubble.svg') }}"
-                         alt="💬" />
-                    <p>Community Buzz</p>
-                </div>
-                <p class="description">Top question "Why does my if-statement skip?"</p>
-            </div>
-        </div>
-        <div class="blocks wrapper-3">
-            <div class="block leard-board-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/graph.svg') }}"
-                         alt="📊" />
-                    <p>Lead Board</p>
-                </div>
-                <!--Remmebr to use Forloop-->
-                <table>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Problem solved</th>
-                    </tr>
-                    <tr>
-                        <td>01</td>
-                        <td>Tom Jack</td>
-                        <td>{{ 120 }}</td>
-                    </tr>
-                    <tr>
-                        <td>02</td>
-                        <td>Ryan Hood</td>
-                        <td>{{ 100 }}</td>
-                    </tr>
-                    <tr>
-                        <td>03</td>
-                        <td>Tony Mode</td>
-                        <td>{{ 90 }}</td>
-                    </tr>
-                    <tr>
-                        <td>04</td>
-                        <td>Christ Jack</td>
-                        <td>{{ 70 }}</td>
-                    </tr>
-                    <tr>
-                        <td>05</td>
-                        <td>Nimal Abinu</td>
-                        <td>{{ 50 }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="block latest-achievement-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/medal.svg') }}"
-                         alt="🏅" />
-                    <p>Latest Achievement</p>
-                </div>
-                <div class="achievement-block-wrapper">
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/bronze-medal.svg') }}"
-                                 alt="🥉" />
-                            <p>Bronze Coins</p>
-                        </div>
-                        <p class="number-of-achievements">10</p>
-                        <p class="description">Earned by completing every 5 Easy challenges</p>
-                    </div>
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/silver-medal.svg') }}"
-                                 alt="🥈" />
-                            <p>Silver Coins</p>
-                        </div>
-                        <p class="number-of-achievements">5</p>
-                        <p class="description">Earned by completing every 5 Medium challenges</p>
-                    </div>
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/gold-medal.svg') }}"
-                                 alt="🥇" />
-                            <p>Gold Coins</p>
-                        </div>
-                        <p class="number-of-achievements">2</p>
-                        <p class="description">Earned by completing every 5 Hard challenges</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-<!-- Adds inline css because to show the progress bar visually to users We need to pass the Python variable to CSS, as we can't pass dit irectly into an external CSS -->
-{% block inline_css %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor with Syntax Highlighting</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-  .continue-learning-wrapper .progress-line {
-    width: {{ 50 }}%;
-  }
-
-  .problem-solved-wrapper .progress-line {
-    width: {{ 13 }}%;
-  }
-
-  /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
-  @media only screen and (max-width: 1200px) {
-    .continue-learning-wrapper .progress-line {
-      width: {{ 100 }}%;
-      background: conic-gradient(
-        #d8b731 0deg {{ 180 }}deg,
-        transparent 0deg 360deg
-      );
-  }
-
-  .problem-solved-wrapper .progress-line {
-      width: {{ 100 }}%;
-      background: conic-gradient(
-        #d87f31 0deg {{ 46 }}deg,
-        transparent 0deg 360deg
-      );
-  }
-  }
+      #editor {
+        height: 800px;
+        border: 1px solid #ddd;
+        margin-top: 20px;
+      }
     </style>
-{% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>{% endblock %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="mt-4">Monaco Editor Syntax Highlighting</h1>
+
+      <div class="form-group mb-3">
+        <label for="languageSelect">Select Language:</label>
+        <select class="form-select" id="languageSelect">
+          <option value="javascript">JavaScript</option>
+          <option value="css">CSS</option>
+          <option value="html">HTML</option>
+          <option value="json">JSON</option>
+        </select>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="themeSelect">Select Theme:</label>
+        <select class="form-select" id="themeSelect">
+          <option value="vs-light">Light</option>
+          <option value="vs-dark">Dark</option>
+          <option value="hc-black">High Contrast</option>
+
+          <option value="dracula">Dracula</option>
+          <option value="solarized-light">Solarized Light</option>
+          <option value="solarized-dark">Solarized Dark</option>
+          <option value="github-dark">GitHub Dark</option>
+          <option value="monokai">Monokai</option>
+        </select>
+      </div>
+
+      <div id="editor"></div>
+    </div>
+
+    <script>
+      // Load Monaco Editor using AMD
+      require.config({
+        paths: {
+          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs",
+        },
+      });
+      require(["vs/editor/editor.main"], function () {
+        // Create the editor instance
+        const editor = monaco.editor.create(document.getElementById("editor"), {
+          value: `// Write your code here\nconsole.log('Hello, Monaco!');`,
+          language: "javascript",
+          theme: "vs-light",
+        });
+
+        monaco.editor.defineTheme("dracula", {
+          base: "vs-dark",
+          inherit: true,
+          rules: [
+            { token: "", background: "282a36", foreground: "f8f8f2" },
+            { token: "comment", foreground: "6272a4" },
+            { token: "keyword", foreground: "ff79c6" },
+            { token: "string", foreground: "f1fa8c" },
+          ],
+          colors: {
+            "editor.background": "#282a36",
+          },
+        });
+
+        monaco.editor.defineTheme("solarized-light", {
+          base: "vs",
+          inherit: true,
+          rules: [
+            { token: "", foreground: "586e75", background: "fdf6e3" },
+            { token: "comment", foreground: "93a1a1" },
+            { token: "keyword", foreground: "859900" },
+            { token: "string", foreground: "2aa198" },
+          ],
+          colors: {
+            "editor.background": "#fdf6e3",
+          },
+        });
+
+        monaco.editor.defineTheme("solarized-dark", {
+          base: "vs-dark",
+          inherit: true,
+          rules: [
+            { token: "", foreground: "839496", background: "002b36" },
+            { token: "comment", foreground: "586e75" },
+            { token: "keyword", foreground: "cb4b16" },
+            { token: "string", foreground: "2aa198" },
+          ],
+          colors: {
+            "editor.background": "#002b36",
+          },
+        });
+
+        monaco.editor.defineTheme("github-dark", {
+          base: "vs-dark",
+          inherit: true,
+          rules: [
+            { token: "", foreground: "c9d1d9", background: "0d1117" },
+            { token: "comment", foreground: "8b949e" },
+            { token: "keyword", foreground: "ff7b72" },
+            { token: "string", foreground: "a5d6ff" },
+          ],
+          colors: {
+            "editor.background": "#0d1117",
+          },
+        });
+
+        monaco.editor.defineTheme("monokai", {
+          base: "vs-dark",
+          inherit: true,
+          rules: [
+            { token: "", foreground: "f8f8f2", background: "272822" },
+            { token: "comment", foreground: "75715e" },
+            { token: "keyword", foreground: "f92672" },
+            { token: "string", foreground: "a6e22e" },
+          ],
+          colors: {
+            "editor.background": "#272822",
+          },
+        });
+
+        // Change language based on selection
+        document
+          .getElementById("languageSelect")
+          .addEventListener("change", function () {
+            const newLanguage = this.value;
+            monaco.editor.setModelLanguage(editor.getModel(), newLanguage);
+          });
+
+        // Change theme based on selection
+        document
+          .getElementById("themeSelect")
+          .addEventListener("change", function () {
+            const newTheme = this.value;
+            monaco.editor.setTheme(newTheme);
+          });
+      });
+    </script>
+  </body>
+</html>

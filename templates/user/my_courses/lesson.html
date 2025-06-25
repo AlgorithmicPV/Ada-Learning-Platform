@@ -6,7 +6,7 @@
 {% block content %}
     {% block extra_css %}
         <link rel="stylesheet"
-              href="{{ url_for('static', filename='css/user/my_courses/course.css') }}" />
+              href="{{ url_for('static', filename='css/user/my_courses/lesson.css') }}" />
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
         <script src="https://unpkg.com/htmx.org@1.9.2"></script>
@@ -120,7 +120,7 @@
                 <div class="content" id="content">{{ lesson_content | safe }}</div>
                 <!-- Using safe filter to render HTML content -->
                 <div class="down-btn-wrapper">
-                    <button class="open-code-editor-btn">Open Editor</button>
+                    <button class="open-code-editor-btn" onclick="window.location.href='{{ url_for("my_courses.code_editor") }}'">Open Editor</button>
                     <form action="{{ url_for("my_courses.lesson_completed") }}" method="post">
                         <input type="hidden" name="completed" value="completed">
                         <button class="done-btn" type="submit">Done</button>
