@@ -84,42 +84,43 @@
   margin-right: auto;
   overflow-y: auto;
   display: flex;
+  flex: 1;
+  scrollbar-gutter: stable; /* Ensures that content does not shift when the scrollbar appears */
 }
 
-.btn-to-show-output.active-btn svg {
-  fill: var(--text-color);
-}
-
+.btn-to-show-output.active-btn svg,
+.btn-to-show-input.active-btn svg,
 .btn-to-show-ai-assistance.active-btn svg {
   fill: var(--text-color);
 }
 
-form {
+.chat-input-wrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
   justify-content: space-between;
   margin-top: auto;
+  padding-top: 15px;
 }
 
-form button {
+.chat-input-wrapper button {
   background-color: transparent !important;
   fill: var(--second-text-color);
   border: none; /* Removes default button border for modern look */
   cursor: pointer; /* Changes the cursor to a pointer on hover to indicate it's clickable */
 }
 
-form button:hover {
+.chat-input-wrapper button:hover {
   fill: var(--text-color);
 }
 
-form button svg {
+.chat-input-wrapper button svg {
   height: 20px;
   width: 20px;
 }
 
-form input {
+.chat-input-wrapper input {
   background-color: transparent;
   outline: none;
   border: none;
@@ -127,6 +128,107 @@ form input {
   font-size: medium;
   color: var(--text-color);
   caret-color: var(--primary-color);
+}
+
+.terminal-line-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+}
+
+.terminal-line-wrapper p {
+  margin: 0; /* Removes default margin for paragraphs */
+}
+
+.terminal-line {
+  width: 100%;
+  outline: none;
+}
+
+.output-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-wrapper {
+  flex: 1; /* Takes up the remaining space in the parent container */
+  display: none;
+}
+
+.input-wrapper textarea {
+  height: 100%;
+  width: calc(
+    100% - 10px
+  ); /* Adjusted to account for padding to avoid overflow */
+  resize: none;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: large !important;
+  caret-color: var(--primary-color);
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  width: calc(
+    100% - 10px
+  ); /* Adjusted to account for padding to avoid overflow */
+  flex: 1;
+  overflow: auto;
+  scrollbar-gutter: stable; /* Ensures that content does not shift when the scrollbar appears */
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 15px; /* Adds space between conversations for better readability */
+}
+
+.user-input-wrapper,
+.answer-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.user-input-wrapper {
+  justify-content: flex-start;
+}
+
+.answer-wrapper {
+  justify-content: flex-end;
+}
+
+.input,
+.ai-response {
+  border-radius: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 2px;
+  text-wrap: wrap;
+  min-width: 200px;
+}
+
+.ai-response {
+  max-width: 80%;
+}
+
+.input {
+  background-color: var(--text-color);
+  color: var(--background-color);
+}
+
+.ai-response {
+  background-color: var(--primary-color);
+  color: var(--home-text-colorr);
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */

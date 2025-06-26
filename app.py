@@ -9,6 +9,8 @@ from routes.auth_routes import auth_bp
 from routes.dashboard import dashboard_bp
 from routes.my_courses import my_courses_bp
 from errors.handlers import errors
+from routes.ai_chat import ai_chat_bp
+from routes.compiler import compiler_bp
 
 
 load_dotenv()
@@ -34,6 +36,10 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(my_courses_bp)
 
 app.register_blueprint(errors)
+
+app.register_blueprint(ai_chat_bp)
+
+app.register_blueprint(compiler_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

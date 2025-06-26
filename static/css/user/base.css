@@ -178,19 +178,19 @@ body {
 }
 
 /* Target the vertical scrollbar thumb */
-.cont-wrapper::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background-color: transparent; /* Thumb color */
   border: 1px solid var(--second-text-color); /* White border around the thumb */
   border-radius: 10px; /* Rounded corners (optional) */
 }
 
 /* Track area behind the thumb */
-.cont-wrapper::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background: transparent;
 }
 
 /* Scrollbar width */
-.cont-wrapper::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 10px;
 }
 

@@ -12,15 +12,14 @@
 {% block content %}
     {{ super() }}
     <div class="all-courses-wrapper">
-            <!-- course_data is a list containing course details -->
-            <!-- course_data[0] = course_name -->
-            <!-- course_data[1] = course_title -->
-            <!-- course_data[2] = course_image -->
-            <!-- course_data[3] = course_background_image -->
-            <!-- course_data[4] = language -->
-            <!-- course_data[5] = course_progress -->
+        <!-- course_data is a list containing course details -->
+        <!-- course_data[0] = course_name -->
+        <!-- course_data[1] = course_title -->
+        <!-- course_data[2] = course_image -->
+        <!-- course_data[3] = course_background_image -->
+        <!-- course_data[4] = language -->
+        <!-- course_data[5] = course_progress -->
         {% for course_data in courses_data %}
-
             <div class="course-wrapper"
                  style="background-image: url({{ url_for('static', filename =  course_data[3]) }})">
                 <div class="course-detail-wrapper">

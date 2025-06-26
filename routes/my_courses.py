@@ -111,7 +111,6 @@ def all_courses():
                 for course_id in element:
                     course_ids.append(course_id)
 
-            
             course_id = request.form.get("course_id")
 
             if course_id not in course_ids:
@@ -164,6 +163,7 @@ def search_courses():
     else:
         return redirect(url_for("auth.login"))
 
+
 # This route is to process all the lesson data and works as an intermediate route between the all_courses route and the lesson route.
 # It fetches the lesson data from the database and stores it in the session for later use
 @my_courses_bp.route("/my-courses/intermediate", methods=["GET", "POST"])
@@ -172,11 +172,15 @@ def intermediate_route():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
         course_id = session.get("course_id")
-        if request.method == "POST": # If the request method is POST, it means the user has selected a lesson
+        if (
+            request.method == "POST"
+        ):  # If the request method is POST, it means the user has selected a lesson
             lesson_id = request.form.get("lesson_id")
-        else: # else, it means the user has not selected a lesson yet
+        else:  # else, it means the user has not selected a lesson yet
 
-            lesson_order_number = session.get("lesson_order") # Gets the lesson order number from the session, which is set to 1 by default but can be changed by the user
+            lesson_order_number = session.get(
+                "lesson_order"
+            )  # Gets the lesson order number from the session, which is set to 1 by default but can be changed by the user
 
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE course_id = ? AND lesson_order = ?",
@@ -200,7 +204,7 @@ def intermediate_route():
 
         if not lesson_titles:
             abort(404)
-        
+
         lesson_title = lesson_titles[0]
 
         session["lesson_title"] = lesson_title
@@ -240,9 +244,13 @@ def intermediate_route():
         lesson_content = cursor.fetchall()
         session["lesson_content"] = lesson_content[0][0]
 
-        formated_course_name = "-".join(course_name.split(" ")) # Formats the course name by replacing spaces with hyphens for URL compatibility
+        formated_course_name = "-".join(
+            course_name.split(" ")
+        )  # Formats the course name by replacing spaces with hyphens for URL compatibility
 
-        formated_lesson_name = "-".join(lesson_title.split(" ")) # Formats the lesson name by replacing spaces with hyphens for URL compatibility
+        formated_lesson_name = "-".join(
+            lesson_title.split(" ")
+        )  # Formats the lesson name by replacing spaces with hyphens for URL compatibility
 
         cursor.execute(
             "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
@@ -263,7 +271,7 @@ def intermediate_route():
         next_lesson_order_number = current_lesson_order_number + 1
 
         prev_lesson_order_number = current_lesson_order_number - 1
-        
+
         # If the next lesson order number is less than or equal to the total number of lessons, fetch the next lesson ID otherwise set it to the current lesson ID
         if next_lesson_order_number <= number_of_lessons:
             cursor.execute(
@@ -316,7 +324,9 @@ def lesson_completed():
         if request.method == "POST":
             completed = request.form.get("completed")
 
-            if completed == "completed": # If the user has completed the lesson, check if the lesson is already marked as completed
+            if (
+                completed == "completed"
+            ):  # If the user has completed the lesson, check if the lesson is already marked as completed
 
                 cursor.execute(
                     "SELECT lesson_id FROM user_lesson WHERE status ='completed' "
@@ -338,9 +348,13 @@ def lesson_completed():
 
                     import uuid
 
-                    user_lesson_id = str(uuid.uuid4()) # Generates a unique ID for the user_lesson record
- 
-                    timestamp = datetime.now().isoformat(timespec="seconds") # Gets the current timestamp in ISO format with seconds precision
+                    user_lesson_id = str(
+                        uuid.uuid4()
+                    )  # Generates a unique ID for the user_lesson record
+
+                    timestamp = datetime.now().isoformat(
+                        timespec="seconds"
+                    )  # Gets the current timestamp in ISO format with seconds precision
 
                     cursor.execute(
                         "INSERT INTO user_lesson (id, lesson_id, user_id, status, completed_at) VALUES (?, ?, ?, ?, ?)",
@@ -350,7 +364,6 @@ def lesson_completed():
                     session["lesson_id"] = session.get("next_lesson_id")
                     conn.commit()
 
-    
         cursor.execute(
             "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
             (lesson_id, course_id),
@@ -380,6 +393,7 @@ def lesson_completed():
 
     else:
         return redirect(url_for("auth.login"))
+
 
 # This route shows the lesson content for a specific course and lesson
 # It retrieves the lesson content from the session and displays it on the lesson page
@@ -423,6 +437,6 @@ def completed_courses():
 def code_editor():
     if "user_id" in session:
         language = session.get("language")
-        return render_template("user/my_courses/code_editor.html", language = language)
+        return render_template("user/my_courses/code_editor.html", language=language)
     else:
         return redirect(url_for("auth.login"))

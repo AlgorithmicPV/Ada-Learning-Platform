@@ -1,56 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monaco Editor with Syntax Highlighting</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Monaco Editor with Syntax Highlighting</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+              rel="stylesheet" />
+        <style>
       #editor {
         height: 800px;
         border: 1px solid #ddd;
         margin-top: 20px;
       }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
-  </head>
-
-  <body>
-    <div class="container">
-      <h1 class="mt-4">Monaco Editor Syntax Highlighting</h1>
-
-      <div class="form-group mb-3">
-        <label for="languageSelect">Select Language:</label>
-        <select class="form-select" id="languageSelect">
-          <option value="javascript">JavaScript</option>
-          <option value="css">CSS</option>
-          <option value="html">HTML</option>
-          <option value="json">JSON</option>
-        </select>
-      </div>
-
-      <div class="form-group mb-3">
-        <label for="themeSelect">Select Theme:</label>
-        <select class="form-select" id="themeSelect">
-          <option value="vs-light">Light</option>
-          <option value="vs-dark">Dark</option>
-          <option value="hc-black">High Contrast</option>
-
-          <option value="dracula">Dracula</option>
-          <option value="solarized-light">Solarized Light</option>
-          <option value="solarized-dark">Solarized Dark</option>
-          <option value="github-dark">GitHub Dark</option>
-          <option value="monokai">Monokai</option>
-        </select>
-      </div>
-
-      <div id="editor"></div>
-    </div>
-
-    <script>
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1 class="mt-4">Monaco Editor Syntax Highlighting</h1>
+            <div class="form-group mb-3">
+                <label for="languageSelect">Select Language:</label>
+                <select class="form-select" id="languageSelect">
+                    <option value="javascript">JavaScript</option>
+                    <option value="css">CSS</option>
+                    <option value="html">HTML</option>
+                    <option value="json">JSON</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="themeSelect">Select Theme:</label>
+                <select class="form-select" id="themeSelect">
+                    <option value="vs-light">Light</option>
+                    <option value="vs-dark">Dark</option>
+                    <option value="hc-black">High Contrast</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="solarized-light">Solarized Light</option>
+                    <option value="solarized-dark">Solarized Dark</option>
+                    <option value="github-dark">GitHub Dark</option>
+                    <option value="monokai">Monokai</option>
+                </select>
+            </div>
+            <div id="editor"></div>
+        </div>
+        <script>
       // Load Monaco Editor using AMD
       require.config({
         paths: {
@@ -151,6 +143,6 @@
             monaco.editor.setTheme(newTheme);
           });
       });
-    </script>
-  </body>
+        </script>
+    </body>
 </html>
