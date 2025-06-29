@@ -2,7 +2,7 @@
 
 const navigation_bar = document.querySelector(".navigation-bar-wrapper");
 const menu_cloppased_button = document.querySelector(".menu-cloppased-button");
-const dashboard_wrapper = document.querySelector(".main-wrapper");
+const menu_wrapper = document.querySelector(".main-wrapper");
 const close_button_small_screen_menu =
   document.querySelector(".close-menu-button");
 const small_screen_menu = document.querySelector(".menu-wrapper-small-screen");
@@ -37,7 +37,7 @@ const collapsed_menu_func = () => {
     button_svgs[i].style.marginRight = "0";
   }
   navigation_bar.style.width = "min-content";
-  dashboard_wrapper.style.width = "100vw";
+  menu_wrapper.style.width = "100vw";
 };
 
 const expanded_menu_func = () => {
@@ -56,7 +56,7 @@ const expanded_menu_func = () => {
   }
 
   navigation_bar.style.width = "200px";
-  dashboard_wrapper.style.width = "calc(100vw - 200px)";
+  menu_wrapper.style.width = "calc(100vw - 200px)";
 };
 
 window.addEventListener("load", () => {
@@ -71,7 +71,7 @@ window.addEventListener("load", () => {
       expanded_menu_func();
     }
   } else {
-    dashboard_wrapper.style.width = "100vw";
+    menu_wrapper.style.width = "100vw";
   }
 });
 
@@ -87,7 +87,7 @@ window.addEventListener("resize", () => {
       expanded_menu_func();
     }
   } else {
-    dashboard_wrapper.style.width = "100vw";
+    menu_wrapper.style.width = "100vw";
   }
 });
 
@@ -126,78 +126,6 @@ close_button_small_screen_menu.addEventListener("click", () => {
   }
 });
 
-let colour_variables = [
-  "--background-color",
-  "--text-color",
-  "--border-color",
-  "--second-text-color",
-  "--primary-color",
-  "--blocks-color",
-  "--small-blocks-color",
-  "--home-text-color",
-  "--text-color-first",
-  "--text-color-second",
-  "--text-color-third",
-  "--text-color-rest",
-  "--course-card-background-color",
-];
-
-let dark_theme_colours = [
-  "#010104",
-  "#ebe9fc",
-  "#ebe9fc22",
-  "#ebe9fc70",
-  "#3a31d8",
-  "#0d0d11",
-  "#ebe9fc36",
-  "#ebe9fc",
-  "#ffd700",
-  "#eeeeee",
-  "#ffa500",
-  "#ffffff99",
-  "#000000ac",
-];
-
-let white_theme_colours = [
-  "#FBFBFE",
-  "#050316",
-  "#0503161e",
-  "#0503167a",
-  "#2F27CE",
-  "#EEEEF2",
-  "#05031611",
-  "#ebe9fc",
-  "#CAAB00",
-  "#000000",
-  "#FFA500",
-  "#000000c8",
-  "#ffffffac",
-];
-
-const dark_theme = () => {
-  for (let i = 0; i < colour_variables.length; i++) {
-    document.documentElement.style.setProperty(
-      colour_variables[i],
-      dark_theme_colours[i]
-    );
-  }
-  is_dark_theme = true;
-  theme_preference = "dark";
-  localStorage.setItem("app-theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
-};
-
-const light_theme = () => {
-  for (let i = 0; i < colour_variables.length; i++) {
-    document.documentElement.style.setProperty(
-      colour_variables[i],
-      white_theme_colours[i]
-    );
-  }
-  is_dark_theme = false;
-  theme_preference = "light";
-  localStorage.setItem("app-theme-preference", theme_preference); // Saves to the local storage, later we can change the colour theme of the landing page according to the user's preference
-};
-
 /* Changes the theme when the user clicks on theme toggle button */
 theme_toggle_button.addEventListener("click", () => {
   if (is_dark_theme == true) {
@@ -206,14 +134,3 @@ theme_toggle_button.addEventListener("click", () => {
     dark_theme();
   }
 });
-
-// Gets the prefered_theme if user has selected from the local storage
-var prefered_theme = localStorage.getItem("app-theme-preference");
-
-if (prefered_theme == "dark") {
-  dark_theme();
-} else if (prefered_theme == "light") {
-  light_theme();
-} else {
-  dark_theme();
-}

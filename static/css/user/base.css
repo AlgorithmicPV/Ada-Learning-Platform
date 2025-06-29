@@ -28,6 +28,18 @@
   transition: background-color 0.4s ease, fill 0.4s ease, color 0.4s ease;
 }
 
+.cont {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform-origin: center center;
+}
+
+.cont.page-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
 body {
   margin: 0; /* Removes default margin because it is easy to customize */
   background-color: var(--background-color);
@@ -41,7 +53,7 @@ body {
 }
 
 /* Styles the navigation bar */
-.navigation-bar-wrapper {
+[data-sidebar="expanded"] .navigation-bar-wrapper {
   display: flex;
   flex-direction: column;
   height: calc(
@@ -53,7 +65,19 @@ body {
   transition: 0.2s ease-in-out all;
 }
 
-.navigation-bar-wrapper button {
+[data-sidebar="collapsed"] .navigation-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(
+    100vh - 30px
+  ); /* Removes 30px from the height as there is a padding of 15px from top and down */
+  padding: 15px; /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
+  border-right: var(--border-color) 1px solid; /* Adds a border to only the right side to separate from the dashboard */
+  width: min-content;
+  transition: 0.2s ease-in-out all;
+}
+
+[data-sidebar="expanded"] .navigation-bar-wrapper button {
   border: none; /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
   background-color: transparent; /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
   color: var(--second-text-color);
@@ -70,13 +94,41 @@ body {
   font-size: medium;
 }
 
-.navigation-bar-wrapper button p {
+[data-sidebar="collapsed"] .navigation-bar-wrapper button {
+  border: none; /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
+  background-color: transparent; /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
+  color: var(--second-text-color);
+  margin-bottom: 10px; /* Sets some spaces between buttons in the navigation bar */
+  padding: 10px;
+  border-radius: 50px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: min-content;
+  transition: 0.2s ease-in-out all;
+  cursor: pointer;
+  font-family: "Inter";
+  font-size: medium;
+}
+
+[data-sidebar="expanded"] .navigation-bar-wrapper button p {
   margin: 0; /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
   transition: 0.2s ease-in-out all;
+  display: block;
+}
+
+[data-sidebar="collapsed"] .navigation-bar-wrapper button p {
+  margin: 0; /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
+  transition: 0.2s ease-in-out all;
+  display: none;
 }
 
 .menu-cloppased-button {
   width: min-content !important; /* Fixes the width of the image as this is the menu close button */
+}
+
+.menu-cloppased-button svg {
+  margin: 0 !important; /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
 }
 
 .menu-cloppased-button svg {
@@ -98,10 +150,18 @@ body {
   color: var(--text-color);
 }
 
-.navigation-bar-wrapper svg {
+[data-sidebar="expanded"] .navigation-bar-wrapper svg {
   height: 20px;
   width: 20px;
   margin-right: 10px; /* Adds some space between the icon and  text in each button for better visualization */
+  transition: 0.2s ease-in-out all;
+  fill: var(--text-color);
+}
+
+[data-sidebar="collapsed"] .navigation-bar-wrapper svg {
+  height: 20px;
+  width: 20px;
+  margin-right: 0; /* Adds some space between the icon and  text in each button for better visualization */
   transition: 0.2s ease-in-out all;
   fill: var(--text-color);
 }
@@ -216,7 +276,7 @@ body {
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .navigation-bar-wrapper {
-    display: none; /* Hides the vertical navigation bar */
+    display: none !important; /* Hides the vertical navigation bar */
   }
 
   .cont {
