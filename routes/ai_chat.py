@@ -24,13 +24,16 @@ def chat():
     if "user_id" in session:
         if request.is_json and request.method == "POST":
             language = session.get("language")
+            user_code = session.get("user_code")
+            print(user_code)
             data = request.get_json()
             user_input = data.get("user_input")
+            code_output = session.get("output_of_code")
             response = client.chat.completions.create(
                 messages=[
                     {
                         "role": "system",
-                        "content": f"You are an AI assistant integrated into Ada Learning Platform developed by G. A. Pasindu Vidunitha, designed to help users learn and understand {language} by providing clear explanations, guidance, and answers to their programming questions.",
+                        "content": f"You are an AI assistant built into the Ada Learning Platform, created by G. A. Pasindu Vidunitha. Your role is to help users learn and understand {language} by providing clear and concise explanations. If they ask questions about their written program—such as {user_code} and the output they received {code_output}—respond with simple, direct answers without unnecessary detail.",
                     },
                     {
                         "role": "user",

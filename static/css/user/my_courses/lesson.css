@@ -90,6 +90,10 @@
   flex-direction: row;
 }
 
+.next-prev-btns-wrapper button svg {
+  fill: var(--text-color) !important;
+}
+
 .lesson-top-bar svg,
 .lesson-title-wrapper svg {
   height: 20px; /* Adjusted height for better visibility which goes with the text size */
@@ -161,7 +165,6 @@
 }
 
 .coding-env {
-  background-color: green;
   height: 100vh;
 }
 

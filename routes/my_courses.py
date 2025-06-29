@@ -50,7 +50,7 @@ def all_courses():
                 """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
                 (
                     user_id,
-                    one_course_set[0],
+                    one_course_set[0], #Course ID
                 ),
             )  # Selects all the completed lessons (number)
 
@@ -428,7 +428,49 @@ def ai_courses():
 @my_courses_bp.route("/my-courses/completed-courses", methods=["GET", "POST"])
 def completed_courses():
     if "user_id" in session:
-        return render_template("user/my_courses/completed_courses.html")
+        user_id = session.get("user_id")
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT course_id FROM Course")
+
+        course_id_tuple = cursor.fetchall()
+        completed_course_ids = []
+
+        # This loop iterates through all the course IDs and checks if the user has completed all the lessons in that course
+        # If the user has completed all the lessons, the course ID is added to the completed_course_ids list
+        # This is used to display the completed courses to the user
+        for element in course_id_tuple:
+            for course_id in element:
+                cursor.execute("""SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,))
+                total_number_of_lessons = cursor.fetchone()[0]
+
+                cursor.execute("""SELECT COUNT(*) FROM user_lesson WHERE lesson_id IN (SELECT lesson_id FROM lesson WHERE course_id = ?) AND status = "completed" AND user_id=? """, (course_id,user_id,),)
+                number_completed_lesson = cursor.fetchone()[0]
+
+                if number_completed_lesson == total_number_of_lessons:
+                    completed_course_ids.append(course_id)
+
+        # This loop fetches the course data for each completed course ID
+        # It retrieves the course name, language image, course image, and language from the Course table
+        # The course data is then stored in the completed_courses_data list
+        completed_courses_data = []
+
+        for completed_course_id in completed_course_ids:
+            cursor.execute(
+                    "SELECT course_id, course_name, language_image, course_image, language FROM Course WHERE course_id=?", (completed_course_id,)
+                )
+            course_data = cursor.fetchall()
+            for one_set_course_data in course_data:
+                for data in one_set_course_data:
+                    completed_courses_data.append(data)
+                completed_courses_data.append(100) # Appends 100 to the list to indicate that the course is completed
+
+        cursor.close()
+        # This function divides the completed_courses_data into chunks based on the number of completed course IDs
+        divided_array = divide_array_into_chunks(completed_courses_data, int(len(completed_courses_data) / len(completed_course_ids)))
+
+
+        return render_template("user/my_courses/completed_courses.html", courses_data = divided_array)
     else:
         return redirect(url_for("auth.login"))
 

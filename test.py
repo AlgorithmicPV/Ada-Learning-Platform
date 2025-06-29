@@ -41,8 +41,50 @@ course_id_tuple = cursor.fetchall()
 
 course_ids = []
 
+completed_course_ids = []
+
 for element in course_id_tuple:
     for course_id in element:
-        course_ids.append(course_id)
+        cursor.execute("""SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,))
 
-print(course_ids)
+        
+        total_number_of_lessons = cursor.fetchone()[0]
+
+        # print(total_number_of_lessons)
+
+        cursor.execute("""SELECT COUNT(*) FROM user_lesson WHERE lesson_id IN (SELECT lesson_id FROM lesson WHERE course_id = ?) AND status = "completed" """, (course_id,))
+
+        number_completed_lesson = cursor.fetchone()[0]
+
+        # print(number_completed_lesson)
+
+        if number_completed_lesson == total_number_of_lessons:
+            completed_course_ids.append(course_id)
+
+# print(completed_course_ids)
+
+completed_courses_data = []
+
+for completed_course_id in completed_course_ids:
+    cursor.execute(
+            "SELECT course_id, course_name, language_image, course_image, language FROM Course WHERE course_id=?", (completed_course_id,)
+        )
+    course_data = cursor.fetchall()
+    for one_set_course_data in course_data:
+        for data in one_set_course_data:
+            completed_courses_data.append(data)
+        completed_courses_data.append(100)
+
+print(completed_courses_data)
+    # print(course_data)
+    # for data in course_data:
+    #     # completed_course_data = (data)
+    #     print(data)
+    # completed_course_data=  completed_course_data + (100,) 
+        
+
+
+# print(completed_course_data)
+
+# for i in completed_course_data:
+#     print(i[1])

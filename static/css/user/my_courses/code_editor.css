@@ -214,7 +214,7 @@
   padding-right: 20px;
   margin: 2px;
   text-wrap: wrap;
-  min-width: 200px;
+  min-width: min-content;
 }
 
 .ai-response {
