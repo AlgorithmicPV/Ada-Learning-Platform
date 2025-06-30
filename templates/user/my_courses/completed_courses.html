@@ -1,8 +1,6 @@
 {% set form_action = url_for('my_courses.search_courses') %}
 {% extends 'user/my_courses/my_courses_base.html' %}
-{% block title %}
-    Completed Courses
-{% endblock %}
+{% block title %}Completed Courses{% endblock %}
 {% block extra_css %}
     {{ super() }}
     <!--Uses the same CSS file as the all courses page as it has the same layout-->

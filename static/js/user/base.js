@@ -20,7 +20,6 @@ const button_svgs = document.querySelectorAll(
 
 let collapsed_menu = false;
 let small_menu_showing = false;
-let is_dark_theme = true;
 
 const collapsed_menu_func = () => {
   collapsed_menu = true;

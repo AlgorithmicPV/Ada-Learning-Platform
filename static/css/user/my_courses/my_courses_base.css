@@ -44,7 +44,7 @@
 }
 
 /* Styles for the form element within the sub-navigation bar */
-form {
+.search-bar {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -54,7 +54,7 @@ form {
   border-radius: 25px; /* Rounds the corners of the form */
 }
 
-form input {
+.search-bar input {
   background-color: transparent; /* Makes the input background transparent for modern design */
   text-decoration: none;
   color: var(--text-color);
@@ -64,11 +64,11 @@ form input {
   caret-color: var(--primary-color);
 }
 
-form input:focus {
+.search-bar input:focus {
   outline: none;
 }
 
-form svg {
+.search-bar svg {
   height: 15px;
   width: auto;
   fill: var(--text-color);
@@ -109,12 +109,12 @@ form svg {
     color: var(--home-text-color);
   }
 
-  form {
+  .search-bar {
     padding: 2px;
     align-self: flex-end;
   }
 
-  form input {
+  .search-bar input {
     display: none;
   }
 

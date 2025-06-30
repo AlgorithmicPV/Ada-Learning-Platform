@@ -1,8 +1,22 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, abort
+from flask import Blueprint, render_template, session, redirect, url_for, request, abort, jsonify
 import sqlite3
 from datetime import datetime
 import uuid
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
 
+
+load_dotenv()
+
+token = os.getenv("GITHUB_TOKEN")
+endpoint = "https://models.github.ai/inference"
+model = "openai/gpt-4.1"
+
+client = OpenAI(
+    base_url=endpoint,
+    api_key=token,
+)
 
 my_courses_bp = Blueprint("my_courses", __name__)
 
@@ -419,7 +433,33 @@ def lesson(course_name, lesson_name):
 @my_courses_bp.route("/my-courses/ai_generated", methods=["GET", "POST"])
 def ai_courses():
     if "user_id" in session:
-        return render_template("user/my_courses/ai_generated_courses.html")
+        user_id =  session.get("user_id")
+
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT resource_id, title, status , generated_at FROM Ai_resource WHERE user_id = ?", (user_id,))
+        
+        ai_courses_data_form_db = cursor.fetchall()
+
+        ai_courses = []
+
+        for ai_Course_from_db in ai_courses_data_form_db:
+            ai_courses.append(ai_Course_from_db[0])
+            ai_courses.append(ai_Course_from_db[1])
+            ai_courses.append(ai_Course_from_db[2])
+            ai_courses.append(ai_Course_from_db[3].split("T")[0])
+        
+           
+        cursor.execute("SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,))
+
+        number_of_ai_courses = cursor.fetchone()[0]
+
+        ai_courses_data = divide_array_into_chunks(ai_courses, int(len(ai_courses) / number_of_ai_courses))
+
+        session["ai_courses_data"] = ai_courses_data
+
+        return render_template("user/my_courses/ai_generated_courses.html", ai_courses_data = ai_courses_data)
     else:
         return redirect(url_for("auth.login"))
 
@@ -469,7 +509,6 @@ def completed_courses():
         # This function divides the completed_courses_data into chunks based on the number of completed course IDs
         divided_array = divide_array_into_chunks(completed_courses_data, int(len(completed_courses_data) / len(completed_course_ids)))
 
-
         return render_template("user/my_courses/completed_courses.html", courses_data = divided_array)
     else:
         return redirect(url_for("auth.login"))
@@ -480,5 +519,99 @@ def code_editor():
     if "user_id" in session:
         language = session.get("language")
         return render_template("user/my_courses/code_editor.html", language=language)
+    else:
+        return redirect(url_for("auth.login"))
+
+
+@my_courses_bp.route("/my-courses/ai_generated/generating", methods = ["POST"])
+def generarting_course():
+    if "user_id" in session:
+        if request.is_json and request.method == "POST":
+            data = request.get_json()
+            user_input = data.get("userInput")
+            
+            if  user_input.strip():
+                response = client.chat.completions.create(
+                messages=[
+                        {
+                            "role": "system",
+                            "content": f"""You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Your role is to generate a simple, clear, and suitable course name based on the following user input: {user_input}.Return only the course name as plain text. Do not include any labels, prefixes, or extra text (e.g., avoid phrases like "Course name:", "Here is your course:", etc.). Output only the name itself.""",
+                        },
+                        {
+                            "role": "user",
+                            "content": user_input,
+                        },
+                    ],
+                    temperature=1,
+                    top_p=1,
+                    model=model,
+                    )
+                
+                course_name =  response.choices[0].message.content
+
+                response = client.chat.completions.create(
+                messages=[
+                        {
+                            "role": "system",
+                            "content": f"",
+                        },
+                        {
+                            "role": "user",
+                            "content": f"You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Ada is a platform designed to help beginner developers learn programming and software development effectively.Your role is to generate beginner-friendly, easy-to-understand course content based on the following user input: {user_input}.Use proper HTML tags for all content, including headings (<h2>), paragraphs (<p>), lists (<ul>, <li>), and code blocks (<pre><code>). This ensures the output can be rendered cleanly in a webpage. Do not include introductions, explanations, or phrases like “Here is your course” — just return the raw structured HTML content. If the user input is random, unclear, or does not make sense, generate a meaningful beginner-friendly course topic on your own and proceed accordingly."
+                        },
+                    ],
+                    temperature=1,
+                    top_p=1,
+                    model=model,
+                    )            
+                
+                course_content = response.choices[0].message.content
+
+                conn = sqlite3.connect("database/app.db")
+                cursor = conn.cursor()
+
+                user_id = session.get("user_id")
+
+                resource_id = str(uuid.uuid4())
+
+                timestamp = datetime.now().isoformat(
+                    timespec="seconds"
+                ) 
+
+                cursor.execute("""
+                    INSERT INTO Ai_resource (resource_id, user_id, title, content, generated_at, status) VALUES (?, ?, ?, ?, ?, ?)
+                            """, (resource_id, user_id, course_name, course_content, timestamp, "Haven't Done"))
+                conn.commit()
+
+                conn.close()
+                
+                ai_courses_url = url_for('my_courses.ai_courses')
+                return jsonify({"redirect_url": ai_courses_url, "status":"created"}),200
+            else:
+                return jsonify({"error": "Invalid Input"})
+
+        else:
+            return jsonify({"error": "Invalid JSON"}),400
+    else:
+        return redirect(url_for("auth.login"))
+    
+@my_courses_bp.route("/my-courses/ai_generated/search", methods = ["POST", "GET"])
+def search_ai_courses():
+    if 'username' in session:
+        ai_courses_data =  session.get("ai_courses_data")
+        if request.method == "GET":
+            keyword = request.args.get(
+                "search"
+            )
+            searched_ai_courses_data = []
+            keyword = keyword.lower()
+            for ai_course_data in ai_courses_data:
+                for data in ai_course_data:
+                    data = data.lower()
+                    if keyword in data:
+                        searched_ai_courses_data.append(ai_course_data)
+                        break     
+            print(searched_ai_courses_data)
+            return render_template("user/my_courses/search_ai_courses.html", ai_courses_data = searched_ai_courses_data)
     else:
         return redirect(url_for("auth.login"))

@@ -1,3 +1,5 @@
+let is_dark_theme;
+
 let colour_variables = [
   "--background-color",
   "--text-color",
@@ -12,6 +14,7 @@ let colour_variables = [
   "--text-color-third",
   "--text-color-rest",
   "--course-card-background-color",
+  "--transparent-background-color",
 ];
 
 let dark_theme_colours = [
@@ -28,6 +31,7 @@ let dark_theme_colours = [
   "#ffa500",
   "#ffffff99",
   "#000000ac",
+  "#0000008b",
 ];
 
 let white_theme_colours = [
@@ -44,6 +48,7 @@ let white_theme_colours = [
   "#FFA500",
   "#000000c8",
   "#ffffffac",
+  "#ffffff8b",
 ];
 
 const dark_theme = () => {
@@ -74,8 +79,11 @@ var prefered_theme = localStorage.getItem("app-theme-preference");
 
 if (prefered_theme == "dark") {
   dark_theme();
+  is_dark_theme = true;
 } else if (prefered_theme == "light") {
   light_theme();
+  is_dark_theme = false;
 } else {
   dark_theme();
+  is_dark_theme = true;
 }

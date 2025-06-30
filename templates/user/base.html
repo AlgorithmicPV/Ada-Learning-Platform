@@ -11,9 +11,7 @@
               href="{{ url_for('static', filename='images/logos/favicon.svg') }}" />
         <link rel="stylesheet"
               href="{{ url_for('static', filename='css/user/base.css') }}" />
-        <script src="{{ url_for('static', filename='js/user/theme.js') }}">
-       
-        </script>
+        <script src="{{ url_for('static', filename='js/user/theme.js') }}"></script>
         <script src="{{ url_for('static', filename='js/user/menu.js') }}"></script>
         <script>
   (() => {
@@ -22,14 +20,12 @@
 
     document.documentElement.setAttribute('data-sidebar', sidebar);
   })();
-</script>
-<script>
+        </script>
+        <script>
   window.addEventListener("DOMContentLoaded", () => {
     document.querySelector(".cont").classList.add("page-loaded");
   });
-</script>
-
-
+        </script>
         {% block extra_css %}{% endblock %}
         <script src="https://unpkg.com/htmx.org@2.0.4"></script>
     </head>
@@ -258,6 +254,7 @@
                 </div>
             </div>
         </div>
+        {% block floatingItems %}{% endblock %}
         <script src="{{ url_for('static', filename='js/user/base.js') }}"></script>
         {% block inline_css %}{% endblock %}
         {% block extra_js %}{% endblock %}

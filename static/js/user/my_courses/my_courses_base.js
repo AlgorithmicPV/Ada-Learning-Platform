@@ -6,16 +6,16 @@ let is_input_box_showing = false;
 
 // Function to toggle the visibility of the search input box
 const show_elements = () => {
-  document.querySelector("form input").style.display = "flex";
-  document.querySelector("form .search-btn").style.display = "flex";
+  document.querySelector(".search-bar input").style.display = "flex";
+  document.querySelector(".search-bar .search-btn").style.display = "flex";
   show_search_box.style.display = "none";
   is_input_box_showing = true;
 };
 
 // Function to hide the search input box
 const hide_elements = () => {
-  document.querySelector("form input").style.display = "none";
-  document.querySelector("form .search-btn").style.display = "none";
+  document.querySelector(".search-bar input").style.display = "none";
+  document.querySelector(".search-bar .search-btn").style.display = "none";
   show_search_box.style.display = "flex";
   is_input_box_showing = false;
 };
