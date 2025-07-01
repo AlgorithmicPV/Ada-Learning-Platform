@@ -1,4 +1,14 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request, abort, jsonify
+from flask import (
+    Blueprint,
+    render_template,
+    session,
+    redirect,
+    url_for,
+    request,
+    abort,
+    jsonify,
+    flash,
+)
 import sqlite3
 from datetime import datetime
 import uuid
@@ -64,7 +74,7 @@ def all_courses():
                 """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
                 (
                     user_id,
-                    one_course_set[0], #Course ID
+                    one_course_set[0],  # Course ID
                 ),
             )  # Selects all the completed lessons (number)
 
@@ -429,41 +439,6 @@ def lesson(course_name, lesson_name):
         return redirect(url_for("auth.login"))
 
 
-# This route is used to display the AI-generated courses
-@my_courses_bp.route("/my-courses/ai_generated", methods=["GET", "POST"])
-def ai_courses():
-    if "user_id" in session:
-        user_id =  session.get("user_id")
-
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT resource_id, title, status , generated_at FROM Ai_resource WHERE user_id = ?", (user_id,))
-        
-        ai_courses_data_form_db = cursor.fetchall()
-
-        ai_courses = []
-
-        for ai_Course_from_db in ai_courses_data_form_db:
-            ai_courses.append(ai_Course_from_db[0])
-            ai_courses.append(ai_Course_from_db[1])
-            ai_courses.append(ai_Course_from_db[2])
-            ai_courses.append(ai_Course_from_db[3].split("T")[0])
-        
-           
-        cursor.execute("SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,))
-
-        number_of_ai_courses = cursor.fetchone()[0]
-
-        ai_courses_data = divide_array_into_chunks(ai_courses, int(len(ai_courses) / number_of_ai_courses))
-
-        session["ai_courses_data"] = ai_courses_data
-
-        return render_template("user/my_courses/ai_generated_courses.html", ai_courses_data = ai_courses_data)
-    else:
-        return redirect(url_for("auth.login"))
-
-
 # This route is used to display the courses that the user has completed
 @my_courses_bp.route("/my-courses/completed-courses", methods=["GET", "POST"])
 def completed_courses():
@@ -481,10 +456,18 @@ def completed_courses():
         # This is used to display the completed courses to the user
         for element in course_id_tuple:
             for course_id in element:
-                cursor.execute("""SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,))
+                cursor.execute(
+                    """SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,)
+                )
                 total_number_of_lessons = cursor.fetchone()[0]
 
-                cursor.execute("""SELECT COUNT(*) FROM user_lesson WHERE lesson_id IN (SELECT lesson_id FROM lesson WHERE course_id = ?) AND status = "completed" AND user_id=? """, (course_id,user_id,),)
+                cursor.execute(
+                    """SELECT COUNT(*) FROM user_lesson WHERE lesson_id IN (SELECT lesson_id FROM lesson WHERE course_id = ?) AND status = "completed" AND user_id=? """,
+                    (
+                        course_id,
+                        user_id,
+                    ),
+                )
                 number_completed_lesson = cursor.fetchone()[0]
 
                 if number_completed_lesson == total_number_of_lessons:
@@ -497,23 +480,36 @@ def completed_courses():
 
         for completed_course_id in completed_course_ids:
             cursor.execute(
-                    "SELECT course_id, course_name, language_image, course_image, language FROM Course WHERE course_id=?", (completed_course_id,)
-                )
+                "SELECT course_id, course_name, language_image, course_image, language FROM Course WHERE course_id=?",
+                (completed_course_id,),
+            )
             course_data = cursor.fetchall()
             for one_set_course_data in course_data:
                 for data in one_set_course_data:
                     completed_courses_data.append(data)
-                completed_courses_data.append(100) # Appends 100 to the list to indicate that the course is completed
+                completed_courses_data.append(
+                    100
+                )  # Appends 100 to the list to indicate that the course is completed
 
         cursor.close()
         # This function divides the completed_courses_data into chunks based on the number of completed course IDs
-        divided_array = divide_array_into_chunks(completed_courses_data, int(len(completed_courses_data) / len(completed_course_ids)))
-
-        return render_template("user/my_courses/completed_courses.html", courses_data = divided_array)
+        try:
+            divided_array = divide_array_into_chunks(
+                completed_courses_data,
+                int(len(completed_courses_data) / len(completed_course_ids)),
+            )
+        except ZeroDivisionError:
+            divided_array = []
+        return render_template(
+            "user/my_courses/completed_courses.html", courses_data=divided_array
+        )
     else:
         return redirect(url_for("auth.login"))
 
 
+# This route is used to display the code editor for the user to write and test their code
+# It checks if the user is logged in and retrieves the programming language from the session
+# language is used for to set language in the code editor
 @my_courses_bp.route("/my-courses/code-editor", methods=["GET", "POST"])
 def code_editor():
     if "user_id" in session:
@@ -523,19 +519,66 @@ def code_editor():
         return redirect(url_for("auth.login"))
 
 
-@my_courses_bp.route("/my-courses/ai_generated/generating", methods = ["POST"])
+# This route is used to display the AI-generated courses that the user has created
+@my_courses_bp.route("/my-courses/ai_generated", methods=["GET", "POST"])
+def ai_courses():
+    if "user_id" in session:
+        user_id = session.get("user_id")
+
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT resource_id, title, status , generated_at FROM Ai_resource WHERE user_id = ?",
+            (user_id,),
+        )
+
+        ai_courses_data_form_db = cursor.fetchall()
+
+        ai_courses = []
+
+        for ai_Course_from_db in ai_courses_data_form_db:
+            ai_courses.append(ai_Course_from_db[0])
+            ai_courses.append(ai_Course_from_db[1])
+            ai_courses.append(ai_Course_from_db[2])
+            ai_courses.append(ai_Course_from_db[3].split("T")[0])
+
+        cursor.execute(
+            "SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,)
+        )
+
+        number_of_ai_courses = cursor.fetchone()[0]
+        try:
+            ai_courses_data = divide_array_into_chunks(
+                ai_courses, int(len(ai_courses) / number_of_ai_courses)
+            )
+        except ZeroDivisionError:
+            ai_courses_data = []
+
+        session["ai_courses_data"] = ai_courses_data
+
+        return render_template(
+            "user/my_courses/ai_generated_courses.html", ai_courses_data=ai_courses_data
+        )
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route is used to generate a course based on the user's input using AI
+# It checks if the user is logged in and if the request is a POST request with JSON
+@my_courses_bp.route("/my-courses/ai_generated/generating", methods=["POST"])
 def generarting_course():
     if "user_id" in session:
         if request.is_json and request.method == "POST":
             data = request.get_json()
             user_input = data.get("userInput")
-            
-            if  user_input.strip():
+
+            if user_input.strip():
                 response = client.chat.completions.create(
-                messages=[
+                    messages=[
                         {
                             "role": "system",
-                            "content": f"""You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Your role is to generate a simple, clear, and suitable course name based on the following user input: {user_input}.Return only the course name as plain text. Do not include any labels, prefixes, or extra text (e.g., avoid phrases like "Course name:", "Here is your course:", etc.). Output only the name itself.""",
+                            "content": f"""You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Your role is to generate a simple, clear, and suitable course name based on the following user input: {user_input}.Return only the course name as plain text. Do not include any labels, prefixes, or extra text (e.g., avoid phrases like "Course name:", "Here is your course:", etc.). Output only the name itself.If the user input is random, unclear, or does not make sense, generate a meaningful beginner-friendly course name on your own and proceed accordingly.""",
                         },
                         {
                             "role": "user",
@@ -545,26 +588,26 @@ def generarting_course():
                     temperature=1,
                     top_p=1,
                     model=model,
-                    )
-                
-                course_name =  response.choices[0].message.content
+                )
+
+                course_name = response.choices[0].message.content
 
                 response = client.chat.completions.create(
-                messages=[
+                    messages=[
                         {
                             "role": "system",
                             "content": f"",
                         },
                         {
                             "role": "user",
-                            "content": f"You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Ada is a platform designed to help beginner developers learn programming and software development effectively.Your role is to generate beginner-friendly, easy-to-understand course content based on the following user input: {user_input}.Use proper HTML tags for all content, including headings (<h2>), paragraphs (<p>), lists (<ul>, <li>), and code blocks (<pre><code>). This ensures the output can be rendered cleanly in a webpage. Do not include introductions, explanations, or phrases like “Here is your course” — just return the raw structured HTML content. If the user input is random, unclear, or does not make sense, generate a meaningful beginner-friendly course topic on your own and proceed accordingly."
+                            "content": f"You are an AI assistant integrated into the Ada Learning Platform, developed by G. A. Pasindu Vidunitha. Ada is a platform designed to help beginner developers learn programming and software development effectively.Your role is to generate beginner-friendly, easy-to-understand course content based on the following user input: {course_name}.Use proper HTML tags for all content, including headings (<h2>), paragraphs (<p>), lists (<ul>, <li>), and code blocks (<pre><code>). This ensures the output can be rendered cleanly in a webpage. Do not include introductions, explanations, or phrases like “Here is your course” — just return the raw structured HTML content. If the user input is random, unclear, or does not make sense, generate a meaningful beginner-friendly course topic on your own and proceed accordingly.",
                         },
                     ],
                     temperature=1,
                     top_p=1,
                     model=model,
-                    )            
-                
+                )
+
                 course_content = response.choices[0].message.content
 
                 conn = sqlite3.connect("database/app.db")
@@ -574,35 +617,47 @@ def generarting_course():
 
                 resource_id = str(uuid.uuid4())
 
-                timestamp = datetime.now().isoformat(
-                    timespec="seconds"
-                ) 
+                timestamp = datetime.now().isoformat(timespec="seconds")
 
-                cursor.execute("""
+                cursor.execute(
+                    """
                     INSERT INTO Ai_resource (resource_id, user_id, title, content, generated_at, status) VALUES (?, ?, ?, ?, ?, ?)
-                            """, (resource_id, user_id, course_name, course_content, timestamp, "Haven't Done"))
+                            """,
+                    (
+                        resource_id,
+                        user_id,
+                        course_name,
+                        course_content,
+                        timestamp,
+                        "Haven't Done",
+                    ),
+                )
                 conn.commit()
 
                 conn.close()
-                
-                ai_courses_url = url_for('my_courses.ai_courses')
-                return jsonify({"redirect_url": ai_courses_url, "status":"created"}),200
+
+                ai_courses_url = url_for("my_courses.ai_courses")
+                return (
+                    jsonify({"redirect_url": ai_courses_url, "status": "created"}),
+                    200,
+                )
             else:
                 return jsonify({"error": "Invalid Input"})
 
         else:
-            return jsonify({"error": "Invalid JSON"}),400
+            return jsonify({"error": "Invalid JSON"}), 400
     else:
         return redirect(url_for("auth.login"))
-    
-@my_courses_bp.route("/my-courses/ai_generated/search", methods = ["POST", "GET"])
+
+
+# This route is used to search for AI-generated courses based on a keyword entered by the user
+# It checks if the user is logged in and retrieves the AI courses data from the session
+@my_courses_bp.route("/my-courses/ai_generated/search", methods=["POST", "GET"])
 def search_ai_courses():
-    if 'username' in session:
-        ai_courses_data =  session.get("ai_courses_data")
+    if "user_id" in session:
+        ai_courses_data = session.get("ai_courses_data")
         if request.method == "GET":
-            keyword = request.args.get(
-                "search"
-            )
+            keyword = request.args.get("search")
             searched_ai_courses_data = []
             keyword = keyword.lower()
             for ai_course_data in ai_courses_data:
@@ -610,8 +665,129 @@ def search_ai_courses():
                     data = data.lower()
                     if keyword in data:
                         searched_ai_courses_data.append(ai_course_data)
-                        break     
+                        break
             print(searched_ai_courses_data)
-            return render_template("user/my_courses/search_ai_courses.html", ai_courses_data = searched_ai_courses_data)
+            return render_template(
+                "user/my_courses/search_ai_courses.html",
+                ai_courses_data=searched_ai_courses_data,
+            )
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route is used to handle the intermediate step when showing all AI-generated courses
+# This works between the AI-generated courses page and the AI course content page
+# It checks if the user is logged in and retrieves the AI resource ID from the form submission
+@my_courses_bp.route("/my-courses/ai_generated/intermediate", methods=["POST", "GET"])
+def intermediate_route_ai():
+    if "user_id" in session:
+        if request.method == "POST":
+
+            conn = sqlite3.connect("database/app.db")
+            cursor = conn.cursor()
+
+            user_id = session.get("user_id")
+
+            ai_resource_id = request.form.get("ai-course-id")
+
+            cursor.execute(
+                "SELECT title FROM Ai_resource WHERE resource_id =? and user_id=?",
+                (
+                    ai_resource_id,
+                    user_id,
+                ),
+            )
+            row = cursor.fetchone()
+
+            conn.close()
+
+            # If the AI resource ID is not found, return a 404 error
+            # This is to ensure that the user cannot access a course that does not exist
+            if not row:
+                abort(404)
+
+            course_name = row[0]
+
+            session["ai_courses_id"] = ai_resource_id
+
+            formated_course_name = "-".join(course_name.split(" "))
+
+            return redirect(
+                url_for("my_courses.ai_course", course_name=formated_course_name)
+            )
+
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route is used to display the AI-generated course content
+@my_courses_bp.route("/my-courses/ai_generated/<course_name>")
+def ai_course(course_name):
+    if "user_id" in session:
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        user_id = session.get("user_id")
+        ai_resource_id = session.get("ai_courses_id")
+
+        cursor.execute(
+            "SELECT title, content FROM Ai_resource WHERE resource_id =? and user_id=?",
+            (
+                ai_resource_id,
+                user_id,
+            ),
+        )
+        ai_course_data = cursor.fetchall()[0]
+        conn.close()
+        title = ai_course_data[0]
+        content = ai_course_data[1]
+
+        session["ai_course_topic"] = title
+
+        return render_template(
+            "user/my_courses/ai_course.html", content=content, course_name=title
+        )
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route is used to mark an AI-generated course as completed
+# It checks if the user is logged in and updates the course status in the database
+@my_courses_bp.route("/my-courses/ai_generated/completed", methods=["POST"])
+def ai_course_complete():
+    if "user_id" in session:
+        if request.method == "POST":
+            completed = request.form.get("completed")
+            if completed == "completed":
+                ai_resource_id = session.get("ai_courses_id")
+                user_id = session.get("user_id")
+                conn = sqlite3.connect("database/app.db")
+                cursor = conn.cursor()
+
+                cursor.execute(
+                    """ SELECT resource_id FROM Ai_resource WHERE user_id = ? AND status = "Completed" """,
+                    (user_id,),
+                )
+
+                completed_ai_course_id = cursor.fetchall()
+
+                ai_course_ids_completed = []
+
+                for tuple_item in completed_ai_course_id:
+                    for uuid in tuple_item:
+                        ai_course_ids_completed.append(uuid)
+
+                # If the AI resource ID is not already marked as completed, update its status to "Completed"
+                # This is to ensure that the user can mark the course as completed only once
+                if ai_resource_id not in ai_course_ids_completed:
+                    cursor.execute(
+                        """UPDATE Ai_resource SET status = "Completed" WHERE resource_id=? AND user_id=?""",
+                        (ai_resource_id, user_id),
+                    )
+
+                    conn.commit()
+                    cursor.close()
+
+        return redirect(url_for("my_courses.ai_courses"))
     else:
         return redirect(url_for("auth.login"))

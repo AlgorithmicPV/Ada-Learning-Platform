@@ -31,7 +31,7 @@ let dark_theme_colours = [
   "#ffa500",
   "#ffffff99",
   "#000000ac",
-  "#0000008b",
+  "#000000bf",
 ];
 
 let white_theme_colours = [
@@ -48,7 +48,7 @@ let white_theme_colours = [
   "#FFA500",
   "#000000c8",
   "#ffffffac",
-  "#ffffff8b",
+  "#ffffffc0",
 ];
 
 const dark_theme = () => {

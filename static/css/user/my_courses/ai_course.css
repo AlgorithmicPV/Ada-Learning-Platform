@@ -1,0 +1,237 @@
+:root {
+  --border-color: #ebe9fc22;
+  --second-text-color: #ebe9fc70;
+  --text-color: #ebe9fc;
+  --background-color: #010104;
+}
+
+.cont-wrapper {
+  overflow: hidden; /* Prevents overflow this allows to add a seperate scrollbar to lesson navigation and lesson content */
+}
+
+.ai_course-wrapper {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ensures the container takes up available space */
+}
+
+.ai-course-top-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 15px; /* Space between elements for better readability */
+  border-top: 2px solid var(--border-color); /* Top border for visual separation */
+  border-bottom: 2px solid var(--border-color); /* Bottom border for visual separation */
+}
+
+.ai-course-cont {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.ai-course-cont-top-bar {
+  padding-top: 5px;
+  padding-bottom: 15px;
+}
+
+.search-keywords-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+
+.searchBox {
+  visibility: hidden;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  font-size: medium;
+  color: var(--text-color);
+  border-bottom: 2px solid var(--text-color);
+  padding: 5px;
+}
+
+.search-keywords-wrapper svg,
+.coursename-and-read-aloud-wrapper svg {
+  height: 20px; /* Adjusted height for better visibility which goes with the text size */
+  width: auto;
+  fill: var(--text-color);
+}
+
+.search-keywords-wrapper button,
+.coursename-and-read-aloud-wrapper button {
+  background-color: transparent;
+  border-radius: 50%; /* Makes the button circular */
+  height: 30px;
+  width: 30px;
+  border: none; /* Removes default button border for a cleaner look */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-keywords-wrapper button:hover,
+.coursename-and-read-aloud-wrapper button:hover {
+  background-color: var(--second-text-color);
+}
+
+mark {
+  background-color: lightblue !important;
+}
+
+.coursename-and-read-aloud-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.coursename-and-read-aloud-wrapper .coursename {
+  font-size: xx-large;
+  margin: 0;
+  font-weight: bolder;
+}
+
+.content-and-chat-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.content-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  border-right: 2px solid var(--border-color);
+  scrollbar-gutter: stable; /* Prevents content shifting when the scrollbar appears */
+}
+
+.ai-assistance-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  flex: 1;
+}
+
+.chat-input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+.chat-input-wrapper button {
+  background-color: transparent !important;
+  fill: var(--second-text-color);
+  border: none; /* Removes default button border for modern look */
+  cursor: pointer; /* Changes the cursor to a pointer on hover to indicate it's clickable */
+}
+
+.chat-input-wrapper button:hover {
+  fill: var(--text-color);
+}
+
+.chat-input-wrapper button svg {
+  height: 20px;
+  width: 20px;
+}
+
+.chat-input-wrapper input {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
+  font-size: medium;
+  color: var(--text-color);
+  caret-color: var(--primary-color);
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  width: calc(
+    100% - 10px
+  ); /* Adjusted to account for padding to avoid overflow */
+  flex: 1;
+  overflow: auto;
+  scrollbar-gutter: stable; /* Ensures that content does not shift when the scrollbar appears */
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 15px; /* Adds space between conversations for better readability */
+}
+
+.user-input-wrapper,
+.answer-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.user-input-wrapper {
+  justify-content: flex-start;
+}
+
+.answer-wrapper {
+  justify-content: flex-end;
+}
+
+.input,
+.ai-response {
+  border-radius: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 2px;
+  text-wrap: wrap;
+  min-width: min-content;
+}
+
+.ai-response {
+  max-width: 80%;
+}
+
+.input {
+  background-color: var(--text-color);
+  color: var(--background-color);
+}
+
+.ai-response {
+  background-color: var(--primary-color);
+  color: var(--home-text-colorr);
+}
+
+.done-form {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.done-btn {
+  background-color: var(--text-color);
+  border: none;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: medium;
+  color: var(--background-color);
+  cursor: pointer; /* Changes the cursor to a pointer on hover to indicate it's clickable */
+}
+
+code {
+  border-radius: 15px; /* Adds rounded corners for a smoother look for code blocks */
+}

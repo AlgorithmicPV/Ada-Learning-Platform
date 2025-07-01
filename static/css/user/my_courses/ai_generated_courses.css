@@ -6,7 +6,7 @@
   --primary-color: #3a31d8;
   --blocks-color: #0d0d11;
   --home-text-color: #ebe9fc;
-  --transparent-background-color: #0000008b;
+  --transparent-background-color: #000000bf;
 }
 
 .ai-generated-courses-wrapper {
@@ -202,7 +202,8 @@
 .ai-course-block {
   background-color: var(--blocks-color);
   width: 350px;
-  height: 125px;
+  min-height: 125px;
+  height: max-content;
   border-radius: 15px;
   padding: 15px;
   display: flex;

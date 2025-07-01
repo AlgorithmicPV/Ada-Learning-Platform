@@ -31,7 +31,6 @@ cursor = conn.cursor()
 # #         lesson_ids.append(uuid)
 
 
-
 # # if "03e1fcbe-406b-4494-b5as7-a4f7d0b935ae" not in lesson_ids:
 # #     print("fine")
 
@@ -47,7 +46,7 @@ cursor = conn.cursor()
 #     for course_id in element:
 #         cursor.execute("""SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,))
 
-        
+
 #         total_number_of_lessons = cursor.fetchone()[0]
 
 #         # print(total_number_of_lessons)
@@ -80,8 +79,7 @@ cursor = conn.cursor()
 #     # for data in course_data:
 #     #     # completed_course_data = (data)
 #     #     print(data)
-#     # completed_course_data=  completed_course_data + (100,) 
-        
+#     # completed_course_data=  completed_course_data + (100,)
 
 
 # # print(completed_course_data)
@@ -174,24 +172,32 @@ user_input = "Make me a course on React"
 #     ai_course.append(ai_Course_from_db[3].split("T")[0])
 
 # print(ai_course)
-    
+
 
 # date = "2025-06-30T19:03:42"
 
 # print(date.split("T")[0])
 
-ai_courses_data = [['f67149f9-c2b2-4e3c-a8fe-1fe84c2c3a7c', 'Introduction to Vue.js', "Haven't Done", '2025-06-30'], ['1ac0385e-699a-4c16-9d75-e739bc94b03f', 'Introduction to AngularJS', "Haven't Done", '2025-06-30'], ['e9542a54-c9f6-4c96-a70d-f887acfbd707', 'FastAPI Mastery', "Haven't Done", '2025-06-30'], ['a5f9b99b-d011-44dd-9045-23ab2b863910', 'Introduction to Web Development with Flask', "Haven't Done", '2025-06-30']]
+# ai_courses_data = [['f67149f9-c2b2-4e3c-a8fe-1fe84c2c3a7c', 'Introduction to Vue.js', "Haven't Done", '2025-06-30'], ['1ac0385e-699a-4c16-9d75-e739bc94b03f', 'Introduction to AngularJS', "Haven't Done", '2025-06-30'], ['e9542a54-c9f6-4c96-a70d-f887acfbd707', 'FastAPI Mastery', "Haven't Done", '2025-06-30'], ['a5f9b99b-d011-44dd-9045-23ab2b863910', 'Introduction to Web Development with Flask', "Haven't Done", '2025-06-30']]
 
-keyword = "FastApi"
+# keyword = "FastApi"
 
-searched_ai_courses_data = []
+# searched_ai_courses_data = []
 
-keyword = keyword.lower()
-for ai_course_data in ai_courses_data:
-    for data in ai_course_data:
-        data = data.lower()
-        if keyword in data:
-            searched_ai_courses_data.append(ai_course_data)
-            break
+# keyword = keyword.lower()
+# for ai_course_data in ai_courses_data:
+#     for data in ai_course_data:
+#         data = data.lower()
+#         if keyword in data:
+#             searched_ai_courses_data.append(ai_course_data)
+#             break
 
-print(searched_ai_courses_data)
+# print(searched_ai_courses_data)
+
+
+cursor.execute(
+    "SELECT title , content FROM Ai_resource WHERE resource_id = '875cc8a3-02e5-49df-b7c8-4e58c9775ab1'"
+)
+row = cursor.fetchall()[0]
+
+print(row[0])

@@ -9,7 +9,7 @@
               href="{{ url_for('static', filename='css/user/my_courses/lesson.css') }}" />
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
-        <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+        <!-- <script src="https://unpkg.com/htmx.org@1.9.2"></script> -->
     {% endblock %}
     <div class="lesson-cont-wrapper">
         <!--Lesson top bar with course name and percentage completion-->
@@ -114,7 +114,6 @@
                         </svg>
                     </button>
                 </div>
-                <!-- <div id="lessonContent"></div> -->
                 <!--End of lesson title and buttons-->
                 <!--Lesson content area where the lesson content is displayed-->
                 <div class="content" id="content">{{ lesson_content | safe }}</div>

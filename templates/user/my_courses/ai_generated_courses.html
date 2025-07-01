@@ -6,21 +6,31 @@
     <link rel="stylesheet"
           href="{{ url_for('static', filename = 'css/user/my_courses/ai_generated_courses.css') }}" />
     <script>
-  const usersawmsg = sessionStorage.getItem("usersawmsg") || "no";
+    // Check if the user has seen the warning message and depending on that set the attribute to show or hide the warning
+  const usersawmsg = sessionStorage.getItem("usersawmsg") || "no"; 
   document.documentElement.setAttribute("data-warningSaw", usersawmsg);
     </script>
 {% endblock %}
 {% block content %}
     {{ super() }}
+    <!--Wrapper that shows all AI-generated courses by the user-->
     <div class="ai-generated-courses-wrapper">
+        <!--{{ai_course[0]}} means course ID-->
+        <!--{{ ai_course[1] }} means course name-->
+        <!--{{ ai_course[2] }} means course status-->
+        <!--{{ ai_course[3] }} means course creation date-->
         {% for ai_course in ai_courses_data %}
+            <!--Each AI course is shown in a block with its name, status, and creation date-->
             <div class="ai-course-block">
                 <p class="course-name">{{ ai_course[1] }}</p>
                 <p class="generated-date">created at {{ ai_course[3] }}</p>
                 <p class="status {% if ai_course[2] == "Completed" %}completed{% else %}pending{% endif %}">{{ ai_course[2] }}</p>
-                <form action="">
+                <!--This form is used to open or continue the AI course-->
+                <form action="{{ url_for("my_courses.intermediate_route_ai") }}"
+                      method="post">
                     <input type="hidden" name="ai-course-id" value="{{ ai_course[0] }}" />
-                    <button class="open-a-course-btn">
+                    <button class="open-a-course-btn" type="submit">
+                        <!--Change button text based on course status-->
                         {% if ai_course[2] == "Completed" %}
                             open
                         {% else %}
@@ -29,11 +39,14 @@
                         %}
                     </button>
                 </form>
+                <!--End of form to open or continue the AI course-->
             </div>
+            <!--End of AI course block-->
         {% endfor %}
     </div>
 {% endblock %}
 {% block floatingItems %}
+    <!--Button to add a new AI-generated course-->
     <button class="add-ai-generated-courses-btn">
         <svg xmlns="http://www.w3.org/2000/svg"
              id="Outline"
@@ -43,6 +56,8 @@
             <path d="M23,11H13V1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1V11H1a1,1,0,0,0-1,1H0a1,1,0,0,0,1,1H11V23a1,1,0,0,0,1,1h0a1,1,0,0,0,1-1V13H23a1,1,0,0,0,1-1h0A1,1,0,0,0,23,11Z" />
         </svg>
     </button>
+    <!--End of button to add a new AI-generated course-->
+    <!--Input wrapper for creating a new AI-generated course based on user input-->
     <div class="new-course-input-wrapper">
         <div class="new-ai-courses-form">
             <input type="text"
@@ -58,10 +73,15 @@
                 </svg>
             </button>
         </div>
+        <!--End of input wrapper for creating a new AI-generated course-->
+        <!--This warning message is shown to the user when they try to create an AI-generated course-->
+        <!--It informs them that there is no built-in code editor for AI-generated courses-->
         <div class="warning-wrapper">
             <p>We are not giving a built in code editor for AI Generated Courses</p>
             <button>X</button>
         </div>
+        <!--End of warning message-->
+        <!--Loader animation that shows while the AI-generated course is being created-->
         <div class="loader">
             <div class="square" id="sq1"></div>
             <div class="square" id="sq2"></div>
@@ -73,7 +93,9 @@
             <div class="square" id="sq8"></div>
             <div class="square" id="sq9"></div>
         </div>
+        <!--End of loader animation-->
     </div>
+    <!--End of input wrapper for creating a new AI-generated course-->
 {% endblock %}
 {% block extra_js %}
     <script>let ai_course_url = "{{ url_for('my_courses.generarting_course') }}";</script>

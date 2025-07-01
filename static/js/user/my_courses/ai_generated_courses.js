@@ -1,3 +1,5 @@
+// JavaScript code for the AI generated courses page (Page that allows users to generate new courses using AI and shows the generated courses)
+
 const BtnAddnewAi = document.querySelector(".add-ai-generated-courses-btn");
 const newCourseInputWrapper = document.querySelector(
   ".new-course-input-wrapper"
@@ -22,12 +24,14 @@ BtnAddnewAi.addEventListener("click", () => {
   }
 });
 
-const WarrningBox = document.querySelector(".warning-wrapper");
+const WarningBox = document.querySelector(".warning-wrapper");
 const WarningCloseBtn = document.querySelector(".warning-wrapper button");
 
+// If user clicks the close button on the warning box, hide the box and set in session storage that the user has seen the message
+// This is to prevent the box from showing up again when the user refreshes the page
 WarningCloseBtn.addEventListener("click", () => {
-  WarrningBox.style.display = "none";
-  WarrningBox.style.opacity = 0;
+  WarningBox.style.display = "none";
+  WarningBox.style.opacity = 0;
   sessionStorage.setItem("usersawmsg", "yes");
 });
 
@@ -38,16 +42,24 @@ const userInputBox = document.querySelector(".user-input");
 const loader = document.querySelector(".loader");
 const newAiCoursesForm = document.querySelector(".new-ai-courses-form");
 
+// Function that passes the user input to the backend to generate a course
+// and redirects the user to the page that shows all generated courses (same page)
 const generatingCourse = async () => {
   if (userInputBox.value != "" && userInputBox.value != " ") {
     let userInput = userInputBox.value;
+
+    // Clear the user input box after getting the input
     userInputBox.value = "";
+
+    // Show the loader, to indicate that the request is being processed
     loader.style.opacity = 1;
     loader.style.visibility = "visible";
 
+    // Hide the user input box, to prevent multiple clicks
     newAiCoursesForm.style.opacity = 0;
     newAiCoursesForm.style.visibility = "hidden";
 
+    // Hide the add new AI button, to prevent multiple clicks
     BtnAddnewAi.style.opacity = 1;
     BtnAddnewAi.style.visibility = "hidden";
 
@@ -66,10 +78,7 @@ const generatingCourse = async () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      console.log("loading...");
-      console.log(result);
       if (result.redirect_url) {
-        console.log("done");
         window.location.href = result.redirect_url;
       }
     } catch (error) {
@@ -78,6 +87,7 @@ const generatingCourse = async () => {
   }
 };
 
+// Add event listener to the send button to call the generatingCourse function
 sendButton.addEventListener("click", () => {
   generatingCourse();
 });
