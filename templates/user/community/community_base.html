@@ -17,7 +17,9 @@
     <!--End of Navigation Menu-->
     <!--Community Discussions Wrapper-->
     <div class="community-wrapper">
-        <div class="discs-cont"></div>
+        <div class="discs-cont">
+            {% block discussions_cont %}{% endblock %}
+        </div>
         <!--Search bar to filter discussions-->
         <form class="search-bar"
               action="{{ form_action }}"
@@ -43,12 +45,14 @@
     <!-- Keeps this as a floating button to keep it when the user scrolls -->
     <button class="add-a-question-btn">Add a Question</button>
     <!--End of add a question button-->
-    <!-- Posting question wrapper -->
-    <!-- This wrapper will be shown when the user clicks on the add a question button -->
-    <div class="posting-question-wrapper">
+    <!-- Posting question form -->
+    <!-- This form will be shown when the user clicks on the add a question button -->
+    <form class="posting-question-wrapper"
+          method="post"
+          action="{{ url_for("community.add_new_post") }}">
         <!--Top bar of the posting question wrapper which includes closing button-->
         <div class="posting-question-wrapper-top-bar">
-            <button class="close-btn-posting-question-wrapper">
+            <button type="button" class="close-btn-posting-question-wrapper">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
                      viewBox="0 0 24 24"
@@ -63,14 +67,15 @@
         <!--User can type their question here-->
         <div class="posting-question-wrapper-body">
             <img src="{{ url_for("static", filename=profile_pic) }}"alt="profile-pic">
-            <textarea class="user-question-input"
+            <textarea name="user-question-input"
+                      class="user-question-input"
                       placeholder="Ask your question to the community!&#10;&#10;You can use Markdown to format your message and make it more readable.&#10;&#10;If you're unfamiliar with Markdown, click the Download button to get a handy cheat sheet. 🚀"></textarea>
         </div>
         <!--End of Body-->
         <!--Bottom bar of the posting question wrapper which includes Post button and download button for markdown cheat sheet-->
         <div class="posting-question-bottom-bar">
-            <button class="posting-btn">Post</button>
-            <button class="download-btn-for-md">
+            <button type="submit" class="posting-btn">Post</button>
+            <button type="button" class="download-btn-for-md">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
                      viewBox="0 0 24 24"
@@ -82,8 +87,8 @@
             </button>
         </div>
         <!--End of Bottom bar-->
-    </div>
-    <!--End of Posting question wrapper-->
+    </form>
+    <!--End of Posting question form-->
 {% endblock %}
 {% block extra_js %}
     <script src="{{ url_for('static', filename = 'js/user/community/community_base.js')}}"></script>

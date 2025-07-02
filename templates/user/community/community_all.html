@@ -1,0 +1,13 @@
+{% extends 'user/community/community_base.html' %} {% block title %} Community -
+All {% endblock %} {% block extra_css %} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename = 'css/user/community/community_all.css') }}"
+/>
+{% endblock %} {% block content %}{{ super() }}{% endblock %} {% block extra_js
+%} {{ super() }}
+<script src="{{ url_for('static', filename = 'js/user/community/community_all.js')}}"></script>
+{% endblock %} {% block discussions_cont %} {% for chat_card_detail in
+chat_cards_detail %}
+<div class="chat-card">{{ chat_card_detail[3] }}</div>
+{% endfor %} {% endblock %}
