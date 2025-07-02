@@ -15,11 +15,11 @@
     {{ super() }}
     <!--Wrapper that shows all AI-generated courses by the user-->
     <div class="ai-generated-courses-wrapper">
-        <!--{{ai_course[0]}} means course ID-->
-        <!--{{ ai_course[1] }} means course name-->
-        <!--{{ ai_course[2] }} means course status-->
-        <!--{{ ai_course[3] }} means course creation date-->
         {% for ai_course in ai_courses_data %}
+            <!--{{ai_course[0]}} means course ID-->
+            <!--{{ ai_course[1] }} means course name-->
+            <!--{{ ai_course[2] }} means course status-->
+            <!--{{ ai_course[3] }} means course creation date-->
             <!--Each AI course is shown in a block with its name, status, and creation date-->
             <div class="ai-course-block">
                 <p class="course-name">{{ ai_course[1] }}</p>

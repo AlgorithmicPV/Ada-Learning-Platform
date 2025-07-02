@@ -147,7 +147,7 @@ const ai_chat = async () => {
 
     // Create a paragraph element for the AI response
     // This will display the AI's response in a formatted way
-    const ai_response = document.createElement("p");
+    const ai_response = document.createElement("div");
     ai_response.classList.add("ai-response");
     ai_response.innerHTML = marked.parse(result["response"]);
 

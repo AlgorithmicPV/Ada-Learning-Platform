@@ -344,17 +344,17 @@ def lesson_completed():
         # when the user clicks on the button "Done" in the lesson page, it sends a POST request to this route
         # This route checks if the user has already completed the lesson and if not, it marks the lesson as completed
         # and updates the user's progress in the course
-        # It also updates the session variables to reflect the changes made
         if request.method == "POST":
             completed = request.form.get("completed")
+            user_id = session.get("user_id")
+
 
             if (
                 completed == "completed"
             ):  # If the user has completed the lesson, check if the lesson is already marked as completed
 
                 cursor.execute(
-                    "SELECT lesson_id FROM user_lesson WHERE status ='completed' "
-                )
+                    "SELECT lesson_id FROM user_lesson WHERE status ='completed' AND user_id=? ", (user_id,))
 
                 completed_lessons_id = cursor.fetchall()
 
@@ -368,7 +368,6 @@ def lesson_completed():
                 # This is to ensure that the user can mark the lesson as completed only once
                 if lesson_id not in lesson_ids:
 
-                    user_id = session.get("user_id")
 
                     import uuid
 

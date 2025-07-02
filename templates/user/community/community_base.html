@@ -1,0 +1,90 @@
+{% extends 'user/base.html' %}
+{% block title %}Community{% endblock %}
+{%block
+    extra_css %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename = 'css/user/community/community_base.css') }}" />
+{% endblock %}
+{% block content %}
+    <!--Navigation Menu for Community Discussions-->
+    <div class="community-navigation-menu">
+        <button class="all-discs-btn">All</button>
+        <button class="newest-discs-btn">Newest</button>
+        <button class="user-discs-btn">You</button>
+        <button class="unanswered-discs-btn">Unanswered</button>
+        <button class="saved-discs-btn">Saved</button>
+    </div>
+    <!--End of Navigation Menu-->
+    <!--Community Discussions Wrapper-->
+    <div class="community-wrapper">
+        <div class="discs-cont"></div>
+        <!--Search bar to filter discussions-->
+        <form class="search-bar"
+              action="{{ form_action }}"
+              method="Get"
+              autocomplete="off">
+            <button type="submit" class="search-btn">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     id="Outline"
+                     viewBox="0 0 24 24"
+                     width="512"
+                     height="512">
+                    <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
+                </svg>
+            </button>
+            <input type="text" name="search" id="search" placeholder="Search" />
+        </form>
+        <!--End of Search bar-->
+    </div>
+    <!--End of Community Discussions Wrapper-->
+{% endblock %}
+{% block floatingItems %}
+    <!-- Floating button to add a new question -->
+    <!-- Keeps this as a floating button to keep it when the user scrolls -->
+    <button class="add-a-question-btn">Add a Question</button>
+    <!--End of add a question button-->
+    <!-- Posting question wrapper -->
+    <!-- This wrapper will be shown when the user clicks on the add a question button -->
+    <div class="posting-question-wrapper">
+        <!--Top bar of the posting question wrapper which includes closing button-->
+        <div class="posting-question-wrapper-top-bar">
+            <button class="close-btn-posting-question-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     id="Outline"
+                     viewBox="0 0 24 24"
+                     width="512"
+                     height="512">
+                    <path d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z" />
+                </svg>
+            </button>
+        </div>
+        <!--End of Top bar-->
+        <!--Body of the posting question wrapper-->
+        <!--User can type their question here-->
+        <div class="posting-question-wrapper-body">
+            <img src="{{ url_for("static", filename=profile_pic) }}"alt="profile-pic">
+            <textarea class="user-question-input"
+                      placeholder="Ask your question to the community!&#10;&#10;You can use Markdown to format your message and make it more readable.&#10;&#10;If you're unfamiliar with Markdown, click the Download button to get a handy cheat sheet. 🚀"></textarea>
+        </div>
+        <!--End of Body-->
+        <!--Bottom bar of the posting question wrapper which includes Post button and download button for markdown cheat sheet-->
+        <div class="posting-question-bottom-bar">
+            <button class="posting-btn">Post</button>
+            <button class="download-btn-for-md">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     id="Outline"
+                     viewBox="0 0 24 24"
+                     width="512"
+                     height="512">
+                    <path d="M9.878,18.122a3,3,0,0,0,4.244,0l3.211-3.211A1,1,0,0,0,15.919,13.5l-2.926,2.927L13,1a1,1,0,0,0-1-1h0a1,1,0,0,0-1,1l-.009,15.408L8.081,13.5a1,1,0,0,0-1.414,1.415Z" />
+                    <path d="M23,16h0a1,1,0,0,0-1,1v4a1,1,0,0,1-1,1H3a1,1,0,0,1-1-1V17a1,1,0,0,0-1-1H1a1,1,0,0,0-1,1v4a3,3,0,0,0,3,3H21a3,3,0,0,0,3-3V17A1,1,0,0,0,23,16Z" />
+                </svg>
+            </button>
+        </div>
+        <!--End of Bottom bar-->
+    </div>
+    <!--End of Posting question wrapper-->
+{% endblock %}
+{% block extra_js %}
+    <script src="{{ url_for('static', filename = 'js/user/community/community_base.js')}}"></script>
+{% endblock %}

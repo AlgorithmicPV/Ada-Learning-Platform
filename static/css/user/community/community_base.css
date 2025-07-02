@@ -1,0 +1,187 @@
+.community-navigation-menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  border-top: 2px solid var(--border-color); /* Adds a top border to the menu bar to separate it from the content above */
+  border-bottom: 2px solid var(--border-color); /* Adds a bottom border to the menu bar to separate it from the content below */
+  padding-top: 20px; /* Keeps some space between the menu bar and the top of the page */
+  padding-bottom: 20px; /* Keeps some space between the menu bar and the bottom of the page */
+  width: 100%;
+}
+
+.community-navigation-menu button {
+  border: none;
+  background-color: transparent;
+  color: var(--second-text-color);
+  font-size: medium;
+  cursor: pointer;
+}
+
+.community-navigation-menu button:hover {
+  color: var(--text-color);
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: max-content;
+  background-color: var(--blocks-color);
+  padding: 15px;
+  /* Adds padding to the form for better appearance */
+  border-radius: 25px;
+  /* Rounds the corners of the form */
+}
+
+.search-bar input {
+  background-color: transparent;
+  /* Makes the input background transparent for modern design */
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: medium;
+  border: none;
+  width: 250px;
+  caret-color: var(--primary-color);
+}
+
+.search-bar input:focus {
+  outline: none; /* Removes the default outline when the input is focused  for the modern look*/
+}
+
+.search-bar svg {
+  height: 15px;
+  width: auto;
+  fill: var(--text-color);
+}
+
+.search-bar button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: medium;
+}
+
+.add-a-question-btn {
+  position: fixed;
+  border: none;
+  background-color: var(--text-color);
+  color: var(--background-color);
+  cursor: pointer;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 30px;
+  bottom: 0; /* Positions the button at the bottom of the page */
+  right: 0; /* Positions the button at the right of the page */
+  margin-bottom: 20px; /* Adds some space to avoid touching the edge of the page */
+  margin-right: 20px; /* Adds some space to avoid touching the edge of the page */
+  font-size: medium;
+}
+
+.posting-question-wrapper {
+  background-color: var(--background-color);
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  height: 500px;
+  width: 800px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  bottom: 80px; /* Positions the posting question wrapper above the add-a-question button */
+  right: 40px;
+  display: none; /* Initially hidden */
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.posting-question-wrapper img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.posting-question-wrapper svg {
+  fill: var(--second-text-color);
+  height: 15px;
+  width: auto;
+}
+
+.posting-question-wrapper-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.posting-question-wrapper-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.posting-question-wrapper-body textarea {
+  height: 400px;
+  width: 700px;
+  resize: none;
+  background-color: transparent;
+  outline: none;
+  color: var(--text-color);
+  border: none;
+  font-size: medium;
+  font-family: "Inter";
+}
+
+.posting-question-wrapper-top-bar button,
+.download-btn-for-md {
+  background-color: transparent;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.posting-question-wrapper-top-bar button:hover svg,
+.download-btn-for-md:hover svg {
+  fill: var(--text-color);
+}
+
+.posting-btn {
+  background-color: var(--text-color);
+  color: var(--background-color);
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.posting-question-bottom-bar {
+  margin-top: auto;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px; /* Adds space between items to reduce the feeling of packed */
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .posting-question-wrapper {
+    position: absolute;
+    background-color: var(--background-color);
+    height: calc(
+      100% - 30px
+    ); /* Take the whole height but reduce padding pixels amount */
+    width: calc(
+      100% - 30px
+    ); /* Take the whole width but reduce padding pixels amount */
+    bottom: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    display: none; /* Initially hidden */
+    opacity: 0;
+  }
+}

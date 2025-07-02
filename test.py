@@ -195,9 +195,9 @@ user_input = "Make me a course on React"
 # print(searched_ai_courses_data)
 
 
-cursor.execute(
-    "SELECT title , content FROM Ai_resource WHERE resource_id = '875cc8a3-02e5-49df-b7c8-4e58c9775ab1'"
-)
-row = cursor.fetchall()[0]
+# cursor.execute(
+#     "SELECT title , content FROM Ai_resource WHERE resource_id = '875cc8a3-02e5-49df-b7c8-4e58c9775ab1'"
+# )
+# row = cursor.fetchall()[0]
 
-print(row[0])
+# print(row[0])

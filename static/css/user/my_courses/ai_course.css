@@ -6,7 +6,8 @@
 }
 
 .cont-wrapper {
-  overflow: hidden; /* Prevents overflow this allows to add a seperate scrollbar to lesson navigation and lesson content */
+  overflow: hidden;
+  /* Prevents overflow this allows to add a seperate scrollbar to lesson navigation and lesson content */
 }
 
 .ai_course-wrapper {
@@ -14,16 +15,20 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1; /* Ensures the container takes up available space */
+  flex: 1;
+  /* Ensures the container takes up available space */
 }
 
 .ai-course-top-bar {
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 15px; /* Space between elements for better readability */
-  border-top: 2px solid var(--border-color); /* Top border for visual separation */
-  border-bottom: 2px solid var(--border-color); /* Bottom border for visual separation */
+  gap: 15px;
+  /* Space between elements for better readability */
+  border-top: 2px solid var(--border-color);
+  /* Top border for visual separation */
+  border-bottom: 2px solid var(--border-color);
+  /* Bottom border for visual separation */
 }
 
 .ai-course-cont {
@@ -56,7 +61,8 @@
 
 .search-keywords-wrapper svg,
 .coursename-and-read-aloud-wrapper svg {
-  height: 20px; /* Adjusted height for better visibility which goes with the text size */
+  height: 20px;
+  /* Adjusted height for better visibility which goes with the text size */
   width: auto;
   fill: var(--text-color);
 }
@@ -64,10 +70,12 @@
 .search-keywords-wrapper button,
 .coursename-and-read-aloud-wrapper button {
   background-color: transparent;
-  border-radius: 50%; /* Makes the button circular */
+  border-radius: 50%;
+  /* Makes the button circular */
   height: 30px;
   width: 30px;
-  border: none; /* Removes default button border for a cleaner look */
+  border: none;
+  /* Removes default button border for a cleaner look */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,7 +113,8 @@ mark {
   flex: 1;
   overflow-y: auto;
   border-right: 2px solid var(--border-color);
-  scrollbar-gutter: stable; /* Prevents content shifting when the scrollbar appears */
+  scrollbar-gutter: stable;
+  /* Prevents content shifting when the scrollbar appears */
 }
 
 .ai-assistance-wrapper {
@@ -130,8 +139,10 @@ mark {
 .chat-input-wrapper button {
   background-color: transparent !important;
   fill: var(--second-text-color);
-  border: none; /* Removes default button border for modern look */
-  cursor: pointer; /* Changes the cursor to a pointer on hover to indicate it's clickable */
+  border: none;
+  /* Removes default button border for modern look */
+  cursor: pointer;
+  /* Changes the cursor to a pointer on hover to indicate it's clickable */
 }
 
 .chat-input-wrapper button:hover {
@@ -157,12 +168,12 @@ mark {
   display: flex;
   flex-direction: column;
   padding: 5px;
-  width: calc(
-    100% - 10px
-  ); /* Adjusted to account for padding to avoid overflow */
+  width: calc(100% - 10px);
+  /* Adjusted to account for padding to avoid overflow */
   flex: 1;
   overflow: auto;
-  scrollbar-gutter: stable; /* Ensures that content does not shift when the scrollbar appears */
+  scrollbar-gutter: stable;
+  /* Ensures that content does not shift when the scrollbar appears */
 }
 
 .conversation {
@@ -170,7 +181,8 @@ mark {
   flex-direction: column;
   width: 100%;
   gap: 15px;
-  margin-bottom: 15px; /* Adds space between conversations for better readability */
+  margin-bottom: 15px;
+  /* Adds space between conversations for better readability */
 }
 
 .user-input-wrapper,
@@ -182,6 +194,7 @@ mark {
 
 .user-input-wrapper {
   justify-content: flex-start;
+
 }
 
 .answer-wrapper {
@@ -198,6 +211,13 @@ mark {
   margin: 2px;
   text-wrap: wrap;
   min-width: min-content;
+}
+
+.input>*,
+.ai-response>* {
+  overflow-wrap: break-word;
+  max-width: 80%;
+  white-space: normal;
 }
 
 .ai-response {
@@ -229,9 +249,18 @@ mark {
   padding-bottom: 5px;
   font-size: medium;
   color: var(--background-color);
-  cursor: pointer; /* Changes the cursor to a pointer on hover to indicate it's clickable */
+  cursor: pointer;
+  /* Changes the cursor to a pointer on hover to indicate it's clickable */
 }
 
 code {
-  border-radius: 15px; /* Adds rounded corners for a smoother look for code blocks */
+  border-radius: 15px;
+  /* Adds rounded corners for a smoother look for code blocks */
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .content-and-chat-wrapper {
+    flex-direction: column;
+  }
 }
