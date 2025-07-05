@@ -348,13 +348,14 @@ def lesson_completed():
             completed = request.form.get("completed")
             user_id = session.get("user_id")
 
-
             if (
                 completed == "completed"
             ):  # If the user has completed the lesson, check if the lesson is already marked as completed
 
                 cursor.execute(
-                    "SELECT lesson_id FROM user_lesson WHERE status ='completed' AND user_id=? ", (user_id,))
+                    "SELECT lesson_id FROM user_lesson WHERE status ='completed' AND user_id=? ",
+                    (user_id,),
+                )
 
                 completed_lessons_id = cursor.fetchall()
 
@@ -367,7 +368,6 @@ def lesson_completed():
                 # If the lesson is not already marked as completed, insert a new record in the user_lesson table
                 # This is to ensure that the user can mark the lesson as completed only once
                 if lesson_id not in lesson_ids:
-
 
                     import uuid
 

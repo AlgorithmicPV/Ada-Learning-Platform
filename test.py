@@ -1,4 +1,3 @@
-
 # # course_id = "7da7fd5f-8ff3-4ef7-9431-20c42961f16e"
 
 # # cursor.execute(
@@ -208,45 +207,110 @@ cursor = conn.cursor()
 cursor.execute("SELECT chat_id, user_id, question, created_at FROM Chat")
 chat_details = cursor.fetchall()
 
-chat_cards_detail = []
+date_sorted_chat_details = []
 
-   
+format_string = "%Y-%m-%dT%H:%M:%S"
+for i in chat_details:
+    raw_date = i[3]
+    converted_date = datetime.strptime(raw_date, format_string)
+    # print(type(converted_date))
 
-for chat_detail in chat_details:
-    user_id = chat_detail[1]
-    chat_id = chat_detail[0]
-
-    cursor.execute("SELECT full_name, profile_image FROM User WHERE user_id=?", (user_id,))
-    user_data = cursor.fetchall()[0]
+    prev_date = converted_date
+    # print(datetime.strptime(raw_date, format_string))
 
 
-    cursor.execute("SELECT COUNT(*) FROM Reply WHERE chat_id = ?", (chat_id,))
-    number_of_replies = cursor.fetchone()
+# chat_details.reverse()
+# chat_cards_detail = []
 
-    chat_detail += user_data
-    chat_detail += number_of_replies
 
-    temp_chat_detail = list(chat_detail)
+# for chat_detail in chat_details:
+#     user_id = chat_detail[1]
+#     chat_id = chat_detail[0]
 
-    today = date.today()
-    chat_date = (chat_detail[3].split("T")[0])
-    if str(today) == chat_date:
-        time_str = chat_detail[3].split("T")[1]
-        time_obj = datetime.strptime(time_str, '%H:%M:%S')
-        time_12hr = time_obj.strftime('%I:%M %p')
-        temp_chat_detail[3] = time_12hr
+#     cursor.execute("SELECT full_name, profile_image FROM User WHERE user_id=?", (user_id,))
+#     user_data = cursor.fetchall()[0]
+
+
+#     cursor.execute("SELECT COUNT(*) FROM Reply WHERE chat_id = ?", (chat_id,))
+#     number_of_replies = cursor.fetchone()
+
+#     chat_detail += user_data
+#     chat_detail += number_of_replies
+
+#     temp_chat_detail = list(chat_detail)
+
+#     today = date.today()
+#     chat_date = (chat_detail[3].split("T")[0])
+#     if str(today) == chat_date:
+#         time_str = chat_detail[3].split("T")[1]
+#         time_obj = datetime.strptime(time_str, '%H:%M:%S')
+#         time_12hr = time_obj.strftime('%I:%M %p')
+#         temp_chat_detail[3] = time_12hr
+#     else:
+#         temp_chat_detail[3] = chat_date
+
+#     chat_detail = tuple(temp_chat_detail)
+
+#     chat_cards_detail.append(chat_detail)
+
+# print(chat_cards_detail)
+
+# for test in chat_cards_detail:
+#     # print(test)
+#     for i in test:
+#         print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
+#         print(i)
+
+# for i in chat_cards_detail:
+#     print(i[3])
+
+
+test = [5, 2, 9, 1, 3]
+
+sorted_test = []
+
+n = 0
+
+# while not len(sorted_test) == len(test):
+#     # sorted_test.append(test[n])
+#     prev_data = 0
+#     for i in range(len(test)):
+#         if prev_date <
+#     # n = n + 1
+
+prev_date = 0
+# for i in range(len(test)):
+#     # prev_date = test[i]
+#     for t in range(len(test)):
+#         while prev_date < test[t]:
+#             prev_date = test[t]
+#         else:
+#             prev_date = prev_date
+#     sorted_test.append(test[t])
+#     test.remove(test[t])
+
+
+# for i in range(len(test)):
+#     for t  in range(len(test)):
+#         if (t + 1) < len(test):
+#             next_data = test[t + 1]
+#         else:
+#             next_data = test[t]
+#         if test[t] < next_data:
+#             print(f"{t} is greater than {t + 1}")
+#             temp_max = test[i]
+#         else:
+#             print(f"{t} is smaller than {t + 1}")
+
+
+# print(sorted_test)
+
+
+for i in range(len(test)):
+    if (i + 1) < len(test):
+        next_data = test[i + 1]
     else:
-        temp_chat_detail[3] = chat_date
-    
-    chat_detail = tuple(temp_chat_detail)
-
-    chat_cards_detail.append(chat_detail)
-
-# # print(chat_cards_detail)
-
-for test in chat_cards_detail:
-    # print(test)
-    for i in test:
-        print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+")
-        print(i)
-
+        next_data = test[i]
+    while test[i] > prev_date:
+        print(f"{test[i]} is the highest")
+        break

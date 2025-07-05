@@ -3,10 +3,14 @@
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  border-top: 2px solid var(--border-color); /* Adds a top border to the menu bar to separate it from the content above */
-  border-bottom: 2px solid var(--border-color); /* Adds a bottom border to the menu bar to separate it from the content below */
-  padding-top: 20px; /* Keeps some space between the menu bar and the top of the page */
-  padding-bottom: 20px; /* Keeps some space between the menu bar and the bottom of the page */
+  border-top: 2px solid var(--border-color);
+  /* Adds a top border to the menu bar to separate it from the content above */
+  border-bottom: 2px solid var(--border-color);
+  /* Adds a bottom border to the menu bar to separate it from the content below */
+  padding-top: 20px;
+  /* Keeps some space between the menu bar and the top of the page */
+  padding-bottom: 20px;
+  /* Keeps some space between the menu bar and the bottom of the page */
   width: 100%;
 }
 
@@ -23,15 +27,18 @@
 }
 
 .search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   flex-direction: row;
   align-items: center;
   width: max-content;
   background-color: var(--blocks-color);
   padding: 15px;
-  /* Adds padding to the form for better appearance */
+  /* Adds padding to the search bar for better appearance */
   border-radius: 25px;
-  /* Rounds the corners of the form */
+  /* Rounds the corners of the search bar */
 }
 
 .search-bar input {
@@ -46,7 +53,8 @@
 }
 
 .search-bar input:focus {
-  outline: none; /* Removes the default outline when the input is focused  for the modern look*/
+  outline: none;
+  /* Removes the default outline when the input is focused  for the modern look*/
 }
 
 .search-bar svg {
@@ -63,7 +71,7 @@
 }
 
 .add-a-question-btn {
-  position: fixed;
+  position: absolute;
   border: none;
   background-color: var(--text-color);
   color: var(--background-color);
@@ -73,10 +81,14 @@
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 30px;
-  bottom: 0; /* Positions the button at the bottom of the page */
-  right: 0; /* Positions the button at the right of the page */
-  margin-bottom: 20px; /* Adds some space to avoid touching the edge of the page */
-  margin-right: 20px; /* Adds some space to avoid touching the edge of the page */
+  bottom: 0;
+  /* Positions the button at the bottom of the page */
+  right: 0;
+  /* Positions the button at the right of the page */
+  margin-bottom: 20px;
+  /* Adds some space to avoid touching the edge of the page */
+  margin-right: 20px;
+  /* Adds some space to avoid touching the edge of the page */
   font-size: medium;
 }
 
@@ -90,9 +102,11 @@
   display: flex;
   flex-direction: column;
   padding: 15px;
-  bottom: 80px; /* Positions the posting question wrapper above the add-a-question button */
+  bottom: 80px;
+  /* Positions the posting question wrapper above the add-a-question button */
   right: 40px;
-  display: none; /* Initially hidden */
+  display: none;
+  /* Initially hidden */
   opacity: 0;
   transition: all 0.5s ease-in-out;
 }
@@ -162,15 +176,21 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 15px; /* Adds space between items to reduce the feeling of packed */
+  gap: 15px;
+  /* Adds space between items to reduce the feeling of packed */
 }
 
 .community-wrapper {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 20px; /* Adds padding around the community wrapper for better spacing */
+  padding: 20px;
+  /* Adds padding around the community wrapper for better spacing */
+}
+
+.show-the-input-box {
+  display: none;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
@@ -178,18 +198,34 @@
   .posting-question-wrapper {
     position: absolute;
     background-color: var(--background-color);
-    height: calc(
-      100% - 30px
-    ); /* Take the whole height but reduce padding pixels amount */
-    width: calc(
-      100% - 30px
-    ); /* Take the whole width but reduce padding pixels amount */
+    height: calc(100% - 30px);
+    /* Take the whole height but reduce padding pixels amount */
+    width: calc(100% - 30px);
+    /* Take the whole width but reduce padding pixels amount */
     bottom: 0;
     right: 0;
     display: flex;
     flex-direction: column;
     padding: 15px;
-    display: none; /* Initially hidden */
+    display: none;
+    /* Initially hidden */
     opacity: 0;
+  }
+
+  .search-bar {
+    right: 15px;
+  }
+
+  .show-the-input-box {
+    display: flex;
+    position: sticky;
+  }
+
+  .search-bar input {
+    display: none;
+  }
+
+  .search-bar .search-btn {
+    display: none;
   }
 }

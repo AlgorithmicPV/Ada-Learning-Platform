@@ -1,0 +1,119 @@
+/* Adds styles for the discussion container and chat cards in this file to reduce the code repetition */
+
+/* Styles the discussion container which has all chat cards*/
+.discs-cont {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 60px;
+}
+
+.chat-card {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+}
+
+.chat-card img {
+  height: 40px;
+  width: 40px;
+  border-radius: 15px;
+}
+
+.chat-card svg {
+  height: 20px;
+  width: auto;
+  fill: var(--second-text-color);
+}
+
+.chat-card button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--second-text-color);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: medium;
+}
+
+.chat-card-cont {
+  display: flex;
+  flex-direction: column;
+  /*  width: 500px;*/
+  flex: 1;
+}
+
+.chat-card-top-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+}
+
+.chat-card-top-bar p {
+  margin: 0;
+}
+
+.chat-card-top-bar div {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: flex-end;
+}
+
+.writer {
+  font-size: medium;
+  font-weight: bold;
+}
+
+.time {
+  font-size: small;
+  color: var(--second-text-color);
+}
+
+.number-of-answers {
+  margin: 0;
+}
+
+.number-of-answers:hover {
+  color: var(--text-color);
+}
+
+.chat-card button:hover svg {
+  fill: var(--text-color);
+}
+
+.question {
+  margin-bottom: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 800px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Keeps a consistent height for the question text for better user experience */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .discs-cont {
+    width: 90%;
+  }
+
+  .question {
+    width: 500px;
+    font-size: small;
+  }
+
+  .chat-card img {
+    height: 30px;
+    width: 30px;
+  }
+}

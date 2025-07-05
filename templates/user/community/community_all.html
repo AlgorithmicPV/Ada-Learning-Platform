@@ -1,13 +1,29 @@
-{% extends 'user/community/community_base.html' %} {% block title %} Community -
-All {% endblock %} {% block extra_css %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename = 'css/user/community/community_all.css') }}"
-/>
-{% endblock %} {% block content %}{{ super() }}{% endblock %} {% block extra_js
-%} {{ super() }}
-<script src="{{ url_for('static', filename = 'js/user/community/community_all.js')}}"></script>
-{% endblock %} {% block discussions_cont %} {% for chat_card_detail in
-chat_cards_detail %}
-<div class="chat-card">{{ chat_card_detail[3] }}</div>
-{% endfor %} {% endblock %}
+{% extends 'user/community/community_base.html' %}
+{% block title %}
+    Community -
+    All
+{% endblock %}
+{% block extra_css %}
+    {{ super() }}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename = 'css/user/community/chat_card.css') }}" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
+{% endblock %}
+{% block content %}{{ super() }}{% endblock %}
+{% block extra_js
+    %}
+    {{ super() }}
+    <script>
+  const toggleSaveUrl = "{{ url_for("community.toggle_save") }}"
+  const urlForDiscs = "{{ url_for("community.get_all_community_discussion") }}"
+    </script>
+    <script type="module"
+            src="{{ url_for('static', filename = 'js/user/community/chat_card.js')}}"></script>
+    <script type="module"
+            src="{{ url_for('static', filename = 'js/user/community/community_all.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}

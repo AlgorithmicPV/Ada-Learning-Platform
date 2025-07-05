@@ -20,11 +20,21 @@
         <div class="discs-cont">
             {% block discussions_cont %}{% endblock %}
         </div>
-        <!--Search bar to filter discussions-->
+        <!--Search bar-->
         <form class="search-bar"
               action="{{ form_action }}"
               method="Get"
               autocomplete="off">
+            <!--Below button only apears in the small screen to show the input box-->
+            <button class="show-the-input-box" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     id="Outline"
+                     viewBox="0 0 24 24"
+                     width="512"
+                     height="512">
+                    <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
+                </svg>
+            </button>
             <button type="submit" class="search-btn">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
@@ -34,11 +44,18 @@
                     <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
                 </svg>
             </button>
-            <input type="text" name="search" id="search" placeholder="Search" />
+            <input type="text"
+                   name="search"
+                   id="search"
+                   placeholder="Search Your Favourite Course" />
         </form>
-        <!--End of Search bar-->
+        <!--End Search bar-->
     </div>
     <!--End of Community Discussions Wrapper-->
+{% endblock %}
+{% block extra_js %}
+    <script>let AddQuestionUrl = "{{ url_for("community.add_new_post") }}" </script>
+    <script src="{{ url_for('static', filename = 'js/user/community/community_base.js')}}"></script>
 {% endblock %}
 {% block floatingItems %}
     <!-- Floating button to add a new question -->
@@ -47,9 +64,9 @@
     <!--End of add a question button-->
     <!-- Posting question form -->
     <!-- This form will be shown when the user clicks on the add a question button -->
-    <form class="posting-question-wrapper"
-          method="post"
-          action="{{ url_for("community.add_new_post") }}">
+    <div class="posting-question-wrapper"
+         method="post"
+         action="{{ url_for("community.add_new_post") }}">
         <!--Top bar of the posting question wrapper which includes closing button-->
         <div class="posting-question-wrapper-top-bar">
             <button type="button" class="close-btn-posting-question-wrapper">
@@ -74,7 +91,7 @@
         <!--End of Body-->
         <!--Bottom bar of the posting question wrapper which includes Post button and download button for markdown cheat sheet-->
         <div class="posting-question-bottom-bar">
-            <button type="submit" class="posting-btn">Post</button>
+            <button class="posting-btn">Post</button>
             <button type="button" class="download-btn-for-md">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
@@ -87,9 +104,6 @@
             </button>
         </div>
         <!--End of Bottom bar-->
-    </form>
+    </div>
     <!--End of Posting question form-->
-{% endblock %}
-{% block extra_js %}
-    <script src="{{ url_for('static', filename = 'js/user/community/community_base.js')}}"></script>
 {% endblock %}
