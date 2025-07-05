@@ -197,6 +197,7 @@
 
 # print(row[0])
 
+import strip_markdown
 import sqlite3
 from datetime import datetime, date
 
@@ -303,14 +304,112 @@ prev_date = 0
 #             print(f"{t} is smaller than {t + 1}")
 
 
-# print(sorted_test)
+# Function to get all community discussions from the database
+# Used a function because I can use this function to get all community discussions and filter them according to the below routes
+
+def get_all_community_discussions_from_db():
+    conn = sqlite3.connect("database/app.db")
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT chat_id, user_id, question, created_at FROM Chat")
+    chat_details = cursor.fetchall()
+
+    # reverse the whole data come from the database
+    # From this latest discussions will show at the top
+    # As the new discussions are added at the end of the database
+    chat_details.reverse()
+
+    # Keeps an empty list to store all the chat details
+    # Then we can psss this array to client side
+    # to render the chat cards
+    chat_cards_detail = []
+
+    for chat_detail in chat_details:
+        posted_user_id = chat_detail[1]
+        chat_id = chat_detail[0]
+
+        # Gets the Name and profile image of the user who posted the discussion
+        # and Store it in user_data
+        cursor.execute(
+            "SELECT full_name, profile_image FROM User WHERE user_id=?",
+            (posted_user_id,),
+        )
+        user_data = cursor.fetchall()[0]
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM Reply WHERE chat_id = ?", (chat_id,))
+        number_of_replies = cursor.fetchone()
+
+        # As the chat_detail is a tuple, I used += operator to add the user_data and number_of_replies
+        # Because they are also tuples
+        chat_detail += user_data
+        chat_detail += number_of_replies
+
+        # Convert the chat_detail tuple to a list to modify it easily
+        temp_chat_detail = list(chat_detail)
+
+        today = date.today()
+
+        # Extract the date from the created_at field
+        # and format it to compare with today's date
+        chat_date = chat_detail[3].split("T")[0]
+
+        # This helps to check, if the quesiont / discussion is posted today
+        # It will show only the time in 12 hour format
+        # If not, it will show the date and time in 12 hour format
+        # This helps for users to find new discussions easily
+        if str(today) == chat_date:
+            time_str = chat_detail[3].split("T")[1]
+            time_obj = datetime.strptime(time_str, "%H:%M:%S")
+            time_12hr = time_obj.strftime("%I:%M %p")
+            temp_chat_detail[3] = time_12hr
+        else:
+            format_string = "%Y-%m-%dT%H:%M:%S"
+            temp_chat_detail[3] = str(
+                (datetime.strptime(chat_detail[3], format_string)).strftime(
+                    "%Y-%m-%d %I:%M %p"
+                )
+            )
+
+        # Removes the user_id from the chat_detail
+        # Because it is not needed for the client side
+        temp_chat_detail.remove(chat_detail[1])
+
+        # As this platform enables to use markdown for user inputs, but for the preview removes the markdown syntax
+        # and shows the text only for the better user experience and keeps the same height for each chat card
+        temp_chat_detail[1] = strip_markdown.strip_markdown(chat_detail[2])
+
+        user_id = session.get("user_id")
+
+        # Checks if the user has saved this discussion
+        # By trying to get a saved_chat_id from the Saved_chat table where the user_id and chat_id matches
+        # If there is value for saved_chat_id, it means the user has saved that discussion
+        # and appends "saved" to the temp_chat_detail list if not appends "unsaved"
+        # This helps for the frontend to show which icon should be shown for the save button
+        cursor.execute(
+            "SELECT saved_chat_id FROM Saved_chat WHERE user_id=? AND chat_id=?",
+            (user_id, chat_id),
+        )
+
+        saved_chat_id = cursor.fetchone()
+
+        if saved_chat_id:
+            temp_chat_detail.append("saved")
+        else:
+            temp_chat_detail.append("unsaved")
+
+        # Converts the temp_chat_detail list back to a tuple
+        # Because the chat_detail is a tuple and we need to keep the same data type
+        chat_detail = tuple(temp_chat_detail)
+
+        # Appends the chat_detail tuple to the chat_cards_detail list
+        # This list will be returned to the client side
+        chat_cards_detail.append(chat_detail)
+
+    conn.close()
+    return chat_cards_detail
 
 
-for i in range(len(test)):
-    if (i + 1) < len(test):
-        next_data = test[i + 1]
-    else:
-        next_data = test[i]
-    while test[i] > prev_date:
-        print(f"{test[i]} is the highest")
-        break
+data_from_db = get_all_community_discussions_from_db()
+
+print(data_from_db)

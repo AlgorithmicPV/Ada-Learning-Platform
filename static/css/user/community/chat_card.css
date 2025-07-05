@@ -95,7 +95,8 @@
   text-overflow: ellipsis;
   max-width: 800px;
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* Keeps a consistent height for the question text for better user experience */
+  -webkit-line-clamp: 3;
+  /* Keeps a consistent height for the question text for better user experience */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,12 +109,20 @@
   }
 
   .question {
-    width: 500px;
     font-size: small;
   }
 
   .chat-card img {
     height: 30px;
     width: 30px;
+  }
+
+  .chat-card-top-bar {
+    margin-bottom: 5px;
+  }
+
+  .chat-card-top-bar div {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

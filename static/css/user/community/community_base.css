@@ -17,12 +17,21 @@
 .community-navigation-menu button {
   border: none;
   background-color: transparent;
-  color: var(--second-text-color);
   font-size: medium;
   cursor: pointer;
 }
 
+.community-navigation-menu button:not(.sub-active) {
+  color: var(--second-text-color);
+  /* Sets the color of the buttons that are not active */
+}
+
 .community-navigation-menu button:hover {
+  color: var(--text-color);
+}
+
+/* Styles for the active button in the sub-navigation bar */
+.sub-active {
   color: var(--text-color);
 }
 
@@ -187,6 +196,11 @@
   justify-content: space-between;
   padding: 20px;
   /* Adds padding around the community wrapper for better spacing */
+  /*overflow-x: hidden;*/
+}
+
+.cont {
+  overflow-x: hidden;
 }
 
 .show-the-input-box {
@@ -213,7 +227,7 @@
   }
 
   .search-bar {
-    right: 15px;
+    right: 0;
   }
 
   .show-the-input-box {

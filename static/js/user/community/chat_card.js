@@ -67,7 +67,7 @@ const createChatCard = (
   chatCard.classList.add("chat-card");
 
   const img = document.createElement("img");
-  img.src = `static/${profilePicOfWriter}`;
+  img.src = `${STATIC_BASE}${profilePicOfWriter}`;
 
   chatCard.appendChild(img);
 
@@ -158,7 +158,7 @@ const createNewChatCard = (
   chatCard.classList.add("chat-card");
 
   const img = document.createElement("img");
-  img.src = `static/${profilePicOfWriter}`;
+  img.src = `${STATIC_BASE}${profilePicOfWriter}`;
 
   chatCard.appendChild(img);
 
@@ -233,3 +233,26 @@ const createNewChatCard = (
 
 // Export the functions to use in other files
 export { createChatCard, createNewChatCard };
+
+const adjustWidhtOfQuestion = () => {
+  if (window.innerWidth < 1280) {
+    let style = document.createElement("style");
+    style.innerHTML = `
+      .question {
+          width: ${window.innerWidth - 200}px;
+        }
+      `;
+    document.head.appendChild(style);
+  } else {
+    let style = document.createElement("style");
+    style.innerHTML = `
+      .question {
+          width: 90%;
+        }
+      `;
+    document.head.appendChild(style);
+  }
+};
+
+window.addEventListener("load", adjustWidhtOfQuestion);
+window.addEventListener("resize", adjustWidhtOfQuestion);

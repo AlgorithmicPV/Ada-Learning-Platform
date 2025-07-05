@@ -11,6 +11,7 @@ import sqlite3
 import uuid
 from datetime import datetime, date
 import strip_markdown
+from dateutil.parser import parse
 
 community_bp = Blueprint("community", __name__)
 
@@ -110,6 +111,11 @@ def get_all_community_discussions_from_db():
         else:
             temp_chat_detail.append("unsaved")
 
+        if chat_detail[1] == user_id:
+            temp_chat_detail.append("you")
+        else:
+            temp_chat_detail.append(" ")
+
         # Converts the temp_chat_detail list back to a tuple
         # Because the chat_detail is a tuple and we need to keep the same data type
         chat_detail = tuple(temp_chat_detail)
@@ -135,7 +141,7 @@ def all_community_discussion():
 
 # This Route connects with the client side, and each 2500 milliseconds
 # it calls the get_all_community_discussion function to keep the data updated
-@community_bp.route("/community/get-all-discussion", methods=["POST", "GET"])
+@community_bp.route("/community/get-all-discussion")
 def get_all_community_discussion():
     if "user_id" in session:
         chat_cards_detail = get_all_community_discussions_from_db()
@@ -148,16 +154,50 @@ def get_all_community_discussion():
 @community_bp.route("/community/newest")
 def newest_community_discussion():
     if "user_id" in session:
-        return render_template("user/community/community_base.html")
+        return render_template("user/community/community_new.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This routes also connects with the client side, and in each 2.5 seconds
+# It sends the discussions that have been posted today
+# This helps for the users to find new discussions easily
+@community_bp.route("/community/get-new-discussions")
+def get_new_community_discussions():
+    if "user_id" in session:
+        chat_cards_detail = get_all_community_discussions_from_db()
+        new_chat_cards_detail = []
+        today = str(date.today())
+        for chat_card_detail in chat_cards_detail:
+            posted_date = str(parse(chat_card_detail[2])).split(" ")[0]
+            if posted_date == today:
+                new_chat_cards_detail.append(chat_card_detail)
+        return jsonify(new_chat_cards_detail)
     else:
         return redirect(url_for("auth.login"))
 
 
 # Routes that displays all discussion that have done by the user
 @community_bp.route("/community/you")
-def your_community_discussion():
+def user_community_discussion():
     if "user_id" in session:
-        return render_template("user/community/community_base.html")
+        return render_template("user/community/community_user.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route connects with the client side, and in each 2.5 seconds
+# It sends the discussions that have been posted by the relevant logged in user
+# This helps user to find answers for their questions easily
+@community_bp.route("/community/get-user-posted-discussions")
+def get_user_posted_discussions():
+    if "user_id" in session:
+        chat_cards_detail = get_all_community_discussions_from_db()
+        user_chat_cards_detail = []
+        for chat_card_detail in chat_cards_detail:
+            if chat_card_detail[7] == "you":
+                user_chat_cards_detail.append(chat_card_detail)
+        return jsonify(user_chat_cards_detail)
     else:
         return redirect(url_for("auth.login"))
 
@@ -166,7 +206,22 @@ def your_community_discussion():
 @community_bp.route("/community/unanswered")
 def unanswered_community_discussion():
     if "user_id" in session:
-        return render_template("user/community/community_base.html")
+        return render_template("user/community/community_unanswered.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route connects with the client side, and in each 2.5 seconds
+# It sends the discussions that have not been answered yet
+@community_bp.route("/community/get-unanswered-discussions")
+def get_unanswered_discussions():
+    if "user_id" in session:
+        chat_cards_detail = get_all_community_discussions_from_db()
+        unanswered_chat_cards_detail = []
+        for chat_card_detail in chat_cards_detail:
+            if chat_card_detail[5] == 0:
+                unanswered_chat_cards_detail.append(chat_card_detail)
+        return jsonify(unanswered_chat_cards_detail)
     else:
         return redirect(url_for("auth.login"))
 
@@ -175,7 +230,23 @@ def unanswered_community_discussion():
 @community_bp.route("/community/saved")
 def saved_community_discussion():
     if "user_id" in session:
-        return render_template("user/community/community_base.html")
+        return render_template("user/community/community_saved.html")
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# This route connects with the client side, and in each 2.5 seconds
+# It sends the discussions that have been saved by the user
+# This helps to user group discussions that they think are important
+@community_bp.route("/community/get-saved-discussions")
+def get_saved_discussions():
+    if "user_id" in session:
+        chat_cards_detail = get_all_community_discussions_from_db()
+        saved_chat_cards_detail = []
+        for chat_card_detail in chat_cards_detail:
+            if chat_card_detail[6] == "saved":
+                saved_chat_cards_detail.append(chat_card_detail)
+        return jsonify(saved_chat_cards_detail)
     else:
         return redirect(url_for("auth.login"))
 

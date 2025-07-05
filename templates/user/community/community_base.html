@@ -8,11 +8,18 @@
 {% block content %}
     <!--Navigation Menu for Community Discussions-->
     <div class="community-navigation-menu">
-        <button class="all-discs-btn">All</button>
-        <button class="newest-discs-btn">Newest</button>
-        <button class="user-discs-btn">You</button>
-        <button class="unanswered-discs-btn">Unanswered</button>
-        <button class="saved-discs-btn">Saved</button>
+        <button class="{% if request.path == '/community' %}sub-active{% endif %}"
+                onclick="window.location.href='{{ url_for("community.all_community_discussion") }}'">All</button>
+        <button class="{% if request.path == '/community/newest' %}sub-active{% endif %}"
+                onclick="window.location.href='{{ url_for("community.newest_community_discussion") }}'">Newest</button>
+        <button class="{% if request.path == '/community/you' %}sub-active{% endif %}"
+                onclick="window.location.href='{{ url_for("community.user_community_discussion") }}'">You</button>
+        <button class="{% if request.path == '/community/unanswered' %}sub-active{% endif %}"
+                onclick="window.location.href='{{ url_for("community.unanswered_community_discussion") }}'">
+            Unanswered
+        </button>
+        <button class="{% if request.path == '/community/saved' %}sub-active{% endif %}"
+                onclick="window.location.href='{{ url_for("community.saved_community_discussion") }}'">Saved</button>
     </div>
     <!--End of Navigation Menu-->
     <!--Community Discussions Wrapper-->

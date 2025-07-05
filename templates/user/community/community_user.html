@@ -1,7 +1,7 @@
 {% extends 'user/community/community_base.html' %}
 {% block title %}
     Community -
-    All
+    User
 {% endblock %}
 {% block extra_css %}
     {{ super() }}
@@ -17,8 +17,8 @@
     {{ super() }}
     <script>
   const toggleSaveUrl = "{{ url_for("community.toggle_save") }}";
-  const urlForDiscs = "{{ url_for("community.get_all_community_discussion") }}";
-  const STATIC_BASE = "{{ url_for('static', filename='') }}";
+  const urlForDiscs = "{{ url_for("community.get_user_posted_discussions") }}";
+   const STATIC_BASE = "{{ url_for('static', filename='') }}";
     </script>
     <script type="module"
             src="{{ url_for('static', filename = 'js/user/community/chat_card.js')}}"></script>
