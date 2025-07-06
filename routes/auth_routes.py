@@ -1,7 +1,6 @@
 from flask import (
     Blueprint,
     render_template,
-    render_template,
     redirect,
     request,
     url_for,
@@ -15,14 +14,14 @@ from datetime import datetime, timedelta
 import uuid
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
-from authlib.integrations.flask_client import OAuth
 from dotenv import load_dotenv
 from extensions import oauth
 
 load_dotenv()
 
 auth_bp = Blueprint("auth", __name__)  # Blueprint for authentication routes
-auth_bp.permanent_session_lifetime = timedelta(days=1)  # Set session lifetime to 1 day
+auth_bp.permanent_session_lifetime = timedelta(
+    days=1)  # Set session lifetime to 1 day
 
 ph = PasswordHasher()  # Password hasher for secure password storage
 
@@ -56,7 +55,8 @@ def login():
 
         if stored_hash_password:
             try:
-                if ph.verify(stored_hash_password[0], password):  # Verify the password
+                if ph.verify(
+                        stored_hash_password[0], password):  # Verify the password
                     session["email"] = email
                     conn = sqlite3.connect("database/app.db")
                     cursor = conn.cursor()
@@ -67,13 +67,15 @@ def login():
                         cursor.fetchone()
                     )  # stored_username is a tuple, so we need to access the first element
                     username = stored_username[0]
-                    session["username"] = username  # Store the username in the session
+                    # Store the username in the session
+                    session["username"] = username
                     cursor.execute(
                         "SELECT user_id FROM User Where email = ?", (email,)
                     )  # Fetch the user_id associated with the email
                     stored_user_id = cursor.fetchone()
                     user_id = stored_user_id[0]
-                    session["user_id"] = user_id  # Store the user_id in the session
+                    # Store the user_id in the session
+                    session["user_id"] = user_id
                     cursor.close()  # Close the database connection
                     return redirect(url_for("dashboard.dashboard"))
             except (
@@ -114,7 +116,9 @@ def signup():
 
         saved_emails = []  # An array to collect all the emails from the database
 
-        # Converts the email list into a flat array to easily check if the entered email is valid or not. email_list is a list of 1-element tuples
+        # Converts the email list into a flat array to easily check if the
+        # entered email is valid or not. email_list is a list of 1-element
+        # tuples
         for email_tuple in email_list:
             for email_from_db in email_tuple:
                 saved_emails.append(email_from_db)
@@ -124,7 +128,9 @@ def signup():
 
         saved_names = []  # An array to collect all the names from the database
 
-        # Converts the full_name_list into a flat array to easily check if the entered name is valid or not. full_name_list is a list of 1-element tuples
+        # Converts the full_name_list into a flat array to easily check if the
+        # entered name is valid or not. full_name_list is a list of 1-element
+        # tuples
         for name_tuple in full_name_list:
             for name_from_db in name_tuple:
                 saved_names.append(name_from_db)
@@ -220,7 +226,8 @@ def authorize_google():
 
     user_id = str(uuid.uuid4())  # Creates a new primary key
 
-    timestamp = datetime.now().isoformat(timespec="seconds")  # Gets the current time
+    timestamp = datetime.now().isoformat(
+        timespec="seconds")  # Gets the current time
 
     if email not in saved_emails:
         cursor.execute(

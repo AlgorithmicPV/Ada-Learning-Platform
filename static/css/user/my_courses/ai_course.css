@@ -194,7 +194,6 @@ mark {
 
 .user-input-wrapper {
   justify-content: flex-start;
-
 }
 
 .answer-wrapper {
@@ -213,8 +212,8 @@ mark {
   min-width: min-content;
 }
 
-.input>*,
-.ai-response>* {
+.input > *,
+.ai-response > * {
   overflow-wrap: break-word;
   max-width: 80%;
   white-space: normal;

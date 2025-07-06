@@ -1,4 +1,4 @@
-import { createChatCard, createNewChatCard } from "./chat_card.js";
+import { createQuestionCard, createNewQuestionCard } from "./chat_card.js";
 
 let numberOfChatCards = 0;
 
@@ -32,7 +32,7 @@ const getAllCommunityDiscussion = () => {
         console.log(data.length);
         numberOfChatCards = data.length;
         for (let i = 0; i < data.length; i++) {
-          createChatCard(
+          createQuestionCard(
             data[i][0],
             data[i][1],
             data[i][2],
@@ -45,7 +45,7 @@ const getAllCommunityDiscussion = () => {
       } else {
         let newQuestions = data.slice(0, data.length - numberOfChatCards);
         for (let i = 0; i < newQuestions.length; i++) {
-          createNewChatCard(
+          createNewQuestionCard(
             newQuestions[i][0],
             newQuestions[i][1],
             newQuestions[i][2],

@@ -43,7 +43,8 @@ def chat():
                 top_p=1,
                 model=model,
             )
-            return jsonify({"response": response.choices[0].message.content}), 200
+            return jsonify(
+                {"response": response.choices[0].message.content}), 200
         else:
             return jsonify({"error": "Invalid JSON"}), 400
     else:
@@ -72,7 +73,8 @@ def ai_course_chat():
                 top_p=1,
                 model=model,
             )
-            return jsonify({"response": response.choices[0].message.content}), 200
+            return jsonify(
+                {"response": response.choices[0].message.content}), 200
         else:
             return jsonify({"error": "Invalid JSON"}), 400
     else:

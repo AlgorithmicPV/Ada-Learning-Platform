@@ -1,17 +1,63 @@
-/* Styles for the discussion container and question cards in this file to reduce the code repetition */
+.user-reply-input-wrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0); /* Center the input box horizontally */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 800px;
+  background-color: var(--blocks-color);
+  padding: 10px;
+  border-radius: 25px; /* Rounded corners for the input box for the modern look */
+}
 
-/* Styles the discussion container which has all question cards*/
+.user-reply-input-box {
+  flex: 1;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  font-size: medium;
+  color: var(--text-color);
+  caret-color: var(--primary-color);
+}
+
+.send-user-reply-btn {
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 35px;
+  background-color: transparent;
+  border: none;
+}
+
+.send-user-reply-btn svg {
+  height: 15px;
+  width: auto;
+  fill: var(--second-text-color);
+}
+
+.send-user-reply-btn:hover svg {
+  fill: var(--text-color);
+}
+
 .discs-cont {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 60px;
+  gap: 60px; /* Adds some space for better user redability */
 }
 
 .question-card {
   display: flex;
   flex-direction: row;
-  gap: 25px;
+  gap: 25px; /* Adds some space for better user redability */
+  width: 100%;
+  flex: 1;
 }
 
 .question-card img {
@@ -42,8 +88,7 @@
 .question-card-cont {
   display: flex;
   flex-direction: column;
-  /*  width: 500px;*/
-  flex: 1;
+  width: 100%;
 }
 
 .question-card-top-bar {
@@ -51,12 +96,11 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  flex: 1;
   width: 100%;
 }
 
 .question-card-top-bar p {
-  margin: 0;
+  margin: 0; /* Removed defoult margin because of extra space */
 }
 
 .question-card-top-bar div {
@@ -90,20 +134,26 @@
 
 .question {
   margin-bottom: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 800px;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  /* Keeps a consistent height for the question text for better user experience */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 1;
+  width: 100%;
+}
+
+.number-of-answers-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+code {
+  border-radius: 15px;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
+  .user-reply-input-wrapper {
+    width: 90%;
+  }
+
   .discs-cont {
     width: 90%;
   }

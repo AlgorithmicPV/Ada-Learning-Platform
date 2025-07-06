@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for
 import sqlite3
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -10,6 +10,7 @@ def dashboard():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
         user_id = session.get("user_id")
-        return render_template("user/dashboard.html", username=session["username"])
+        return render_template("user/dashboard.html",
+                               username=session["username"])
     else:
         return redirect(url_for("auth.login"))

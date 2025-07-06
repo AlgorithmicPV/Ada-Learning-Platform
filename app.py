@@ -54,7 +54,8 @@ def inject_profile_pic():
 
         user_id = session.get("user_id")
 
-        cursor.execute("SELECT profile_image FROM User WHERE user_id=?", (user_id,))
+        cursor.execute(
+            "SELECT profile_image FROM User WHERE user_id=?", (user_id,))
         result = cursor.fetchone()
 
         if result and result[0]:

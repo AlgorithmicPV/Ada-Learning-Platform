@@ -7,7 +7,6 @@ from flask import (
     request,
     abort,
     jsonify,
-    flash,
 )
 import sqlite3
 from datetime import datetime
@@ -44,8 +43,9 @@ def divide_array_into_chunks(
     ):  # Iterates over the array in chunks
         new_array.append(
             dividing_array[
-                (chunk_size * i) : (chunk_size + (chunk_size * i))
-            ]  # {chunk_size * i} is the starting index of the chunk, and {chunk_size + (chunk_size * i)} is the ending index of the chunk
+                (chunk_size * i): (chunk_size + (chunk_size * i))
+                # {chunk_size * i} is the starting index of the chunk, and {chunk_size + (chunk_size * i)} is the ending index of the chunk
+            ]
         )  # Appends the chunk to the new array,
     return new_array
 
@@ -82,7 +82,7 @@ def all_courses():
 
             number_of_completed_lessons = number_of_completed_lessons[0][
                 0
-            ]  #  Converts into a flat variable as the previous variable "number_of_completed_lessons" is a list of one element
+            ]  # Converts into a flat variable as the previous variable "number_of_completed_lessons" is a list of one element
 
             cursor.execute(
                 """SELECT COUNT(*) FROM Lesson WHERE course_id =?""",
@@ -154,7 +154,8 @@ def all_courses():
         return redirect(url_for("auth.login"))
 
 
-# This route is used to search for courses based on a keyword entered by the user
+# This route is used to search for courses based on a keyword entered by
+# the user
 @my_courses_bp.route("/my-courses/search", methods=["GET", "POST"])
 def search_courses():
     if "user_id" in session:
@@ -165,13 +166,17 @@ def search_courses():
         if request.method == "GET":
             keyword = request.args.get(
                 "search"
-            ).lower()  # Gets the keyword entered by the user and converts it to lowercase for case-insensitive search
+                # Gets the keyword entered by the user and converts it to
+                # lowercase for case-insensitive search
+            ).lower()
             if keyword != " " and keyword != "":
                 for course_block in all_courses_data:
                     for word in course_block:
                         word = str(
                             word
-                        ).lower()  # Converts each word in the course block to lowercase for case-insensitive search
+                            # Converts each word in the course block to
+                            # lowercase for case-insensitive search
+                        ).lower()
                         if (
                             keyword in word
                         ):  # Checks if the keyword is present in any word of the course block
@@ -189,7 +194,8 @@ def search_courses():
 
 
 # This route is to process all the lesson data and works as an intermediate route between the all_courses route and the lesson route.
-# It fetches the lesson data from the database and stores it in the session for later use
+# It fetches the lesson data from the database and stores it in the
+# session for later use
 @my_courses_bp.route("/my-courses/intermediate", methods=["GET", "POST"])
 def intermediate_route():
     if "user_id" in session:
@@ -217,7 +223,8 @@ def intermediate_route():
 
         session["lesson_id"] = lesson_id
 
-        cursor.execute("SELECT language FROM Course WHERE  course_id = ?", (course_id,))
+        cursor.execute(
+            "SELECT language FROM Course WHERE  course_id = ?", (course_id,))
         language = cursor.fetchone()[0]
         session["language"] = language
 
@@ -289,14 +296,17 @@ def intermediate_route():
         )
 
         # Find the next and previous lesson IDs based on the current lesson order number
-        # This is used to navigate between lessons in the course , which is useful for the user to navigate through the lessons easily
+        # This is used to navigate between lessons in the course , which is
+        # useful for the user to navigate through the lessons easily
         current_lesson_order_number = cursor.fetchone()[0]
 
         next_lesson_order_number = current_lesson_order_number + 1
 
         prev_lesson_order_number = current_lesson_order_number - 1
 
-        # If the next lesson order number is less than or equal to the total number of lessons, fetch the next lesson ID otherwise set it to the current lesson ID
+        # If the next lesson order number is less than or equal to the total
+        # number of lessons, fetch the next lesson ID otherwise set it to the
+        # current lesson ID
         if next_lesson_order_number <= number_of_lessons:
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
@@ -308,7 +318,8 @@ def intermediate_route():
             session["next_lesson_id"] = lesson_id
 
         # If the previous lesson order number is greater than 0, fetch the previous lesson ID otherwise set it to the current lesson ID
-        # This is to ensure that the user can navigate back to the previous lesson if they are not on the first lesson
+        # This is to ensure that the user can navigate back to the previous
+        # lesson if they are not on the first lesson
         if prev_lesson_order_number != 0:
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
@@ -331,7 +342,8 @@ def intermediate_route():
 
 
 # This route is used to mark a lesson as completed and update the user's progress in the course
-# It checks if the user has already completed the lesson and updates the database accordingly
+# It checks if the user has already completed the lesson and updates the
+# database accordingly
 @my_courses_bp.route("/my-courses/lesson-completed", methods=["GET", "POST"])
 def lesson_completed():
     if "user_id" in session:
@@ -366,7 +378,8 @@ def lesson_completed():
                         lesson_ids.append(uuid)
 
                 # If the lesson is not already marked as completed, insert a new record in the user_lesson table
-                # This is to ensure that the user can mark the lesson as completed only once
+                # This is to ensure that the user can mark the lesson as
+                # completed only once
                 if lesson_id not in lesson_ids:
 
                     import uuid
@@ -381,7 +394,8 @@ def lesson_completed():
 
                     cursor.execute(
                         "INSERT INTO user_lesson (id, lesson_id, user_id, status, completed_at) VALUES (?, ?, ?, ?, ?)",
-                        (user_lesson_id, lesson_id, user_id, "completed", timestamp),
+                        (user_lesson_id, lesson_id,
+                         user_id, "completed", timestamp),
                     )
 
                     session["lesson_id"] = session.get("next_lesson_id")
@@ -419,8 +433,10 @@ def lesson_completed():
 
 
 # This route shows the lesson content for a specific course and lesson
-# It retrieves the lesson content from the session and displays it on the lesson page
-@my_courses_bp.route("/my-courses/<course_name>/<lesson_name>", methods=["GET", "POST"])
+# It retrieves the lesson content from the session and displays it on the
+# lesson page
+@my_courses_bp.route("/my-courses/<course_name>/<lesson_name>",
+                     methods=["GET", "POST"])
 def lesson(course_name, lesson_name):
     if "user_id" in session:
         return render_template(
@@ -491,7 +507,8 @@ def completed_courses():
                 )  # Appends 100 to the list to indicate that the course is completed
 
         cursor.close()
-        # This function divides the completed_courses_data into chunks based on the number of completed course IDs
+        # This function divides the completed_courses_data into chunks based on
+        # the number of completed course IDs
         try:
             divided_array = divide_array_into_chunks(
                 completed_courses_data,
@@ -513,12 +530,14 @@ def completed_courses():
 def code_editor():
     if "user_id" in session:
         language = session.get("language")
-        return render_template("user/my_courses/code_editor.html", language=language)
+        return render_template(
+            "user/my_courses/code_editor.html", language=language)
     else:
         return redirect(url_for("auth.login"))
 
 
-# This route is used to display the AI-generated courses that the user has created
+# This route is used to display the AI-generated courses that the user has
+# created
 @my_courses_bp.route("/my-courses/ai_generated", methods=["GET", "POST"])
 def ai_courses():
     if "user_id" in session:
@@ -564,7 +583,8 @@ def ai_courses():
 
 
 # This route is used to generate a course based on the user's input using AI
-# It checks if the user is logged in and if the request is a POST request with JSON
+# It checks if the user is logged in and if the request is a POST request
+# with JSON
 @my_courses_bp.route("/my-courses/ai_generated/generating", methods=["POST"])
 def generarting_course():
     if "user_id" in session:
@@ -595,7 +615,7 @@ def generarting_course():
                     messages=[
                         {
                             "role": "system",
-                            "content": f"",
+                            "content": "",
                         },
                         {
                             "role": "user",
@@ -637,7 +657,8 @@ def generarting_course():
 
                 ai_courses_url = url_for("my_courses.ai_courses")
                 return (
-                    jsonify({"redirect_url": ai_courses_url, "status": "created"}),
+                    jsonify({"redirect_url": ai_courses_url,
+                            "status": "created"}),
                     200,
                 )
             else:
@@ -650,8 +671,10 @@ def generarting_course():
 
 
 # This route is used to search for AI-generated courses based on a keyword entered by the user
-# It checks if the user is logged in and retrieves the AI courses data from the session
-@my_courses_bp.route("/my-courses/ai_generated/search", methods=["POST", "GET"])
+# It checks if the user is logged in and retrieves the AI courses data
+# from the session
+@my_courses_bp.route("/my-courses/ai_generated/search",
+                     methods=["POST", "GET"])
 def search_ai_courses():
     if "user_id" in session:
         ai_courses_data = session.get("ai_courses_data")
@@ -676,8 +699,10 @@ def search_ai_courses():
 
 # This route is used to handle the intermediate step when showing all AI-generated courses
 # This works between the AI-generated courses page and the AI course content page
-# It checks if the user is logged in and retrieves the AI resource ID from the form submission
-@my_courses_bp.route("/my-courses/ai_generated/intermediate", methods=["POST", "GET"])
+# It checks if the user is logged in and retrieves the AI resource ID from
+# the form submission
+@my_courses_bp.route("/my-courses/ai_generated/intermediate",
+                     methods=["POST", "GET"])
 def intermediate_route_ai():
     if "user_id" in session:
         if request.method == "POST":
@@ -701,7 +726,8 @@ def intermediate_route_ai():
             conn.close()
 
             # If the AI resource ID is not found, return a 404 error
-            # This is to ensure that the user cannot access a course that does not exist
+            # This is to ensure that the user cannot access a course that does
+            # not exist
             if not row:
                 abort(404)
 
@@ -712,7 +738,9 @@ def intermediate_route_ai():
             formated_course_name = "-".join(course_name.split(" "))
 
             return redirect(
-                url_for("my_courses.ai_course", course_name=formated_course_name)
+                url_for(
+                    "my_courses.ai_course",
+                    course_name=formated_course_name)
             )
 
     else:
@@ -751,7 +779,8 @@ def ai_course(course_name):
 
 
 # This route is used to mark an AI-generated course as completed
-# It checks if the user is logged in and updates the course status in the database
+# It checks if the user is logged in and updates the course status in the
+# database
 @my_courses_bp.route("/my-courses/ai_generated/completed", methods=["POST"])
 def ai_course_complete():
     if "user_id" in session:
@@ -777,7 +806,8 @@ def ai_course_complete():
                         ai_course_ids_completed.append(uuid)
 
                 # If the AI resource ID is not already marked as completed, update its status to "Completed"
-                # This is to ensure that the user can mark the course as completed only once
+                # This is to ensure that the user can mark the course as
+                # completed only once
                 if ai_resource_id not in ai_course_ids_completed:
                     cursor.execute(
                         """UPDATE Ai_resource SET status = "Completed" WHERE resource_id=? AND user_id=?""",

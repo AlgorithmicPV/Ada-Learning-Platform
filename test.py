@@ -305,7 +305,9 @@ prev_date = 0
 
 
 # Function to get all community discussions from the database
-# Used a function because I can use this function to get all community discussions and filter them according to the below routes
+# Used a function because I can use this function to get all community
+# discussions and filter them according to the below routes
+
 
 def get_all_community_discussions_from_db():
     conn = sqlite3.connect("database/app.db")
@@ -376,7 +378,8 @@ def get_all_community_discussions_from_db():
         temp_chat_detail.remove(chat_detail[1])
 
         # As this platform enables to use markdown for user inputs, but for the preview removes the markdown syntax
-        # and shows the text only for the better user experience and keeps the same height for each chat card
+        # and shows the text only for the better user experience and keeps the
+        # same height for each chat card
         temp_chat_detail[1] = strip_markdown.strip_markdown(chat_detail[2])
 
         user_id = session.get("user_id")
@@ -385,7 +388,8 @@ def get_all_community_discussions_from_db():
         # By trying to get a saved_chat_id from the Saved_chat table where the user_id and chat_id matches
         # If there is value for saved_chat_id, it means the user has saved that discussion
         # and appends "saved" to the temp_chat_detail list if not appends "unsaved"
-        # This helps for the frontend to show which icon should be shown for the save button
+        # This helps for the frontend to show which icon should be shown for
+        # the save button
         cursor.execute(
             "SELECT saved_chat_id FROM Saved_chat WHERE user_id=? AND chat_id=?",
             (user_id, chat_id),
@@ -399,7 +403,8 @@ def get_all_community_discussions_from_db():
             temp_chat_detail.append("unsaved")
 
         # Converts the temp_chat_detail list back to a tuple
-        # Because the chat_detail is a tuple and we need to keep the same data type
+        # Because the chat_detail is a tuple and we need to keep the same data
+        # type
         chat_detail = tuple(temp_chat_detail)
 
         # Appends the chat_detail tuple to the chat_cards_detail list
