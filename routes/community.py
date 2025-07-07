@@ -84,10 +84,9 @@ def get_all_community_questions_from_db():
         else:
             format_string = "%Y-%m-%dT%H:%M:%S"
             temp_question_detail[3] = str(
-                (datetime.strptime(question_detail[3], format_string)).strftime(
-                    "%Y-%m-%d %I:%M %p"
-                )
-            )
+                (datetime.strptime(
+                    question_detail[3],
+                    format_string)).strftime("%Y-%m-%d %I:%M %p"))
 
         user_id = session.get("user_id")
 
@@ -285,12 +284,11 @@ def add_new_post():
 
                 cursor.execute(
                     "INSERT INTO Question (question_id, user_id, question, created_at) VALUES (?, ?, ?, ?)",
-                    (
-                        question_id,
-                        user_id,
-                        question,
-                        created_at,
-                    ),
+                    (question_id,
+                     user_id,
+                     question,
+                     created_at,
+                     ),
                 )
                 conn.commit()
                 conn.close()
@@ -325,10 +323,9 @@ def toggle_save():
                 # Ckeck has user saved that discussion
                 cursor.execute(
                     "SELECT saved_question_id FROM Saved_question WHERE question_id=? AND user_id=?",
-                    (
-                        question_id[0],
-                        user_id,
-                    ),
+                    (question_id[0],
+                     user_id,
+                     ),
                 )
                 saved_question_id_from_db = cursor.fetchone()
 
@@ -456,8 +453,7 @@ def discussions(question_id):
             # Counts the number of replies for the question and appends it to
             # the question_details_that_goes_to_client_side list
             cursor.execute(
-                "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,)
-            )
+                "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,))
             number_of_replies = cursor.fetchone()[0]
             question_details_that_goes_to_client_side.append(number_of_replies)
 
@@ -473,8 +469,10 @@ def discussions(question_id):
         return redirect(url_for("auth.login"))
 
 
-@community_bp.route("/community/get-answers", methods=["POST"])
-def get_answers():
+# This Route validates the question_id coming from the client side with the database question_id
+# It passes the redirect url to the client side to change the page
+@community_bp.route("/community/check-qid", methods=["POST"])
+def check_qid():
     if "user_id" in session:
         if request.is_json:
             data = request.get_json()
@@ -483,8 +481,9 @@ def get_answers():
             conn = sqlite3.connect("database/app.db")
             cursor = conn.cursor()
 
-            # Valide the question_id coming from the client side with the
-            # database
+            # Uses the client side question id to check if there is an actual question id in the database
+            # If there is a question id in the database, it will set the
+            # session question_id
             cursor.execute(
                 "SELECT question_id FROM question WHERE question_id = ?",
                 (client_question_id,),
@@ -505,6 +504,233 @@ def get_answers():
 @community_bp.route("/community/add-answers", methods=["POST"])
 def add_answers():
     if "user_id" in session:
-        pass
+        if request.is_json:
+            data = request.get_json()
+            user_answer = data["userAnswer"]
+
+            conn = sqlite3.connect("database/app.db")
+            cursor = conn.cursor()
+
+            # Before adding to the database, check userinput is not a blank or
+            # empty string
+            if not user_answer == "" and not user_answer.isspace():
+                created_at = datetime.now().isoformat(timespec="seconds")
+                answer_id = str(uuid.uuid4())
+                question_id = session.get("question_id")
+                user_id = session.get("user_id")
+                cursor.execute("""INSERT INTO Answer
+                               (answer_id, question_id, user_id, content, created_at)
+                               VALUES
+                               (?, ?, ?, ?, ?)""",
+                               (answer_id, question_id, user_id, user_answer, created_at))
+
+                conn.commit()
+                conn.close()
+
+            return "", 200
+    else:
+        return redirect(url_for("auth.login"))
+
+# This route gets all the answers that are relevant to the question that user clicked
+# THis route passes the answers to the client side in every 2.5 seconds
+# To keep anwers updated
+
+
+@community_bp.route("/community/get-answers")
+def get_answers():
+    if "user_id" in session:
+        question_id = session.get("question_id")
+
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        answers_details_that_go_to_the_frontend = []
+
+        cursor.execute("""
+                        SELECT answer_id,
+                                user_id,
+                                content,
+                                created_at FROM Answer WHERE question_id = ?
+                       """, (question_id,))
+
+        answers_details_from_db = cursor.fetchall()
+
+        for answer_detail_from_db in answers_details_from_db:
+            answered_user_id = answer_detail_from_db[1]
+
+            cursor.execute("""
+                            SELECT  full_name,
+                                    profile_image FROM User WHERE user_id=?
+                           """, (answered_user_id,))
+            answered_user_info = cursor.fetchall()[0]
+            answer_detail_from_db += answered_user_info
+
+            # Convert the tuple into a list because easier to modify
+            temp_array_of_answers_details = list(answer_detail_from_db)
+
+            # If user'answer is in markdown syntax ocnvert them into the HTML format
+            # and append to the temp_array_of_answers_details list
+            temp_array_of_answers_details[2] = markdown.markdown(
+                answer_detail_from_db[2])
+
+            user_id = session.get("user_id")
+
+            # If the answers is done by that relevant logged in user, changes username into "You"
+            # This gives better user experience and easier to find their
+            # answers
+            if answer_detail_from_db[1] == user_id:
+                temp_array_of_answers_details[4] = "You"
+
+            today = date.today()
+
+            # Extract the date from the created_at field
+            # and format it to compare with today's date
+            question_date = answer_detail_from_db[3].split("T")[0]
+
+            # This helps to check, if the quesiont / discussion is posted today
+            # It will show only the time in 12 hour format
+            # If not, it will show the date and time in 12 hour format
+            # This helps for users to find new discussions easily
+            if str(today) == question_date:
+                time_str = answer_detail_from_db[3].split("T")[1]
+                time_obj = datetime.strptime(time_str, "%H:%M:%S")
+                time_12hr = time_obj.strftime("%I:%M %p")
+                temp_array_of_answers_details[3] = time_12hr
+            else:
+                format_string = "%Y-%m-%dT%H:%M:%S"
+                temp_array_of_answers_details[3] = (
+                    str(
+                        (
+                            datetime.strptime(
+                                answer_detail_from_db[3], format_string
+                            )
+                        ).strftime("%Y-%m-%d %I:%M %p")
+                    )
+                )
+
+            # Remove the user_id from the array as it is not needed for the
+            # frontend
+            temp_array_of_answers_details.remove(answer_detail_from_db[1])
+
+            # Counts the number of likes for the answer
+            # and appends it to the temp_array_of_answers_details list
+            cursor.execute("""
+                            SELECT COUNT(*) FROM AnswerLike WHERE answer_id=?
+                           """, (answer_detail_from_db[0],))
+
+            number_of_likes = cursor.fetchone()[0]
+            temp_array_of_answers_details.append(number_of_likes)
+
+            # This part helps to the frontend to set the relevant icon for the like button
+            # It is done by checking is relevanr logges user_id and answer_id
+            # is in the AnswerLike table
+            cursor.execute(
+                "SELECT like_id FROM AnswerLike WHERE user_id=? AND answer_id=?",
+                (user_id, answer_detail_from_db[0]),
+            )
+
+            like_id = cursor.fetchone()
+
+            if like_id:
+                temp_array_of_answers_details.append("like")
+            else:
+                temp_array_of_answers_details.append("unlike")
+
+            # Append the answer_id to the temp_array_of_answers_details list
+            answers_details_that_go_to_the_frontend.append(
+                temp_array_of_answers_details)
+
+        return jsonify(answers_details_that_go_to_the_frontend)
+
+    else:
+        return redirect(url_for("auth.login"))
+
+# This route handles the like and unlike functionality of the answers
+# If user has likes the answer it will comver to unlike and other way around
+# It also counts the number of likes for the answer and sends it to the
+# client side
+
+
+@community_bp.route("/community/toggle-like", methods=["POST"])
+def toggle_like():
+    if "user_id" in session:
+        if request.is_json:
+            data = request.get_json()
+            client_answer_id = data["answerId"]
+
+            conn = sqlite3.connect("database/app.db")
+            cursor = conn.cursor()
+
+            # Validates the answer_id coming from the client side with the database
+            # If there is an answer_id in the database, it will proceed with the like/unlike functionality
+            # and count the number of likes for that answer
+            cursor.execute(
+                "SELECT answer_id FROM Answer WHERE answer_id=?", (client_answer_id,))
+            answer_id = cursor.fetchone()
+
+            if answer_id:
+                user_id = session.get("user_id")
+
+                cursor.execute(
+                    "SELECT like_id FROM AnswerLike WHERE user_id=? AND answer_id=?",
+                    (user_id,
+                     client_answer_id,
+                     ))
+                liked_answer_id_from_db = cursor.fetchone()
+
+                # if the liked_answer_id has some sort of value it will delete from the AnswerLike table,
+                # and set the like variable to "no"
+                # IF there is no value in the liked_answer_id_from_db,
+                # It will insert the new like answers details to the AnswerLike table
+                # and set the like variable to "yes"
+                if liked_answer_id_from_db:
+                    cursor.execute(
+                        "DELETE FROM AnswerLike WHERE like_id=?",
+                        (liked_answer_id_from_db))
+                    conn.commit()
+                    like = "no"
+                else:
+                    like_id = str(uuid.uuid4())
+                    cursor.execute(
+                        "INSERT INTO AnswerLike (like_id, user_id, answer_id) VALUES (?, ?, ?)",
+                        (like_id,
+                         user_id,
+                         client_answer_id))
+                    conn.commit()
+                    like = "yes"
+
+                # Counts the number of likes for the answer
+                # and sends it to the client side
+                cursor.execute("""
+                            SELECT COUNT(*) FROM AnswerLike WHERE answer_id=?
+                           """, (client_answer_id,))
+                number_of_likes = cursor.fetchone()[0]
+                conn.close()
+            else:
+                print("not valid")
+
+            return jsonify({"like": like, "nu_likes": number_of_likes}), 200
+    else:
+        return redirect(url_for("auth.login"))
+
+# This route gets the number of answers for the relevant question
+# This has connected with the client side, and pass data in every 2.5 seconds
+# to keep the number of answers updated
+
+
+@community_bp.route("/community/get-number-of-answers")
+def get_number_of_answers():
+    if "user_id" in session:
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        question_id = session.get("question_id")
+
+        cursor.execute(
+            "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,)
+        )
+        number_of_answers = cursor.fetchone()
+
+        return jsonify({"numberOfAnswers": number_of_answers})
     else:
         return redirect(url_for("auth.login"))

@@ -31,7 +31,8 @@ google = oauth.register(
     client_id=os.getenv("Client_ID"),
     client_secret=os.getenv("Client_secret"),
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile"},
+    client_kwargs={
+        "scope": "openid email profile"},
 )
 
 
@@ -49,23 +50,24 @@ def login():
         cursor.execute(
             "SELECT password FROM User WHERE email = ?", (email,)
         )  # Fetch the stored password hash for the given email
-        stored_hash_password = (
-            cursor.fetchone()
-        )  # stored_hash_password is a tuple, so we need to access the first element
+        # stored_hash_password is a tuple, so we need to access the first
+        # element
+        stored_hash_password = (cursor.fetchone())
 
         if stored_hash_password:
             try:
                 if ph.verify(
-                        stored_hash_password[0], password):  # Verify the password
+                        stored_hash_password[0],
+                        password):  # Verify the password
                     session["email"] = email
                     conn = sqlite3.connect("database/app.db")
                     cursor = conn.cursor()
                     cursor.execute(
                         "SELECT full_name FROM User Where email = ?", (email,)
                     )  # Fetch the username associated with the email
-                    stored_username = (
-                        cursor.fetchone()
-                    )  # stored_username is a tuple, so we need to access the first element
+                    # stored_username is a tuple, so we need to access the
+                    # first element
+                    stored_username = (cursor.fetchone())
                     username = stored_username[0]
                     # Store the username in the session
                     session["username"] = username
@@ -85,8 +87,8 @@ def login():
                 return redirect(url_for("auth.login"))
             except InvalidHash:  # If the password hash is invalid
                 flash(
-                    "Invalid hash format. The hash may be corrupted", category="error"
-                )
+                    "Invalid hash format. The hash may be corrupted",
+                    category="error")
                 return redirect(url_for("auth.login"))
             except Exception as e:  # Catch any other exceptions
                 flash(f"An error occured: {e}", category="error")
@@ -171,15 +173,14 @@ def signup():
 
             cursor.execute(
                 """INSERT INTO User (user_id, email, full_name, password, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                (
-                    user_id,
-                    email,
-                    name,
-                    ph.hash(password),
+                (user_id,
+                 email,
+                 name,
+                 ph.hash(password),
                     "manual",
                     "dark",
                     datetime.fromisoformat(timestamp),
-                ),
+                 ),
             )
 
             conn.commit()
@@ -232,7 +233,12 @@ def authorize_google():
     if email not in saved_emails:
         cursor.execute(
             """INSERT INTO User (user_id, email, full_name, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?)""",
-            (user_id, email, username, "google", "dark", timestamp),
+            (user_id,
+             email,
+             username,
+             "google",
+             "dark",
+             timestamp),
         )
 
         conn.commit()

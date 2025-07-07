@@ -35,7 +35,7 @@ const toggleSave = (questionId, saveButton) => {
 };
 
 const openTheDiscussion = (questionId) => {
-  fetch(discussionRepliesUrl, {
+  fetch(questionGateUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -80,18 +80,18 @@ def all_courses():
 
             number_of_completed_lessons = cursor.fetchall()
 
-            number_of_completed_lessons = number_of_completed_lessons[0][
-                0
-            ]  # Converts into a flat variable as the previous variable "number_of_completed_lessons" is a list of one element
+            # Converts into a flat variable as the previous variable
+            # "number_of_completed_lessons" is a list of one element
+            number_of_completed_lessons = number_of_completed_lessons[0][0]
 
             cursor.execute(
                 """SELECT COUNT(*) FROM Lesson WHERE course_id =?""",
                 (one_course_set[0],),
             )  # Gets the total number of lessons available in  a course the database
 
-            number_of_all_lessons = (
-                cursor.fetchall()
-            )  # Gets the total number of lessons available in a course the database
+            # Gets the total number of lessons available in a course the
+            # database
+            number_of_all_lessons = (cursor.fetchall())
 
             number_of_all_lessons = number_of_all_lessons[0][0]
 
@@ -105,15 +105,15 @@ def all_courses():
             for j in range(5):  # Appends the course data into a new array
                 course_data_with_percentage.append(one_course_set[j])
 
-            course_data_with_percentage.append(
-                percentage_of_the_completion
-            )  # Appends the percentage of the completion of the course into the new array
+            # Appends the percentage of the completion of the course into the
+            # new array
+            course_data_with_percentage.append(percentage_of_the_completion)
 
         cursor.execute("""SELECT COUNT(*) FROM  Course""")
 
-        number_of_courses = cursor.fetchall()[0][
-            0
-        ]  # Gets the total number of courses available in the database, and this is used to divide the array into chunks
+        # Gets the total number of courses available in the database, and this
+        # is used to divide the array into chunks
+        number_of_courses = cursor.fetchall()[0][0]
         divided_array = divide_array_into_chunks(
             course_data_with_percentage,
             int(
@@ -177,9 +177,9 @@ def search_courses():
                             # Converts each word in the course block to
                             # lowercase for case-insensitive search
                         ).lower()
-                        if (
-                            keyword in word
-                        ):  # Checks if the keyword is present in any word of the course block
+                        # Checks if the keyword is present in any word of the
+                        # course block
+                        if (keyword in word):
                             filtered_courses.append(course_block)
                             break
 
@@ -202,22 +202,21 @@ def intermediate_route():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
         course_id = session.get("course_id")
-        if (
-            request.method == "POST"
-        ):  # If the request method is POST, it means the user has selected a lesson
+        # If the request method is POST, it means the user has selected a
+        # lesson
+        if (request.method == "POST"):
             lesson_id = request.form.get("lesson_id")
         else:  # else, it means the user has not selected a lesson yet
 
-            lesson_order_number = session.get(
-                "lesson_order"
-            )  # Gets the lesson order number from the session, which is set to 1 by default but can be changed by the user
+            # Gets the lesson order number from the session, which is set to 1
+            # by default but can be changed by the user
+            lesson_order_number = session.get("lesson_order")
 
             cursor.execute(
                 "SELECT lesson_id FROM Lesson WHERE course_id = ? AND lesson_order = ?",
-                (
-                    course_id,
-                    lesson_order_number,
-                ),
+                (course_id,
+                 lesson_order_number,
+                 ),
             )
             lesson_id = cursor.fetchone()[0]
 
@@ -257,10 +256,9 @@ def intermediate_route():
 
         cursor.execute(
             """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
-            (
-                user_id,
-                course_id,
-            ),
+            (user_id,
+             course_id,
+             ),
         )
         number_of_completed_lessons = cursor.fetchall()[0][0]
         percentage_of_completion = round(
@@ -275,13 +273,13 @@ def intermediate_route():
         lesson_content = cursor.fetchall()
         session["lesson_content"] = lesson_content[0][0]
 
-        formated_course_name = "-".join(
-            course_name.split(" ")
-        )  # Formats the course name by replacing spaces with hyphens for URL compatibility
+        # Formats the course name by replacing spaces with hyphens for URL
+        # compatibility
+        formated_course_name = "-".join(course_name.split(" "))
 
-        formated_lesson_name = "-".join(
-            lesson_title.split(" ")
-        )  # Formats the lesson name by replacing spaces with hyphens for URL compatibility
+        # Formats the lesson name by replacing spaces with hyphens for URL
+        # compatibility
+        formated_lesson_name = "-".join(lesson_title.split(" "))
 
         cursor.execute(
             "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
@@ -360,9 +358,9 @@ def lesson_completed():
             completed = request.form.get("completed")
             user_id = session.get("user_id")
 
-            if (
-                completed == "completed"
-            ):  # If the user has completed the lesson, check if the lesson is already marked as completed
+            # If the user has completed the lesson, check if the lesson is
+            # already marked as completed
+            if (completed == "completed"):
 
                 cursor.execute(
                     "SELECT lesson_id FROM user_lesson WHERE status ='completed' AND user_id=? ",
@@ -388,14 +386,17 @@ def lesson_completed():
                         uuid.uuid4()
                     )  # Generates a unique ID for the user_lesson record
 
-                    timestamp = datetime.now().isoformat(
-                        timespec="seconds"
-                    )  # Gets the current timestamp in ISO format with seconds precision
+                    # Gets the current timestamp in ISO format with seconds
+                    # precision
+                    timestamp = datetime.now().isoformat(timespec="seconds")
 
                     cursor.execute(
                         "INSERT INTO user_lesson (id, lesson_id, user_id, status, completed_at) VALUES (?, ?, ?, ?, ?)",
-                        (user_lesson_id, lesson_id,
-                         user_id, "completed", timestamp),
+                        (user_lesson_id,
+                         lesson_id,
+                         user_id,
+                         "completed",
+                         timestamp),
                     )
 
                     session["lesson_id"] = session.get("next_lesson_id")
@@ -472,16 +473,14 @@ def completed_courses():
         for element in course_id_tuple:
             for course_id in element:
                 cursor.execute(
-                    """SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,)
-                )
+                    """SELECT COUNT(*) FROM Lesson WHERE course_id=?""", (course_id,))
                 total_number_of_lessons = cursor.fetchone()[0]
 
                 cursor.execute(
                     """SELECT COUNT(*) FROM user_lesson WHERE lesson_id IN (SELECT lesson_id FROM lesson WHERE course_id = ?) AND status = "completed" AND user_id=? """,
-                    (
-                        course_id,
-                        user_id,
-                    ),
+                    (course_id,
+                     user_id,
+                     ),
                 )
                 number_completed_lesson = cursor.fetchone()[0]
 
@@ -502,9 +501,9 @@ def completed_courses():
             for one_set_course_data in course_data:
                 for data in one_set_course_data:
                     completed_courses_data.append(data)
-                completed_courses_data.append(
-                    100
-                )  # Appends 100 to the list to indicate that the course is completed
+                # Appends 100 to the list to indicate that the course is
+                # completed
+                completed_courses_data.append(100)
 
         cursor.close()
         # This function divides the completed_courses_data into chunks based on
@@ -517,8 +516,8 @@ def completed_courses():
         except ZeroDivisionError:
             divided_array = []
         return render_template(
-            "user/my_courses/completed_courses.html", courses_data=divided_array
-        )
+            "user/my_courses/completed_courses.html",
+            courses_data=divided_array)
     else:
         return redirect(url_for("auth.login"))
 
@@ -562,8 +561,7 @@ def ai_courses():
             ai_courses.append(ai_Course_from_db[3].split("T")[0])
 
         cursor.execute(
-            "SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,)
-        )
+            "SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,))
 
         number_of_ai_courses = cursor.fetchone()[0]
         try:
@@ -576,8 +574,8 @@ def ai_courses():
         session["ai_courses_data"] = ai_courses_data
 
         return render_template(
-            "user/my_courses/ai_generated_courses.html", ai_courses_data=ai_courses_data
-        )
+            "user/my_courses/ai_generated_courses.html",
+            ai_courses_data=ai_courses_data)
     else:
         return redirect(url_for("auth.login"))
 
@@ -716,10 +714,9 @@ def intermediate_route_ai():
 
             cursor.execute(
                 "SELECT title FROM Ai_resource WHERE resource_id =? and user_id=?",
-                (
-                    ai_resource_id,
-                    user_id,
-                ),
+                (ai_resource_id,
+                 user_id,
+                 ),
             )
             row = cursor.fetchone()
 
@@ -759,10 +756,9 @@ def ai_course(course_name):
 
         cursor.execute(
             "SELECT title, content FROM Ai_resource WHERE resource_id =? and user_id=?",
-            (
-                ai_resource_id,
-                user_id,
-            ),
+            (ai_resource_id,
+             user_id,
+             ),
         )
         ai_course_data = cursor.fetchall()[0]
         conn.close()
@@ -772,8 +768,9 @@ def ai_course(course_name):
         session["ai_course_topic"] = title
 
         return render_template(
-            "user/my_courses/ai_course.html", content=content, course_name=title
-        )
+            "user/my_courses/ai_course.html",
+            content=content,
+            course_name=title)
     else:
         return redirect(url_for("auth.login"))
 

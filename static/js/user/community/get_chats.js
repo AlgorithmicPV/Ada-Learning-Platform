@@ -10,7 +10,7 @@ let numberOfChatCards = 0;
 // then using that, next time when I fetch the data, i slice the data to get only new discussions and update the numberOfChatCards variable
 // and create new chat cards for those new discussions
 
-// chatId - [i][0]
+// questionId - [i][0]
 // questionData - [i][1]
 // postedTimeData - [i][2]
 // writerName - [i][3]
@@ -18,9 +18,9 @@ let numberOfChatCards = 0;
 // nuOfAnswers - [i][5]
 // isSave - [i][6]
 
-// urlForDiscs has set in the community_all.html file
+// urlForQuestions has set in the community_all.html file
 const getAllCommunityDiscussion = () => {
-  fetch(urlForDiscs)
+  fetch(urlForQuestions)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");

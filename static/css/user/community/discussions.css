@@ -1,4 +1,4 @@
-.user-reply-input-wrapper {
+.user-answer-input-wrapper {
   position: absolute;
   bottom: 20px;
   left: 50%;
@@ -13,7 +13,7 @@
   border-radius: 25px; /* Rounded corners for the input box for the modern look */
 }
 
-.user-reply-input-box {
+.user-answer-input-box {
   flex: 1;
   background-color: transparent;
   outline: none;
@@ -23,7 +23,7 @@
   caret-color: var(--primary-color);
 }
 
-.send-user-reply-btn {
+.send-user-answer-btn {
   cursor: pointer;
   border-radius: 50%;
   display: flex;
@@ -35,13 +35,13 @@
   border: none;
 }
 
-.send-user-reply-btn svg {
+.send-user-answer-btn svg {
   height: 15px;
   width: auto;
   fill: var(--second-text-color);
 }
 
-.send-user-reply-btn:hover svg {
+.send-user-answer-btn:hover svg {
   fill: var(--text-color);
 }
 
@@ -49,7 +49,48 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 60px; /* Adds some space for better user redability */
+  gap: 20px; /* Adds some space for better user redability */
+  margin-bottom: 60px; /* Space for the input box at the bottom */
+  align-items: flex-end;
+}
+
+.nested {
+  width: 100%;
+}
+
+.nested li {
+  margin-left: 5em;
+}
+
+.nested ul {
+  padding: 0;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+.nested li ul {
+  border-left: 1px solid var(--second-text-color);
+  position: relative;
+  margin-left: 20px;
+}
+
+.nested li ul::before {
+  content: "";
+  border-bottom: 1px solid var(--second-text-color);
+  position: absolute;
+  width: 2.5em;
+  top: 1em;
+}
+
+.answers-wrapper {
+  width: 98%;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  align-items: flex-end;
 }
 
 .question-card {
@@ -58,21 +99,34 @@
   gap: 25px; /* Adds some space for better user redability */
   width: 100%;
   flex: 1;
+  padding-bottom: 60px;
 }
 
-.question-card img {
+.answer-card {
+  display: flex;
+  flex-direction: row;
+  gap: 25px; /* Adds some space for better user redability */
+  width: 90%;
+  flex: 1;
+  padding-bottom: 60px;
+}
+
+.question-card img,
+.answer-card img {
   height: 40px;
   width: 40px;
   border-radius: 15px;
 }
 
-.question-card svg {
+.question-card svg,
+.answer-card svg {
   height: 20px;
   width: auto;
   fill: var(--second-text-color);
 }
 
-.question-card button {
+.question-card button,
+.answer-card button {
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -85,13 +139,15 @@
   font-size: medium;
 }
 
-.question-card-cont {
+.question-card-cont,
+.answer-card-cont {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.question-card-top-bar {
+.question-card-top-bar,
+.answer-card-top-bar {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -99,11 +155,13 @@
   width: 100%;
 }
 
-.question-card-top-bar p {
+.question-card-top-bar p,
+.answer-card-top-bar p {
   margin: 0; /* Removed defoult margin because of extra space */
 }
 
-.question-card-top-bar div {
+.question-card-top-bar div,
+.answer-card-top-bar div {
   display: flex;
   flex-direction: row;
   gap: 5px;
@@ -132,7 +190,8 @@
   fill: var(--text-color);
 }
 
-.question {
+.question,
+.answer {
   margin-bottom: 15px;
   flex: 1;
   width: 100%;
@@ -148,9 +207,23 @@ code {
   border-radius: 15px;
 }
 
+.number-of-answers {
+  margin: 0;
+}
+
+.answer-card button:hover svg {
+  fill: var(--text-color);
+}
+
+.number-of-likes-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
-  .user-reply-input-wrapper {
+  .user-answer-input-wrapper {
     width: 90%;
   }
 
@@ -158,20 +231,24 @@ code {
     width: 90%;
   }
 
-  .question {
+  .question,
+  .answer {
     font-size: small;
   }
 
-  .question-card img {
+  .question-card img,
+  .answer-card img {
     height: 30px;
     width: 30px;
   }
 
-  .question-card-top-bar {
+  .question-card-top-bar,
+  .answer-card-top-bar {
     margin-bottom: 5px;
   }
 
-  .question-card-top-bar div {
+  .question-card-top-bar div,
+  .answer-card-top-bar div {
     flex-direction: column;
     align-items: flex-start;
   }
