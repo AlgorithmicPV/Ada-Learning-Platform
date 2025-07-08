@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   width: 800px;
   background-color: var(--blocks-color);
   padding: 10px;
@@ -21,6 +21,13 @@
   font-size: medium;
   color: var(--text-color);
   caret-color: var(--primary-color);
+  max-height: 150px;
+  field-sizing: content;
+  resize: none;
+  font-family: "Inter";
+  font-size: medium;
+  margin-bottom: 5px;
+  padding: 5px;
 }
 
 .send-user-answer-btn {

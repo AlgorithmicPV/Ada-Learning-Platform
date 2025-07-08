@@ -156,7 +156,7 @@ def all_courses():
 
 # This route is used to search for courses based on a keyword entered by
 # the user
-@my_courses_bp.route("/my-courses/search", methods=["GET", "POST"])
+@my_courses_bp.route("/my-courses/search", methods=["GET"])
 def search_courses():
     if "user_id" in session:
         all_courses_data = session.get("all_courses_data")
@@ -169,7 +169,7 @@ def search_courses():
                 # Gets the keyword entered by the user and converts it to
                 # lowercase for case-insensitive search
             ).lower()
-            if keyword != " " and keyword != "":
+            if not keyword == "" and not keyword.isspace():
                 for course_block in all_courses_data:
                     for word in course_block:
                         word = str(
@@ -678,19 +678,22 @@ def search_ai_courses():
         ai_courses_data = session.get("ai_courses_data")
         if request.method == "GET":
             keyword = request.args.get("search")
-            searched_ai_courses_data = []
-            keyword = keyword.lower()
-            for ai_course_data in ai_courses_data:
-                for data in ai_course_data:
-                    data = data.lower()
-                    if keyword in data:
-                        searched_ai_courses_data.append(ai_course_data)
-                        break
-            print(searched_ai_courses_data)
-            return render_template(
-                "user/my_courses/search_ai_courses.html",
-                ai_courses_data=searched_ai_courses_data,
-            )
+            if not keyword == "" and not keyword.isspace():
+                searched_ai_courses_data = []
+                keyword = keyword.lower()
+                for ai_course_data in ai_courses_data:
+                    for data in ai_course_data:
+                        data = data.lower()
+                        if keyword in data:
+                            searched_ai_courses_data.append(ai_course_data)
+                            break
+                print(searched_ai_courses_data)
+                return render_template(
+                    "user/my_courses/search_ai_courses.html",
+                    ai_courses_data=searched_ai_courses_data,
+                )
+            else:
+                return redirect(url_for("my_courses.ai_courses"))
     else:
         return redirect(url_for("auth.login"))
 

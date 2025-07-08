@@ -102,6 +102,11 @@
   text-overflow: ellipsis;
 }
 
+.number-of-answers-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .discs-cont {

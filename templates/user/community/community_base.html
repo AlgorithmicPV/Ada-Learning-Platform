@@ -1,3 +1,4 @@
+{% set form_action = url_for('community.search_questions') %}
 {% extends 'user/base.html' %}
 {% block title %}Community{% endblock %}
 {%block
@@ -30,7 +31,7 @@
         <!--Search bar-->
         <form class="search-bar"
               action="{{ form_action }}"
-              method="Get"
+              method="get"
               autocomplete="off">
             <!--Below button only apears in the small screen to show the input box-->
             <button class="show-the-input-box" type="button">
@@ -51,10 +52,7 @@
                     <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
                 </svg>
             </button>
-            <input type="text"
-                   name="search"
-                   id="search"
-                   placeholder="Search Your Favourite Course" />
+            <input type="text" name="search" id="search" placeholder="Search" />
         </form>
         <!--End Search bar-->
     </div>
@@ -71,9 +69,7 @@
     <!--End of add a question button-->
     <!-- Posting question form -->
     <!-- This form will be shown when the user clicks on the add a question button -->
-    <div class="posting-question-wrapper"
-         method="post"
-         action="{{ url_for("community.add_new_post") }}">
+    <div class="posting-question-wrapper" method="post">
         <!--Top bar of the posting question wrapper which includes closing button-->
         <div class="posting-question-wrapper-top-bar">
             <button type="button" class="close-btn-posting-question-wrapper">

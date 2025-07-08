@@ -158,7 +158,6 @@ const createQuestionCard = (
   questionCard.appendChild(questionCardCont);
 
   discussionsContainer.appendChild(questionCard);
-  console.log("created");
 };
 
 // Function to create a new question card in the community page
@@ -251,7 +250,6 @@ const createNewQuestionCard = (
   questionCard.appendChild(questionCardCont);
 
   discussionsContainer.prepend(questionCard);
-  console.log("created");
 };
 
 // Export the functions to use in other files

@@ -13,6 +13,8 @@ from datetime import datetime, date
 import strip_markdown
 from dateutil.parser import parse
 import markdown
+import emoji
+import string
 
 community_bp = Blueprint("community", __name__)
 
@@ -732,5 +734,99 @@ def get_number_of_answers():
         number_of_answers = cursor.fetchone()
 
         return jsonify({"numberOfAnswers": number_of_answers})
+    else:
+        return redirect(url_for("auth.login"))
+
+
+# Removes the punctuations of a text
+translator = str.maketrans('', '', string.punctuation)
+
+# This route filters the questions based on the user's keywords
+# This route will only work if the keyword is not empty or just whitespace
+
+
+@community_bp.route("/community/search/", methods=["GET"])
+def search_questions():
+    if "user_id" in session:
+        if request.method == "GET":
+            keyword = request.args.get("search")
+            search_result = []
+            if not keyword == "" and not keyword.isspace():
+                question_cards_detail = get_all_community_questions_from_db()
+                for question_card_detail in question_cards_detail:
+
+                    # Converts the question from the database to plain text
+                    # This makes it easier to convert into a flat array
+                    flat_question = question_card_detail[1].replace(
+                        '\r\n', ' ').replace('\n', ' ')
+
+                    # Removes existing emojis, otherwise, the algorithm doesn't work properly
+                    # because can't find similar words between the question and
+                    # the keyword
+                    emojiless_question = emoji.replace_emoji(
+                        flat_question, replace="")
+
+                    # Removes exisiting punctuation marks,
+                    # and converts to lowercase
+                    clean_question = emojiless_question.translate(
+                        translator).lower()
+
+                    # Convert the exisitng cleaned string to an array then a set
+                    # Because It removes duplicate values
+                    # If there are duplicate values, calculation maybe wrong
+                    # At last converts it to an array
+                    question_array = list(set(clean_question.split(" ")))
+
+                    # Converts the User input to a plain text without any symbols
+                    # This makes it easier to convert into a flat array
+                    emojiless_keyword = emoji.replace_emoji(
+                        keyword, replace="")
+
+                    # Removes exisiting punctuation marks,
+                    # and converts to lowercase
+                    clean_keyword = emojiless_keyword.translate(
+                        translator).lower()
+
+                    # Convert the exisitng cleaned string to an array then a set
+                    # Because It removes duplicate values
+                    # If there are duplicate values, calculation maybe wrong
+                    # At last converts it to an array
+                    keyword_array = list(set(clean_keyword.split(" ")))
+
+                    # Compare the lenght of those created arrays,
+                    # And save the array that has small number of elements to a varaible called denominator
+                    # This is done because, if we use the bigger value, our percentage will be getting lower
+                    # To avoid that I take the smallest lenght of array and
+                    # count it lenght and save it.
+                    if len(question_array) < len(keyword_array):
+                        denominator = len(question_array)
+                    else:
+                        denominator = len(keyword_array)
+
+                    # Converts created two arrays into two tuple
+                    # Then we can find the simillar words between those two
+                    # arrays
+                    keyword_set = set(keyword_array)
+                    question_set = set(question_array)
+
+                    # Counts the similar words between two tuples
+                    nu_common_words = len(
+                        question_set.intersection(keyword_set))
+
+                    # Finds the percentage of quility between two arrays
+                    percentage_of_equility = (
+                        nu_common_words / denominator) * 100
+
+                    # If the percentage is increased than 50 append to the search_result array
+                    # I chose 50 because it is a fair value and the center of
+                    # 100
+                    if percentage_of_equility >= 50:
+                        search_result.append(question_card_detail)
+
+                return render_template(
+                    "user/community/community_search_result.html",
+                    search_result=search_result)
+            else:
+                return redirect(url_for("community.all_community_questions"))
     else:
         return redirect(url_for("auth.login"))

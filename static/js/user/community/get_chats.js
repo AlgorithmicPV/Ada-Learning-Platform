@@ -9,6 +9,8 @@ let numberOfChatCards = 0;
 // that variable initially set to 0 and after a one fetch it set to the the length of the data (number of chat cards created)
 // then using that, next time when I fetch the data, i slice the data to get only new discussions and update the numberOfChatCards variable
 // and create new chat cards for those new discussions
+// This will work if the data.lenght is greater than the numberOfChatCards, that if condition prevents from making two question cards in the saved page
+// Because in the save page, when the user clicks unsave button data.length becomes a small number compare to numberOfChatCards, because of that it creates duplicate cards
 
 // questionId - [i][0]
 // questionData - [i][1]
@@ -29,7 +31,6 @@ const getAllCommunityDiscussion = () => {
     })
     .then((data) => {
       if (numberOfChatCards == 0) {
-        console.log(data.length);
         numberOfChatCards = data.length;
         for (let i = 0; i < data.length; i++) {
           createQuestionCard(
@@ -42,7 +43,7 @@ const getAllCommunityDiscussion = () => {
             data[i][6]
           );
         }
-      } else {
+      } else if (data.length > numberOfChatCards) {
         let newQuestions = data.slice(0, data.length - numberOfChatCards);
         for (let i = 0; i < newQuestions.length; i++) {
           createNewQuestionCard(

@@ -1,69 +1,5 @@
 // Javascript code for community base page
 
-const addaQuestionBtn = document.querySelector(".add-a-question-btn");
-const postingQuestionWrapper = document.querySelector(
-  ".posting-question-wrapper"
-);
-const closeBtnForPostingQuestionWrapper = document.querySelector(
-  ".close-btn-posting-question-wrapper"
-);
-
-let isPostingQuestionShowing = false;
-
-addaQuestionBtn.addEventListener("click", () => {
-  if (!isPostingQuestionShowing) {
-    postingQuestionWrapper.style.display = "flex";
-    postingQuestionWrapper.style.opacity = 1;
-    isPostingQuestionShowing = true;
-  } else {
-    postingQuestionWrapper.style.opacity = 0;
-    postingQuestionWrapper.style.display = "none";
-    isPostingQuestionShowing = false;
-  }
-});
-
-closeBtnForPostingQuestionWrapper.addEventListener("click", () => {
-  if (!isPostingQuestionShowing) {
-    postingQuestionWrapper.style.display = "flex";
-    postingQuestionWrapper.style.opacity = 1;
-    isPostingQuestionShowing = true;
-  } else {
-    postingQuestionWrapper.style.opacity = 0;
-    postingQuestionWrapper.style.display = "none";
-    isPostingQuestionShowing = false;
-  }
-});
-
-const postingButton = document.querySelector(".posting-btn");
-
-const postTheQuestion = () => {
-  const userQuestion = document.querySelector(".user-question-input").value;
-
-  fetch(AddQuestionUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ userQuestionInput: userQuestion }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Server error ${response.status}`);
-      }
-      postingQuestionWrapper.style.opacity = 0;
-      postingQuestionWrapper.style.display = "none";
-      isPostingQuestionShowing = false;
-    })
-    .catch((error) => {
-      console.error("Submission failed:", error);
-      alert("Something went wrong. Please try again later.");
-    });
-};
-
-postingButton.addEventListener("click", () => {
-  postTheQuestion();
-});
-
 const show_search_box = document.querySelector(".show-the-input-box");
 
 console.log(show_search_box);
@@ -129,3 +65,68 @@ const clearinput = () => {
 // Add an event listener to clear the input when the page is shown, this is useful for when the user navigates back to this page
 // The user doesn't clear the input manually
 window.addEventListener("pageshow", clearinput);
+
+const addaQuestionBtn = document.querySelector(".add-a-question-btn");
+const postingQuestionWrapper = document.querySelector(
+  ".posting-question-wrapper"
+);
+const closeBtnForPostingQuestionWrapper = document.querySelector(
+  ".close-btn-posting-question-wrapper"
+);
+
+let isPostingQuestionShowing = false;
+
+addaQuestionBtn.addEventListener("click", () => {
+  if (!isPostingQuestionShowing) {
+    postingQuestionWrapper.style.display = "flex";
+    postingQuestionWrapper.style.opacity = 1;
+    isPostingQuestionShowing = true;
+  } else {
+    postingQuestionWrapper.style.opacity = 0;
+    postingQuestionWrapper.style.display = "none";
+    isPostingQuestionShowing = false;
+  }
+});
+
+closeBtnForPostingQuestionWrapper.addEventListener("click", () => {
+  if (!isPostingQuestionShowing) {
+    postingQuestionWrapper.style.display = "flex";
+    postingQuestionWrapper.style.opacity = 1;
+    isPostingQuestionShowing = true;
+  } else {
+    postingQuestionWrapper.style.opacity = 0;
+    postingQuestionWrapper.style.display = "none";
+    isPostingQuestionShowing = false;
+  }
+});
+
+const postingButton = document.querySelector(".posting-btn");
+
+const postTheQuestion = () => {
+  const userQuestion = document.querySelector(".user-question-input").value;
+
+  fetch(AddQuestionUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userQuestionInput: userQuestion }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Server error ${response.status}`);
+      }
+      postingQuestionWrapper.style.opacity = 0;
+      postingQuestionWrapper.style.display = "none";
+      isPostingQuestionShowing = false;
+      document.querySelector(".user-question-input").value = "";
+    })
+    .catch((error) => {
+      console.error("Submission failed:", error);
+      alert("Something went wrong. Please try again later.");
+    });
+};
+
+postingButton.addEventListener("click", () => {
+  postTheQuestion();
+});

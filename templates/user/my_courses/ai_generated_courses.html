@@ -15,34 +15,49 @@
     {{ super() }}
     <!--Wrapper that shows all AI-generated courses by the user-->
     <div class="ai-generated-courses-wrapper">
-        {% for ai_course in ai_courses_data %}
-            <!--{{ai_course[0]}} means course ID-->
-            <!--{{ ai_course[1] }} means course name-->
-            <!--{{ ai_course[2] }} means course status-->
-            <!--{{ ai_course[3] }} means course creation date-->
-            <!--Each AI course is shown in a block with its name, status, and creation date-->
-            <div class="ai-course-block">
-                <p class="course-name">{{ ai_course[1] }}</p>
-                <p class="generated-date">created at {{ ai_course[3] }}</p>
-                <p class="status {% if ai_course[2] == "Completed" %}completed{% else %}pending{% endif %}">{{ ai_course[2] }}</p>
-                <!--This form is used to open or continue the AI course-->
-                <form action="{{ url_for("my_courses.intermediate_route_ai") }}"
-                      method="post">
-                    <input type="hidden" name="ai-course-id" value="{{ ai_course[0] }}" />
-                    <button class="open-a-course-btn" type="submit">
-                        <!--Change button text based on course status-->
-                        {% if ai_course[2] == "Completed" %}
-                            open
-                        {% else %}
-                            Continue
-                        {% endif
-                        %}
-                    </button>
-                </form>
-                <!--End of form to open or continue the AI course-->
+        {% if ai_courses_data %}
+            {% for ai_course in ai_courses_data %}
+                <!--{{ai_course[0]}} means course ID-->
+                <!--{{ ai_course[1] }} means course name-->
+                <!--{{ ai_course[2] }} means course status-->
+                <!--{{ ai_course[3] }} means course creation date-->
+                <!--Each AI course is shown in a block with its name, status, and creation date-->
+                <div class="ai-course-block">
+                    <p class="course-name">{{ ai_course[1] }}</p>
+                    <p class="generated-date">created at {{ ai_course[3] }}</p>
+                    <p class="status {% if ai_course[2] == "Completed" %}completed{% else %}pending{% endif %}">{{ ai_course[2] }}</p>
+                    <!--This form is used to open or continue the AI course-->
+                    <form action="{{ url_for("my_courses.intermediate_route_ai") }}"
+                          method="post">
+                        <input type="hidden" name="ai-course-id" value="{{ ai_course[0] }}" />
+                        <button class="open-a-course-btn" type="submit">
+                            <!--Change button text based on course status-->
+                            {% if ai_course[2] == "Completed" %}
+                                open
+                            {% else %}
+                                Continue
+                            {% endif
+                            %}
+                        </button>
+                    </form>
+                    <!--End of form to open or continue the AI course-->
+                </div>
+                <!--End of AI course block-->
+            {% endfor %}
+        {% else %}
+            <div class="no-result-wrapper"
+                 style="height: 100%;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center">
+                <img style="width: auto;
+                            height: 500px"
+                     class="no-result-image"
+                     src="{{ url_for('static', filename='images/assets/no_result.png') }}"
+                     alt="No result Image" />
             </div>
-            <!--End of AI course block-->
-        {% endfor %}
+        {% endif %}
     </div>
 {% endblock %}
 {% block floatingItems %}
