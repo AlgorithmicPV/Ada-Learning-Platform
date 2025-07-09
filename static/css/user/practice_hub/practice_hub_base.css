@@ -1,0 +1,139 @@
+:root {
+  --border-color: #ebe9fc22;
+  --second-text-color: #ebe9fc70;
+  --text-color: #ebe9fc;
+  --blocks-color: #0d0d11;
+  --primary-color: #3a31d8;
+  --home-text-color: #ebe9fc;
+}
+
+/* Styles for the sub-navigation bar in the Practice Hub section */
+.sub-navigation-bar-practice-hub {
+  width: 100%;
+  border-top: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  /* Ensures items are spaced evenly and moves the search bar to the right while keeping other on the left side */
+  padding-top: 5px;
+  /* Adds padding to the top of the sub-navigation bar  to prevent from touching with the top bar*/
+  padding-bottom: 5px;
+}
+
+/* Styles button elements within the sub-navigation bar */
+.sub-navigation-bar-practice-hub button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: medium;
+}
+
+.sub-navigation-bar-practice-hub button:not(.sub-active) {
+  color: var(--second-text-color);
+}
+
+/* Styles for the active button in the sub-navigation bar */
+.sub-navigation-bar-practice-hub button:hover {
+  color: var(--text-color);
+}
+
+/* Styles for the active button in the sub-navigation bar */
+.sub-active {
+  color: var(--text-color);
+}
+
+/* Styles for the form element within the sub-navigation bar */
+.search-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: max-content;
+  background-color: var(--blocks-color);
+  padding: 15px;
+  /* Adds padding to the form for better appearance */
+  border-radius: 25px;
+  /* Rounds the corners of the form */
+}
+
+.search-bar input {
+  background-color: transparent;
+  /* Makes the input background transparent for modern design */
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: medium;
+  border: none;
+  width: 250px;
+  caret-color: var(--primary-color);
+}
+
+.search-bar input:focus {
+  outline: none;
+}
+
+.search-bar svg {
+  height: 15px;
+  width: auto;
+  fill: var(--text-color);
+}
+
+.show-the-input-box {
+  display: none;
+  /* Hides the button to show the input box in larger screens */
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .cont {
+    overflow-x: hidden;
+    /* Prevents horizontal scrolling on smaller screens */
+  }
+
+  .sub-navigation-bar-practice-hub {
+    border: none;
+    flex-direction: column;
+    gap: 5px;
+    /* Adds space between the elements in the sub-navigation bar for clear visuals for users */
+  }
+
+  .menu {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+  }
+
+  .sub-navigation-bar-practice-hub button:not(.sub-active) {
+    background-color: var(--blocks-color);
+    padding: 6px;
+    border-radius: 25px;
+    color: var(--text-color);
+    font-size: smaller;
+  }
+
+  .sub-active {
+    padding: 6px;
+    border-radius: 25px;
+    background-color: var(--primary-color) !important;
+    color: var(--home-text-color);
+  }
+
+  .search-bar {
+    padding: 2px;
+    align-self: flex-end;
+  }
+
+  .search-bar input {
+    display: none;
+  }
+
+  .search-btn {
+    display: none;
+  }
+
+  .show-the-input-box {
+    display: flex;
+  }
+}

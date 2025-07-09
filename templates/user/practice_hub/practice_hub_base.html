@@ -1,0 +1,43 @@
+{% extends 'user/base.html' %}
+{% block title %}{% endblock %}
+{%
+block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/user/practice_hub/practice_hub_base.css') }}" />
+{% endblock %}
+{% block content %}
+<!-- Sub Navigation Bar -->
+<div class="sub-navigation-bar-practice-hub">
+  <!--navigation buttons-->
+  <div class="menu">
+    <button class="{% if request.path == '/practice-hub' %}sub-active{% endif %}"
+      onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_questions") }}'">Uncompleted
+      Questions</button>
+    <button class="">
+      Completed Questions
+    </button>
+  </div>
+  <!--End navigation buttons-->
+  <!--Search bar-->
+  <form class="search-bar" action="{{ form_action }}" method="Get" autocomplete="off">
+    <!--Below button only apears in the small screen to show the input box-->
+    <button class="show-the-input-box" type="button">
+      <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="512" height="512">
+        <path
+          d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
+      </svg>
+    </button>
+    <button type="submit" class="search-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="512" height="512">
+        <path
+          d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
+      </svg>
+    </button>
+    <input type="text" name="search" id="search" placeholder="Search" />
+  </form>
+  <!--End Search bar-->
+</div>
+<!--End Sub Navigation Bar-->
+{% endblock %}
+{% block extra_js %}
+<script src="{{ url_for('static', filename = 'js/user/practice_hub/practice_hub_base.js')}}"></script>
+{% endblock %}

@@ -1,0 +1,85 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+tr:nth-child(1) {
+  border-bottom: 2px solid var(--border-color);
+}
+
+th {
+  padding: 20px;
+}
+
+th:nth-child(1) {
+  width: 100px;
+  text-align: center;
+}
+
+th:nth-child(2) {
+  width: 50px;
+  text-align: center;
+}
+
+th:nth-child(4),
+th:last-child {
+  width: 200px;
+  text-align: center;
+}
+
+
+th {
+  text-align: left;
+}
+
+td {
+  padding: 15px;
+}
+
+td:nth-child(1),
+td:nth-child(2),
+td:nth-child(4),
+td:last-child {
+  text-align: center;
+}
+
+td button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+td button svg {
+  all: unset;
+  height: 25px;
+  fill: var(--text-color);
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  table {
+    font-size: small;
+  }
+
+  th:nth-child(1) {
+    width: 50px;
+    text-align: center;
+  }
+
+  th:nth-child(2) {
+    width: 25px;
+    text-align: center;
+  }
+
+  th:nth-child(4),
+  th:last-child {
+    width: 60px;
+    text-align: center;
+  }
+
+  td button svg {
+    all: unset;
+    height: 20px;
+    fill: var(--text-color);
+  }
+}
