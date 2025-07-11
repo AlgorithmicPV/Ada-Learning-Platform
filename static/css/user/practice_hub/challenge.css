@@ -1,0 +1,410 @@
+.cont {
+  overflow: hidden;
+}
+
+.challenge-main-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.challenge-detail-wrapper {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  border-right: 2px solid var(--border-color);
+  min-width: 0;
+}
+
+.code-env-wrapper {
+  flex: 1;
+  min-width: 0;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.challenge-header {
+  font-size: x-large;
+  font-weight: bold;
+  margin: 0;
+}
+
+.challenge-detail-wrapper form {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.challenge-detail-wrapper form button,
+.run {
+  background-color: var(--text-color);
+  border: none;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: medium;
+  color: var(--background-color);
+  cursor: pointer;
+  /* Changes the cursor to a pointer on hover to indicate it's clickable */
+}
+
+.code-env-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.code-env-header div {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-solution {
+  background-color: transparent;
+  color: var(--second-text-color);
+  border: none;
+  font-size: medium;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.toggle-solution svg {
+  fill: var(--second-text-color);
+  height: 20px;
+  width: fit-content;
+}
+
+
+.toggle-solution:hover {
+  color: var(--text-color);
+}
+
+.toggle-solution:hover svg {
+  fill: var(--text-color);
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-icon {
+  position: absolute;
+  left: 0;
+  height: 20px;
+  pointer-events: none;
+}
+
+
+.language-selector {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.selected-language-wrapper {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+}
+
+.drop-down-btn {
+  background-color: transparent;
+  cursor: pointer;
+  border: none;
+}
+
+
+.drop-down-btn svg {
+  color: var(--second-text-color);
+  height: 15px;
+  width: auto;
+}
+
+.drop-down-btn:hover svg {
+  color: var(--text-color);
+}
+
+.selected-language {
+  display: flex;
+  flex-direction: row;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.lang-img {
+  height: 20px;
+  width: auto;
+}
+
+.selected-language p {
+  width: 100px;
+  font-size: medium;
+  color: var(--text-color);
+}
+
+
+.options-wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 5px !important;
+  top: 100%;
+  z-index: 100;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  margin-left: 20px;
+  background-color: var(--background-color);
+  padding: 5px;
+  border-radius: 5px;
+  border: 2px solid var(--border-color);
+  opacity: 0;
+  display: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+
+.options-wrapper .option {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: medium;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 5px;
+  justify-content: flex-start;
+}
+
+.options-wrapper .option:hover {
+  background-color: var(--border-color);
+}
+
+.options-wrapper p {
+  margin: 0;
+}
+
+.development-wrapper {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor {
+  flex: 1;
+  min-height: 0;
+}
+
+.dev-tools-main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-top: 2px solid var(--border-color);
+  padding: 10px;
+  min-height: 0;
+}
+
+.vertical-nav-bar {
+  display: flex;
+  flex-direction: column;
+  width: min-content;
+  gap: 5px;
+}
+
+.vertical-nav-bar button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  fill: var(--second-text-color);
+}
+
+.vertical-nav-bar button:hover {
+  fill: var(--text-color);
+}
+
+.vertical-nav-bar button svg {
+  height: 20px;
+  width: auto;
+}
+
+.dev-tools {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.output-wrapper {
+  height: 100%;
+  width: 100%;
+  display: none;
+  margin-right: auto;
+  overflow-y: auto;
+  display: flex;
+  flex: 1;
+  scrollbar-gutter: stable;
+  /* Ensures that content does not shift when the scrollbar appears */
+}
+
+.ai-assistance-wrapper {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+  display: none;
+  flex-direction: column;
+}
+
+.chat-input-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+
+.chat-input-wrapper button {
+  background-color: transparent !important;
+  fill: var(--second-text-color);
+  border: none;
+  /* Removes default button border for modern look */
+  cursor: pointer;
+  /* Changes the cursor to a pointer on hover to indicate it's clickable */
+}
+
+.chat-input-wrapper button:hover {
+  fill: var(--text-color);
+}
+
+.chat-input-wrapper button svg {
+  height: 20px;
+  width: 20px;
+}
+
+.chat-input-wrapper input {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  width: 100%;
+  font-size: medium;
+  color: var(--text-color);
+  caret-color: var(--primary-color);
+}
+
+.terminal-line-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+}
+
+.terminal-line-wrapper p {
+  margin: 0;
+  /* Removes default margin for paragraphs */
+}
+
+.terminal-line {
+  width: 100%;
+  outline: none;
+}
+
+.output-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-wrapper {
+  flex: 1;
+  /* Takes up the remaining space in the parent container */
+  display: none;
+}
+
+.input-wrapper textarea {
+  height: 100%;
+  width: calc(100% - 10px);
+  /* Adjusted to account for padding to avoid overflow */
+  resize: none;
+  outline: none;
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: large !important;
+  caret-color: var(--primary-color);
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  width: calc(100% - 10px);
+  /* Adjusted to account for padding to avoid overflow */
+  scrollbar-gutter: stable;
+  /* Ensures that content does not shift when the scrollbar appears */
+  overflow: auto;
+}
+
+.conversation {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 15px;
+  margin-bottom: 15px;
+  /* Adds space between conversations for better readability */
+}
+
+.user-input-wrapper,
+.answer-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.user-input-wrapper {
+  justify-content: flex-start;
+}
+
+.answer-wrapper {
+  justify-content: flex-end;
+}
+
+.input,
+.ai-response {
+  border-radius: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 2px;
+  text-wrap: wrap;
+  min-width: min-content;
+}
+
+.ai-response {
+  max-width: 80%;
+}
+
+.input {
+  background-color: var(--text-color);
+  color: var(--background-color);
+}
+
+.ai-response {
+  background-color: var(--primary-color);
+  color: var(--home-text-colorr);
+}

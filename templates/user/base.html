@@ -66,7 +66,7 @@
                 <p>My Course</p>
             </button>
             <button class="practice-hub-btn {% if request.path.startswith('/practice-hub') %}active{% endif %}"
-                     onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_questions") }}'">
+                    onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"

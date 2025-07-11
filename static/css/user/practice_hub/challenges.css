@@ -47,12 +47,34 @@ td button {
   border: none;
   background-color: transparent;
   cursor: pointer;
+  color: var(--text-color);
+  font-size: medium;
+}
+
+td button:hover {
+  color: var(--second-text-color);
 }
 
 td button svg {
   all: unset;
   height: 25px;
   fill: var(--text-color);
+}
+
+td button:hover svg {
+  fill: var(--second-text-color);
+}
+
+.easy {
+  color: #15AA97;
+}
+
+.medium {
+  color: #FFB422;
+}
+
+.hard {
+  color: #FF343D;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
