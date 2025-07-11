@@ -29,13 +29,13 @@
   margin: 0;
 }
 
-.challenge-detail-wrapper form {
+.challenge-detail-wrapper .done-btn-wrapper {
   display: flex;
   width: 100%;
   justify-content: flex-end;
 }
 
-.challenge-detail-wrapper form button,
+.challenge-detail-wrapper .done-btn,
 .run {
   background-color: var(--text-color);
   border: none;
@@ -407,4 +407,62 @@
 .ai-response {
   background-color: var(--primary-color);
   color: var(--home-text-colorr);
+}
+
+
+.solution {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--transparent-background-color);
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  display: none;
+  z-index: 110;
+}
+
+.solution button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  z-index: 150;
+}
+
+.solution button svg {
+  fill: var(--second-text-color);
+  height: 20px;
+  width: auto;
+}
+
+.solution button:hover svg {
+  fill: var(--text-color);
+}
+
+code {
+  border-radius: 15px;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .challenge-main-wrapper {
+    flex-direction: column;
+  }
+
+  .code-env-wrapper,
+  .challenge-detail-wrapper {
+    min-height: 0;
+    flex: 1;
+  }
+
+  .development-wrapper {
+    flex-direction: row;
+  }
 }

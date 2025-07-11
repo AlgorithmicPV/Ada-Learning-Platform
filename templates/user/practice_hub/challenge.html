@@ -1,10 +1,14 @@
 {% extends 'user/practice_hub/practice_hub_base.html' %}
-{% block title %}Practice hub - {{ challenge_info[2] }}{% endblock %}
+{% block title
+    %}
+    Practice hub - {{ challenge_info[2] }}
+{% endblock %}
 {% block extra_css %}
-    {{ super() 
-    }}
+    {{ super() }}
     <link rel="stylesheet"
           href="{{ url_for('static', filename = 'css/user/practice_hub/challenge.css') }}" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.0/min/vs/loader.min.js"></script>
 {% endblock %}
 {% block content %}
@@ -13,10 +17,9 @@
         <div class="challenge-detail-wrapper">
             <p class="challenge-header">{{ challenge_info[1] }}.{{ challenge_info[2] }}</p>
             <div class="challenge">{{ challenge_info[3] | safe }}</div>
-            <form>
-                <input type="hidden" name="challenge_id" value="{{ challenge_info[0] }}">
-                <button type="submit" class="done-btn">Done</button>
-            </form>
+            <div class="done-btn-wrapper">
+                <button class="done-btn">Done</button>
+            </div>
         </div>
         <div class="code-env-wrapper">
             <div class="code-env-header">
@@ -100,8 +103,7 @@
                     <div class="dev-tools">
                         <div class="output-wrapper"></div>
                         <div class="ai-assistance-wrapper">
-                            <div class="chat-content">
-                           </div>
+                            <div class="chat-content"></div>
                             <div class="chat-input-wrapper">
                                 <input autocomplete="off"
                                        type="text"
@@ -160,6 +162,18 @@
             </div>
         </div>
     </div>
+    <div class="solution">
+        <button class="solution-close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 id="Outline"
+                 viewBox="0 0 24 24"
+                 width="512"
+                 height="512">
+                <path d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z" />
+            </svg>
+        </button>
+        <div class="code"></div>
+    </div>
 {% endblock %}
 {% block extra_js %}
     {{ super() }}
@@ -171,7 +185,14 @@
   });
   let fetch_url = '{{ url_for("compiler.compiler") }}';
   let chat_url = '{{ url_for("ai_chat.chat")  }}';
+  let send_language_url = `{{ url_for("compiler.get_the_language") }}`;
+  let check_answers_url = `{{ url_for("ai_chat.check_answers") }}`;
+  let get_solution_url = `{{ url_for("practice_hub.solution") }}`;
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <script src="{{ url_for('static', filename = 'js/user/practice_hub/challenge.js')}}"></script>
-    <script   type="module" src="{{ url_for('static', filename = 'js/user/base_code_editor.js')}}"></script>
+    <script type="module"
+            src="{{ url_for('static', filename = 'js/user/base_code_editor.js')}}"></script>
 {% endblock %}

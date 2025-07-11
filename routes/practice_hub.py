@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify
 import sqlite3
 import uuid
 import datetime
@@ -99,7 +99,6 @@ def validate_challenge_id():
             else:
                 return redirect(url_for("practice_hub.uncomplete_practice_challenges"))
 
-            return "", 200
         else:
             return redirect(url_for("practice_hub.uncomplete_practice_challenges"))
     else:
@@ -128,3 +127,79 @@ def show_challenge(challenge_title):
         return render_template("user/practice_hub/challenge.html", challenge_info=challenge_info_list)
     else:
         return redirect(url_for("auth.login"))
+
+@practice_hub_bp.route("/practice-hub/solution", methods=["POST"])
+def solution():
+    if "user_id" in session:
+        if request.method == "POST":
+            data = request.get_json()
+            language = data.get("language")
+            print(language)
+            languages = ["python", "c++", "java", "javascript", "typescript"]
+            if language in languages:
+                challenge_id = session.get("challenge_id")
+                
+                conn = sqlite3.connect("database/app.db")
+                cursor = conn.cursor()
+                
+                cursor.execute("""
+                            SELECT answer 
+                            FROM Solution 
+                            WHERE challenge_id=? AND language=?
+                            """, (challenge_id, language,))
+                answer = markdown.markdown(cursor.fetchone()[0],extensions=['fenced_code'])
+                print(answer)
+                return jsonify({"answer":answer})
+    else:
+        return redirect(url_for("auth.login"))
+
+@practice_hub_bp.route("/practice-hub/solution-challenges", methods=["POST"])
+def solutions():
+    if "user_id" in session:
+        if request.method == "POST":
+            data = request.get_json()
+            client_challenge_id = data.get("value")
+            
+            conn = sqlite3.connect("database/app.db")
+            cursor = conn.cursor()
+
+            cursor.execute("""
+                            SELECT challenge_id 
+                            FROM Challenge
+                            WHERE challenge_id=?
+                           """, (client_challenge_id,))
+
+            challenge_id_from_db = cursor.fetchone()
+
+            if challenge_id_from_db:
+                language = "python"
+                cursor.execute("""
+                            SELECT answer 
+                            FROM Solution 
+                            WHERE challenge_id=? AND language=?
+                            """, (client_challenge_id, language,))
+                session["challenge_id"] = client_challenge_id
+                answer = markdown.markdown(cursor.fetchone()[0],extensions=['fenced_code'])
+                
+                cursor.execute("""
+                    SELECT 
+                    challenge_title
+                    FROM Challenge WHERE challenge_id=?
+                    """, (client_challenge_id,))
+                
+                title = cursor.fetchone()[0]
+
+                output = {
+                    "answer":answer,
+                    "title":title
+                }
+                
+                return jsonify(output)
+    else:
+        return redirect(url_for("auth.login"))
+
+
+@practice_hub_bp.route("/practice-hub/completed", methods=["POST"])
+def completed():
+    if "user_id" in session:
+        pass
