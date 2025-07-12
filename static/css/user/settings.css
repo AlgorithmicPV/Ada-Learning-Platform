@@ -364,3 +364,30 @@ textarea {
   border: none;
   cursor: pointer;
 }
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1280px) {
+  .profile-section .form-body {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .profile-section .username-wrapper,
+  .profile-section .email-wrapper {
+    width: calc(100% - 10px);
+  }
+
+  .send-btn {
+    margin-left: 20px;
+  }
+
+  .new-passwords-wrapper {
+    flex-direction: column;
+  }
+
+  .new-password-entry-wrapper,
+  .current-password-entry-wrapper,
+  .confirm-new-password-entry-wrapper {
+    width: calc(100% - 30px);
+  }
+}
