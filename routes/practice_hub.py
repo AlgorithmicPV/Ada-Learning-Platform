@@ -7,6 +7,8 @@ import markdown
 practice_hub_bp = Blueprint("practice_hub", __name__)
 
 # This Route shows the all the unsolved Challenges
+
+
 @practice_hub_bp.route("/practice-hub")
 def uncomplete_practice_challenges():
     if "user_id" in session:
@@ -27,7 +29,8 @@ def uncomplete_practice_challenges():
         # That sign helps user to indetify that user hasn't done that challenge
         # If the status's value is "Started" it will append that value
         # This means user has started the challenge but hasn't done
-        # I used status[0] because when we get data from the database we get it as a tuple
+        # I used status[0] because when we get data from the database we get it
+        # as a tuple
         for challenge in all_challenges:
             cursor.execute("""
                           SELECT status
@@ -36,7 +39,7 @@ def uncomplete_practice_challenges():
                            user_id=?""", (challenge[0], user_id,))
 
             status = cursor.fetchone()
-            if status == None:
+            if status is None:
                 challenge += ("-",)
                 unsolved_challenges.append(challenge)
 
@@ -45,18 +48,21 @@ def uncomplete_practice_challenges():
                     challenge += ("Started",)
                     unsolved_challenges.append(challenge)
 
-        # I assigned the page title in here 
+        # I assigned the page title in here
         # Because I am using the same template to show the search result
         page_title = "Unsolved"
         conn.close()
-        return render_template("user/practice_hub/unsolved_challenges.html", page_title=page_title, challenges=unsolved_challenges)
+        return render_template(
+            "user/practice_hub/unsolved_challenges.html",
+            page_title=page_title,
+            challenges=unsolved_challenges)
     else:
         return redirect(url_for("auth.login"))
 
 
-# This route validates the challenge ids comming 
+# This route validates the challenge ids comming
 # from the client side with the database and save it to the session data
-# This route will work when the user cicks on a challenge 
+# This route will work when the user cicks on a challenge
 # if that clicked challenge's status is not started or completed,
 # It will mark it as "Started"
 # If the challenge id is validate, this will redirect to the route that shows the challenge and
@@ -71,7 +77,7 @@ def validate_challenge_id():
             cursor = conn.cursor()
 
             cursor.execute("""
-                            SELECT challenge_id 
+                            SELECT challenge_id
                             FROM Challenge
                             WHERE challenge_id=?
                            """, (client_challenge_id,))
@@ -87,12 +93,12 @@ def validate_challenge_id():
                                user_id=?""", (client_challenge_id, user_id,))
 
                 status = cursor.fetchone()
-                if status == None:
+                if status is None:
                     challenge_attempt_id = str(uuid.uuid4())
                     cursor.execute("""
-                                INSERT INTO 
-                                Challenge_attempt 
-                                (id, user_id, challenge_id, status) VALUES 
+                                INSERT INTO
+                                Challenge_attempt
+                                (id, user_id, challenge_id, status) VALUES
                                 (?, ?, ?, ?)
                                """, (challenge_attempt_id, user_id, client_challenge_id, "Started"))
                     conn.commit()
@@ -109,20 +115,27 @@ def validate_challenge_id():
 
                 conn.close()
 
-                # Formates the challenge title, if there are space converted them into "-" 
+                # Formates the challenge title, if there are space converted them into "-"
                 # For better user experence
                 formated_challenge_title = challenge_title.replace(" ", "-")
 
-                return redirect(url_for("practice_hub.show_challenge", challenge_title=formated_challenge_title))
+                return redirect(
+                    url_for(
+                        "practice_hub.show_challenge",
+                        challenge_title=formated_challenge_title))
             else:
-                return redirect(url_for("practice_hub.uncomplete_practice_challenges"))
+                return redirect(
+                    url_for("practice_hub.uncomplete_practice_challenges"))
 
         else:
-            return redirect(url_for("practice_hub.uncomplete_practice_challenges"))
+            return redirect(
+                url_for("practice_hub.uncomplete_practice_challenges"))
     else:
         return redirect(url_for("auth.login"))
 
 # This Route shows the Challenge and the code editor etc..
+
+
 @practice_hub_bp.route("/practice-hub/<challenge_title>")
 def show_challenge(challenge_title):
     if "user_id" in session:
@@ -133,9 +146,9 @@ def show_challenge(challenge_title):
 
         challenge_id = session.get("challenge_id")
         cursor.execute("""
-            SELECT challenge_id, 
-                    number, 
-                    challenge_title, 
+            SELECT challenge_id,
+                    number,
+                    challenge_title,
                     question FROM Challenge WHERE challenge_id=?
                     """, (challenge_id,))
         challenge_info = cursor.fetchall()[0]
@@ -144,11 +157,14 @@ def show_challenge(challenge_title):
 
         conn.close()
 
-        return render_template("user/practice_hub/challenge.html", challenge_info=challenge_info_list)
+        return render_template(
+            "user/practice_hub/challenge.html",
+            challenge_info=challenge_info_list)
     else:
         return redirect(url_for("auth.login"))
 
 
+# This route sends the solution for the clicked challenge
 @practice_hub_bp.route("/practice-hub/solution", methods=["POST"])
 def solution():
     if "user_id" in session:
@@ -164,10 +180,11 @@ def solution():
                 cursor = conn.cursor()
 
                 cursor.execute("""
-                            SELECT answer 
-                            FROM Solution 
+                            SELECT answer
+                            FROM Solution
                             WHERE challenge_id=? AND language=?
                             """, (challenge_id, language,))
+                # Converts the markdown code to html
                 answer = markdown.markdown(
                     cursor.fetchone()[0], extensions=['fenced_code'])
                 print(answer)
@@ -175,7 +192,10 @@ def solution():
     else:
         return redirect(url_for("auth.login"))
 
-
+# This route sends solution to the page that shows all challenges 
+# When the user clicks on the solution button it will sends 
+# the solution for selected language through the AJAX
+# In default it has set to python language
 @practice_hub_bp.route("/practice-hub/solution-challenges", methods=["POST"])
 def solutions():
     if "user_id" in session:
@@ -187,7 +207,7 @@ def solutions():
             cursor = conn.cursor()
 
             cursor.execute("""
-                            SELECT challenge_id 
+                            SELECT challenge_id
                             FROM Challenge
                             WHERE challenge_id=?
                            """, (client_challenge_id,))
@@ -197,8 +217,8 @@ def solutions():
             if challenge_id_from_db:
                 language = "python"
                 cursor.execute("""
-                            SELECT answer 
-                            FROM Solution 
+                            SELECT answer
+                            FROM Solution
                             WHERE challenge_id=? AND language=?
                             """, (client_challenge_id, language,))
                 session["challenge_id"] = client_challenge_id
@@ -206,7 +226,7 @@ def solutions():
                     cursor.fetchone()[0], extensions=['fenced_code'])
 
                 cursor.execute("""
-                    SELECT 
+                    SELECT
                     challenge_title
                     FROM Challenge WHERE challenge_id=?
                     """, (client_challenge_id,))
@@ -222,7 +242,7 @@ def solutions():
     else:
         return redirect(url_for("auth.login"))
 
-
+# This is routes shows the all the completed Challenges by the user
 @practice_hub_bp.route("/practice-hub/completed")
 def completed_practice_challenges():
     if "user_id" in session:
@@ -231,6 +251,7 @@ def completed_practice_challenges():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
+        # Gets all the Challenges from the database
         cursor.execute("""SELECT challenge_id,
                                 number,
                                 challenge_title,
@@ -238,6 +259,8 @@ def completed_practice_challenges():
                                 FROM Challenge""")
         all_challenges = cursor.fetchall()
 
+        # Selects all the Challenges that the user has completed
+        # Then those Challeneges are added to the completed_challenges list
         for challenge in all_challenges:
             cursor.execute("""
                           SELECT status
@@ -248,6 +271,10 @@ def completed_practice_challenges():
             status = cursor.fetchone()
             if status:
                 if status[0] == "Completed":
+
+                    # Gets dates that relevant challenge are completed
+                    # IF the date is today it will show the time 
+                    # This if for better user expereince
                     cursor.execute("""
                                 SELECT completed_at FROM
                                 Challenge_attempt
@@ -280,10 +307,13 @@ def completed_practice_challenges():
 
         conn.close()
 
-        return render_template("user/practice_hub/completed_challenges.html", challenges=completed_challenges)
+        return render_template(
+            "user/practice_hub/completed_challenges.html",
+            challenges=completed_challenges)
     else:
         return redirect(url_for("auth.login"))
 
+# Route that filters the challenges by the users' Keywprds
 @practice_hub_bp.route("/practice-hub/search", methods=["GET"])
 def search():
     if "user_id" in session:
@@ -323,9 +353,10 @@ def search():
 
                 return render_template(
                     "user/practice_hub/search_result.html",
-                    challenges=filtered_challenges,page_title="Search Result"
-                )  
+                    challenges=filtered_challenges, page_title="Search Result"
+                )
             else:
-                return redirect(url_for("practice_hub.uncomplete_practice_challenges"))
+                return redirect(
+                    url_for("practice_hub.uncomplete_practice_challenges"))
     else:
         return redirect(url_for("auth.login"))

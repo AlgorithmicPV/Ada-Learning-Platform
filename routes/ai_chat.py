@@ -84,6 +84,8 @@ def ai_course_chat():
         return redirect(url_for("auth.login"))
 
 # Route that checks users's answers for the challenges
+
+
 @ai_chat_bp.route("/check-answers", methods=["POST"])
 def check_answers():
     if "user_id" in session:
@@ -106,15 +108,16 @@ def check_answers():
 
             status = cursor.fetchone()
             if status:
-                redirect_url =url_for("practice_hub.uncomplete_practice_challenges")
+                redirect_url = url_for(
+                    "practice_hub.uncomplete_practice_challenges")
                 if status[0] == "Started":
                     cursor.execute("""
-                                    SELECT question 
+                                    SELECT question
                                 FROM Challenge WHERE challenge_id=?
                             """, (challenge_id,))
-                    
+
                     challenge = cursor.fetchone()[0]
-                    
+
                     language = session.get("language")
                     response = client.chat.completions.create(
                         messages=[
@@ -132,14 +135,13 @@ def check_answers():
                         model=model,
                     )
 
-                    is_solution_correct =  response.choices[0].message.content
+                    is_solution_correct = response.choices[0].message.content
 
                     print(is_solution_correct)
 
-                    if is_solution_correct == "Correct" :
+                    if is_solution_correct == "Correct":
                         completed_at = datetime.now().isoformat(timespec="seconds")
-                        
-               
+
                         cursor.execute("""
                         UPDATE Challenge_attempt
                         SET completed_at = ?, status = ?
@@ -148,10 +150,11 @@ def check_answers():
 
                         conn.commit()
                         conn.close()
-                        return jsonify({"redirect_url":redirect_url})
+                        return jsonify({"redirect_url": redirect_url})
                 elif status[0] == "Completed":
-                        return jsonify({"redirect_url":redirect_url})
+                    return jsonify({"redirect_url": redirect_url})
             else:
-                return jsonify({"solutionNotCorrect":"Hmm, not quite! Check your code and have another go — you've got this!"})
+                return jsonify(
+                    {"solutionNotCorrect": "Hmm, not quite! Check your code and have another go — you've got this!"})
     else:
         return redirect(url_for("auth.login"))

@@ -125,17 +125,18 @@ def signup():
             for email_from_db in email_tuple:
                 saved_emails.append(email_from_db)
 
-        cursor.execute("SELECT full_name FROM User")
-        full_name_list = cursor.fetchall()
+        # cursor.execute("SELECT full_name FROM User")
+        # full_name_list = cursor.fetchall()
 
-        saved_names = []  # An array to collect all the names from the database
+        # saved_names = []  # An array to collect all the names from the
+        # database
 
-        # Converts the full_name_list into a flat array to easily check if the
-        # entered name is valid or not. full_name_list is a list of 1-element
-        # tuples
-        for name_tuple in full_name_list:
-            for name_from_db in name_tuple:
-                saved_names.append(name_from_db)
+        # # Converts the full_name_list into a flat array to easily check if the
+        # # entered name is valid or not. full_name_list is a list of 1-element
+        # # tuples
+        # for name_tuple in full_name_list:
+        #     for name_from_db in name_tuple:
+        #         saved_names.append(name_from_db)
 
         conn.close()
 
@@ -144,9 +145,6 @@ def signup():
 
         elif email in saved_emails:
             flash("Email is already in use.", category="error")
-
-        elif name in saved_names:
-            flash("Username is already in use.", category="error")
 
         elif password != confirm_password:
             flash("Passwords don't match!", category="error")
@@ -172,7 +170,7 @@ def signup():
             cursor = conn.cursor()
 
             cursor.execute(
-                """INSERT INTO User (user_id, email, full_name, password, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?, ?)""",
+                """INSERT INTO User (user_id, email, full_name, password, auth_provider, theme_preference, join_date, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (user_id,
                  email,
                  name,
@@ -180,6 +178,7 @@ def signup():
                     "manual",
                     "dark",
                     datetime.fromisoformat(timestamp),
+                 "images/profile_pics/default-pic.png",
                  ),
             )
 

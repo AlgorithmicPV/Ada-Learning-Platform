@@ -6,13 +6,15 @@ piston = PistonApp()
 compiler_bp = Blueprint("compiler", __name__)
 
 # Route that get the language from the challenge page
+
+
 @compiler_bp.route("/get-language", methods=["POST"])
 def get_the_language():
     if "user_id" in session:
         if request.is_json and request.method == "POST":
             data = request.get_json()
             session["language"] = data.get("language")
-        return "",204
+        return "", 204
     else:
         return redirect(url_for("auth.login"))
 

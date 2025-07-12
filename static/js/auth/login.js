@@ -19,11 +19,13 @@ show_password_img.addEventListener("click", () => {
 });
 
 //close the error box when the user clicks the cross-icon
-document
-  .querySelector(".error-box-wrapper .cross-icon")
-  .addEventListener("click", () => {
+const crossIcon = document.querySelector(".error-box-wrapper .cross-icon");
+
+if (crossIcon) {
+  crossIcon.addEventListener("click", () => {
     document.querySelector(".error-box-wrapper").style.display = "none";
   });
+}
 
 const clearinput = () => {
   document.getElementById("search").value = "";

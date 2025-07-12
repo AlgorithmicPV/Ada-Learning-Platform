@@ -7,28 +7,36 @@
 {% endblock %}
 {% block content %}
     <div class="settings-wrapper">
+        <!-- Profile Section to edit the username , email and the profile image-->
         <div class="profile-section">
             <div class="header">
                 <img src="{{ url_for('static', filename = 'images/icons/profile.svg') }}"
                      alt="profile-logo" />
                 <p>Profile</p>
             </div>
-            <form action="">
+            <form action="{{ url_for("settings.profile_update") }}"
+                  method="post"
+                  enctype="multipart/form-data">
                 <div class="form-body">
                     <div class="profile-img-update-wrapper">
-                        <img src="{{ url_for('static', filename='images/profile_pics/default-pic.png') }}"
+                        <img id="profilePreview"
+                             src="{{ url_for('static', filename=user_data[2]) }}"
                              alt="profile-pic" />
-                        <label for="myFile" class="file-upload">
+                        <label for="file" class="file-upload">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                 <path d="M22.853,1.148a3.626,3.626,0,0,0-5.124,0L1.465,17.412A4.968,4.968,0,0,0,0,20.947V23a1,1,0,0,0,1,1H3.053a4.966,4.966,0,0,0,3.535-1.464L22.853,6.271A3.626,3.626,0,0,0,22.853,1.148ZM5.174,21.122A3.022,3.022,0,0,1,3.053,22H2V20.947a2.98,2.98,0,0,1,.879-2.121L15.222,6.483l2.3,2.3ZM21.438,4.857,18.932,7.364l-2.3-2.295,2.507-2.507a1.623,1.623,0,1,1,2.295,2.3Z" />
                             </svg>
                         </label>
-                        <input type="file" id="myFile" name="filename" />
+                        <input type="file" id="file" name="image" accept="image/*" />
                     </div>
                     <div class="username-wrapper">
                         <p>Username</p>
                         <div>
-                            <input type="text" name="username" value="Admin" readonly />
+                            <input class="username"
+                                   type="text"
+                                   name="username"
+                                   value="{{ user_data[0] }}"
+                                   readonly />
                             <button class="edit" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      id="Outline"
@@ -43,7 +51,11 @@
                     <div class="email-wrapper">
                         <p>E-mail</p>
                         <div>
-                            <input type="email" name="email" value="admin@gmail.com" readonly />
+                            <input class="email"
+                                   type="email"
+                                   name="email"
+                                   value="{{ user_data[1] }}"
+                                   readonly />
                             <button class="edit" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      id="Outline"
@@ -59,18 +71,20 @@
                 <button type="submit" class="update-btn">Update</button>
             </form>
         </div>
+        <!--End of the profile section-->
+        <!-- Password changing section-->
         <div class="change-password-section">
             <div class="header">
                 <img src="{{ url_for('static', filename = 'images/icons/password.svg') }}"
                      alt="password-lock-icon" />
                 <p>Change the Password</p>
             </div>
-            <form action="">
+            <form action="{{ url_for("settings.change_password") }}" method="post">
                 <div class="form-body">
                     <div class="current-password-entry-wrapper">
                         <input type="password"
-                               name="password"
-                               id="password"
+                               name="currentPassword"
+                               id="currentPassword"
                                required="required"
                                value="" />
                         <label for="name">Current Password</label>
@@ -96,8 +110,8 @@
                     <div class="new-passwords-wrapper">
                         <div class="new-password-entry-wrapper">
                             <input type="password"
-                                   name="confirm-password"
-                                   id="confirm-password"
+                                   name="new-password"
+                                   id="new-password"
                                    required="required"
                                    value="" />
                             <label for="name">New Password</label>
@@ -121,8 +135,8 @@
                         </div>
                         <div class="confirm-new-password-entry-wrapper">
                             <input type="password"
-                                   name="confirm-password"
-                                   id="confirm-password"
+                                   name="confirm-new-password"
+                                   id="confirm-new-password"
                                    required="required"
                                    value="" />
                             <label for="name">Comfirm New Password</label>
@@ -149,18 +163,20 @@
                 <button type="submit" class="update-btn">Update</button>
             </form>
         </div>
+        <!--End of password changing section-->
+        <!--Posting Feedback about the app section-->
         <div class="post-comment-section">
             <div class="header">
                 <img src="{{ url_for('static', filename = 'images/icons/comment.svg') }}"
                      alt="comment-ico" />
                 <p>Comments</p>
             </div>
-            <form action="">
+            <form>
                 <div class="form-body">
                     <textarea name="comment" placeholder="Let us know what you think..."></textarea>
                     <div class="stars-wrapper">
                         {% for i in range(5) %}
-                            <button class="star" type="button">
+                            <button class="star {{ i }}-button" type="button">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      id="Outline"
                                      viewBox="0 0 24 24"
@@ -175,6 +191,8 @@
                 <button class="send-btn" type="submit">Send</button>
             </form>
         </div>
+        <!--End of feedback section-->
+        <!--Delete Account section-->
         <div class="delete-account-section">
             <div class="header">
                 <img src="{{ url_for('static', filename = 'images/icons/bin.svg') }}"
@@ -182,11 +200,46 @@
                 <p>Delete Account</p>
             </div>
             <p class="warning-txt">Warning: This will permanently delete your all account details</p>
-            <form action="">
+            <form action="{{ url_for("settings.delete_account") }}" method="post">
                 <input type="hidden" value="delete" name="delete" />
                 <button class="delete-btn" type="submit">Delete My account</button>
             </form>
         </div>
+        <!--End of delete account section-->
     </div>
+    <!--Error box -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages
+            %}
+            {% for category, message in messages %}
+                {% if category == 'error' %}
+                    <div class="error-box-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             id="Outline"
+                             viewBox="0 0 24 24"
+                             width="512"
+                             height="512">
+                            <path d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z" />
+                            <path d="M12,5a1,1,0,0,0-1,1v8a1,1,0,0,0,2,0V6A1,1,0,0,0,12,5Z" />
+                            <rect x="11" y="17" width="2" height="2" rx="1" />
+                        </svg>
+                        <p>{{ message }}</p>
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             id="Outline"
+                             viewBox="0 0 24 24"
+                             width="512"
+                             height="512"
+                             class="cross-icon">
+                            <path d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z" />
+                        </svg>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <!--End of the error box-->
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/user/dashboard.js') }}"></script>{% endblock %}
+{% block extra_js %}
+    <script>const sendFeedback = '{{ url_for("settings.feedback") }}';</script>
+    <script src="{{ url_for('static', filename='js/user/settings.js') }}"></script>
+{% endblock %}

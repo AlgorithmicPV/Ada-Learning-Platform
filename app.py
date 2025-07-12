@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, redirect, url_for
 from datetime import timedelta
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
@@ -21,7 +21,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("app_secret_key")
 app.permanent_session_lifetime = timedelta(days=1)
-
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images' ,'profile_pics')
 ph = PasswordHasher()
 
 oauth.init_app(app)
@@ -66,6 +66,14 @@ def inject_profile_pic():
             profile_pic = result[0]
             return dict(profile_pic=profile_pic)
     return dict(profile_pic="images/profile_pics/default-pic.png")
+
+@app.route("/logout")
+def logout():
+    if "user_id" in session:
+        session.clear()
+        return redirect(url_for("landing_page.landing_page"))
+    else:
+        return redirect(url_for("auth.login"))
 
 
 if __name__ == "__main__":
