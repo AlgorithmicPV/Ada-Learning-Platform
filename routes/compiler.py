@@ -38,4 +38,3 @@ def compiler():
             return jsonify({"error": "Invalid JSON"}), 400
     else:
         return redirect(url_for("auth.login"))
-

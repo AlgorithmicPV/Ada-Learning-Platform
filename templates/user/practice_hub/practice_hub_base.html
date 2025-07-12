@@ -15,12 +15,15 @@ block extra_css %}
                 Uncompleted
                 Questions
             </button>
-            <button class="">Completed Questions</button>
+            <button class="{% if request.path == '/practice-hub/completed' %}sub-active{% endif %}"
+                    onclick="window.location.href='{{ url_for("practice_hub.completed_practice_challenges") }}'">
+                Completed Questions
+            </button>
         </div>
         <!--End navigation buttons-->
         <!--Search bar-->
         <form class="search-bar"
-              action="{{ form_action }}"
+              action="{{ url_for("practice_hub.search") }}"
               method="Get"
               autocomplete="off">
             <!--Below button only apears in the small screen to show the input box-->

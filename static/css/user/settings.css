@@ -1,0 +1,366 @@
+.settings-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+}
+
+.settings-wrapper img {
+  height: 20px;
+  width: auto;
+}
+
+.settings-wrapper svg {
+  fill: var(--text-color);
+  height: 20px;
+}
+
+.update-btn,
+.send-btn {
+  background-color: var(--text-color);
+  border: none;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  font-size: medium;
+  color: var(--background-color);
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 15px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-section form {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-section .form-body {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+}
+
+.profile-img-update-wrapper {
+  min-height: 200px !important;
+  min-width: 200px !important;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.profile-img-update-wrapper:hover label {
+  opacity: 1;
+  display: block;
+}
+
+.profile-img-update-wrapper:hover img {
+  filter: brightness(50%);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.profile-img-update-wrapper label {
+  cursor: pointer;
+  opacity: 0;
+  display: none;
+  animation: fadePop 0.4s ease forwards;
+}
+
+.profile-img-update-wrapper svg {
+  height: 50px;
+  width: auto;
+}
+
+.profile-img-update-wrapper img,
+.profile-img-update-wrapper label,
+.profile-img-update-wrapper input {
+  position: absolute;
+}
+
+.profile-section .form-body img {
+  min-height: 110px;
+  min-width: 110px;
+  border-radius: 50%;
+  transition: filter 0.3s ease;
+}
+
+.profile-section .username-wrapper,
+.profile-section .email-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  justify-content: space-between;
+}
+
+@keyframes fadePop {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.profile-section .username-wrapper div,
+.profile-section .email-wrapper div {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 5px;
+  transition: all 0.5s ease;
+}
+
+.profile-section .username-wrapper div svg,
+.profile-section .email-wrapper div svg {
+  height: 20px;
+  width: 20px;
+  fill: var(--second-text-color);
+}
+
+.profile-section .username-wrapper div button,
+.profile-section .email-wrapper div button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.profile-section .username-wrapper div button:hover svg,
+.profile-section .email-wrapper div button:hover svg {
+  fill: var(--text-color);
+}
+
+.profile-section input[type="text"],
+.profile-section input[type="email"] {
+  background-color: transparent;
+  color: var(--text-color);
+  font-size: medium;
+  border: none;
+  outline: none;
+  flex: 1;
+}
+
+.username-wrapper p,
+.email-wrapper p {
+  color: var(--second-text-color);
+  font-size: small;
+}
+
+.profile-section .username-wrapper div:focus-within,
+.profile-section .email-wrapper div:focus-within {
+  border-bottom: 2px solid var(--text-color);
+}
+
+.change-password-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.change-password-section .form-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.new-passwords-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.current-password-entry-wrapper,
+.new-password-entry-wrapper,
+.confirm-new-password-entry-wrapper {
+  width: fit-content;
+  position: relative;
+  height: 40px;
+  line-height: 40px;
+  width: 400px;
+  margin: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.current-password-entry-wrapper svg,
+.new-password-entry-wrapper svg,
+.confirm-new-password-entry-wrapper svg {
+  height: 20px;
+  width: 20px;
+}
+
+.current-password-entry-wrapper input,
+.new-password-entry-wrapper input,
+.confirm-new-password-entry-wrapper input {
+  position: absolute;
+  width: 100%;
+  outline: none;
+  background-color: transparent;
+  transition: 0.3s ease all;
+  height: 40px;
+  line-height: 40px;
+  border: none;
+  border-bottom: 2px solid var(--border-color);
+  color: var(--text-color);
+  padding-left: 25px;
+  font-size: medium;
+  z-index: 10;
+}
+
+.current-password-entry-wrapper label,
+.new-password-entry-wrapper label,
+.confirm-new-password-entry-wrapper label {
+  position: absolute;
+  transition: 0.2s ease;
+  padding-left: 25px;
+  font-size: medium;
+  color: var(--second-text-color);
+  z-index: 5;
+  top: 0;
+}
+
+.current-password-entry-wrapper input:focus + label,
+.current-password-entry-wrapper input:valid + label,
+.new-password-entry-wrapper input:focus + label,
+.new-password-entry-wrapper input:valid + label,
+.confirm-new-password-entry-wrapper input:focus + label,
+.confirm-new-password-entry-wrapper input:valid + label {
+  height: 5px;
+  line-height: 20px;
+  transform: translate(-15px, -20px);
+  font-size: small;
+  color: var(--text-color);
+}
+
+.current-password-entry-wrapper input:focus,
+.current-password-entry-wrapper input:valid,
+.new-password-entry-wrapper input:focus,
+.new-password-entry-wrapper input:valid,
+.confirm-new-password-entry-wrapper input:focus,
+.confirm-new-password-entry-wrapper input:valid {
+  border-bottom: 2px solid var(--text-color);
+  background-color: transparent;
+}
+
+.closed-eye-img-pass {
+  fill: var(--second-text-color);
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  right: 0;
+  z-index: 15;
+  transition: 0.3s ease all;
+  cursor: pointer;
+  width: min-content;
+  display: none;
+}
+
+.closed-eye-img-pass:hover {
+  fill: var(--text-color);
+}
+
+.eye-img-pass {
+  fill: var(--second-text-color);
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  right: 0;
+  z-index: 15;
+  transition: 0.3s ease all;
+  cursor: pointer;
+  width: min-content;
+}
+
+.eye-img-pass:hover {
+  fill: var(--text-color);
+}
+
+.post-comment-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-comment-section .form-body {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+textarea {
+  width: 100%;
+  height: 400px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-color);
+  font-family: "Inter";
+  font-size: medium;
+  resize: none;
+}
+
+.stars-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.star {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.star svg {
+  height: 20px;
+  width: 20px;
+}
+
+.delete-account-section {
+  background-color: #7f1d1d;
+  width: 90%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.delete-account-section p {
+  margin: 0;
+}
+
+.delete-account-section .header {
+  color: #fba4a4;
+}
+
+.warning-txt {
+  color: #ebe9fc75;
+}
+
+.delete-btn {
+  background-color: #dc2626;
+  color: white;
+  padding: 10px;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+}

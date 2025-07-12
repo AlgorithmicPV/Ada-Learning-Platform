@@ -14,6 +14,7 @@ from routes.ai_chat import ai_chat_bp
 from routes.compiler import compiler_bp
 from routes.community import community_bp
 from routes.practice_hub import practice_hub_bp
+from routes.settings  import settings_bp
 
 load_dotenv()
 
@@ -47,6 +48,7 @@ app.register_blueprint(community_bp)
 
 app.register_blueprint(practice_hub_bp)
 
+app.register_blueprint(settings_bp)
 
 @app.context_processor
 def inject_profile_pic():
