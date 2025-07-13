@@ -51,7 +51,7 @@ app.register_blueprint(practice_hub_bp)
 app.register_blueprint(settings_bp)
 
 @app.context_processor
-def inject_profile_pic():
+def inject_user_info():
     if "user_id" in session:
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
@@ -61,10 +61,10 @@ def inject_profile_pic():
         cursor.execute(
             "SELECT profile_image FROM User WHERE user_id=?", (user_id,))
         result = cursor.fetchone()
-
+        auth_provider = session.get("auth_provider")
         if result and result[0]:
             profile_pic = result[0]
-            return dict(profile_pic=profile_pic)
+            return dict(profile_pic=profile_pic, auth_provider = auth_provider)
     return dict(profile_pic="images/profile_pics/default-pic.png")
 
 @app.route("/logout")

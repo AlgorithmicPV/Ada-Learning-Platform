@@ -79,6 +79,7 @@ def login():
                     # Store the user_id in the session
                     session["user_id"] = user_id
                     cursor.close()  # Close the database connection
+                    session["auth_provider"] = "manual"
                     return redirect(url_for("dashboard.dashboard"))
             except (
                 VerifyMismatchError
@@ -193,7 +194,6 @@ def signup():
 # login for google
 @auth_bp.route("/login/google")
 def login_google():
-    session.clear()
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
         return google.authorize_redirect(redirect_uri)
@@ -204,7 +204,6 @@ def login_google():
 
 @auth_bp.route("/authorize/google")
 def authorize_google():
-    session.clear()
     token = google.authorize_access_token()
     session["user"] = token
     conn = sqlite3.connect("database/app.db")
@@ -214,6 +213,8 @@ def authorize_google():
     userInfo = userToken["userinfo"]
     username = userInfo["given_name"]
     email = userInfo["email"]
+    profile_pic = userInfo["picture"] 
+    google_id = userInfo["sub"]
     cursor.execute("SELECT email FROM User")
     email_list = cursor.fetchall()
 
@@ -228,14 +229,16 @@ def authorize_google():
 
     timestamp = datetime.now().isoformat(
         timespec="seconds")  # Gets the current time
-
+    print("Session state (login):", session.get('oauth_state'))
     if email not in saved_emails:
         cursor.execute(
-            """INSERT INTO User (user_id, email, full_name, auth_provider, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?)""",
+            """INSERT INTO User (user_id, email, full_name,google_id, auth_provider, profile_image, theme_preference, join_date) VALUES (?, ?, ?, ?, ?, ?, ?,?)""",
             (user_id,
              email,
              username,
+             google_id,
              "google",
+             profile_pic,
              "dark",
              timestamp),
         )
@@ -249,6 +252,7 @@ def authorize_google():
     stored_user_id = cursor.fetchone()
     user_id = stored_user_id[0]
     session["user_id"] = user_id  # Store the user_id in the session
+    session["auth_provider"] = "google"
     cursor.close()  # Close the database connection
 
     return redirect(url_for("dashboard.dashboard"))

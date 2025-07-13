@@ -59,7 +59,7 @@
     <!--End of Community Discussions Wrapper-->
 {% endblock %}
 {% block extra_js %}
-    <script>let AddQuestionUrl = "{{ url_for("community.add_new_post") }}" </script>
+    <script>let AddQuestionUrl = "{{ url_for("community.add_new_post") }}" ;</script>
     <script src="{{ url_for('static', filename = 'js/user/community/community_base.js')}}"></script>
 {% endblock %}
 {% block floatingItems %}
@@ -86,7 +86,13 @@
         <!--Body of the posting question wrapper-->
         <!--User can type their question here-->
         <div class="posting-question-wrapper-body">
-            <img src="{{ url_for("static", filename=profile_pic) }}"alt="profile-pic">
+            {% if auth_provider == "manual" %}
+                <img class="profile-pic"
+                     src="{{ url_for('static', filename = profile_pic) }}"
+                     alt="profile_pic">
+            {% else %}
+                <img class="profile-pic" src="{{ profile_pic }}" alt="profile_pic">
+            {% endif %}
             <textarea name="user-question-input"
                       class="user-question-input"
                       placeholder="Ask your question to the community!&#10;&#10;You can use Markdown to format your message and make it more readable.&#10;&#10;If you're unfamiliar with Markdown, click the Download button to get a handy cheat sheet. 🚀"></textarea>

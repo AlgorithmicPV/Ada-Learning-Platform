@@ -240,9 +240,13 @@
                         </svg>
                     </button>
                     <!-- <div class="profile-pic"> -->
-                    <img class="profile-pic"
-                         src="{{ url_for('static', filename = profile_pic) }}"
-                         alt="">
+                    {% if auth_provider == "manual" %}
+                        <img class="profile-pic"
+                             src="{{ url_for('static', filename = profile_pic) }}"
+                             alt="profile_pic">
+                    {% else %}
+                        <img class="profile-pic" src="{{ profile_pic }}" alt="profile_pic">
+                    {% endif %}
                     <!-- </div> -->
                     <!--Menu cloppased button for smaller screen-->
                     <button class="menu-cloppased-button small-screen">
