@@ -426,6 +426,13 @@ textarea {
   transform: translateY(10px);
 }
 
+.email-txt {
+  color: var(--text-color) !important;
+  font-size: medium !important;
+  margin: 0;
+  margin-bottom: 5px;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .profile-section .form-body {

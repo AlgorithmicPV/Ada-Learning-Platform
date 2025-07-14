@@ -27,6 +27,9 @@ def settings():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
+        auth_provider = session.get("auth_provider")
+
+
         user_id = session.get("user_id")
 
         cursor.execute(
@@ -36,7 +39,7 @@ def settings():
         if user_data:
             user_data = user_data[0]
 
-        return render_template("user/settings.html", user_data=user_data)
+        return render_template("user/settings.html", user_data=user_data, auth_provider = auth_provider)
     else:
         return redirect(url_for("auth.login"))
 
@@ -76,30 +79,35 @@ def profile_update():
                 else:
                     flash("Username is too short.", category="error")
 
-            if not new_email == "" and not new_email.isspace():
-                # Checks the new email is in the database
-                cursor.execute("""SELECT email
-                                  FROM User
-                                  WHERE email=?""", (new_email,))
-                email_from_db = cursor.fetchone()
-                # if the database output is None,
-                # It will check does new email have @ mark
-                # If the email doesn't have @ mark, it will send a flash message to the frontend saying Invalid email
-                if email_from_db is None:
-                    if "@" in new_email:
-                        cursor.execute("""
-                                    UPDATE User
-                                    SET email = ?
-                                    WHERE user_id=?
-                                        """, (new_email, user_id,))
-                        conn.commit()
+            # Checks whether user is logged by a gmail account or
+            # by a normal account 
+            # If it is a normal account give access to change the email
+            auth_provider = session.get("auth_provider")
+            if auth_provider == "manual":
+                if not new_email == "" and not new_email.isspace():
+                    # Checks the new email is in the database
+                    cursor.execute("""SELECT email
+                                    FROM User
+                                    WHERE email=?""", (new_email,))
+                    email_from_db = cursor.fetchone()
+                    # if the database output is None,
+                    # It will check does new email have @ mark
+                    # If the email doesn't have @ mark, it will send a flash message to the frontend saying Invalid email
+                    if email_from_db is None:
+                        if "@" in new_email:
+                            cursor.execute("""
+                                        UPDATE User
+                                        SET email = ?
+                                        WHERE user_id=?
+                                            """, (new_email, user_id,))
+                            conn.commit()
+                        else:
+                            flash("Invalid email!", category="error")
+                    # IF the new email is same as the current email, it will pass
+                    elif email_from_db[0] == current_email:
+                        pass
                     else:
-                        flash("Invalid email!", category="error")
-                # IF the new email is same as the current email, it will pass
-                elif email_from_db[0] == current_email:
-                    pass
-                else:
-                    flash("Email is already in use.", category="error")
+                        flash("Email is already in use.", category="error")
 
             # Gets the users' new profile image to update
             file = request.files.get('image')
@@ -165,43 +173,52 @@ def change_password():
                         """, (user_id,))
             stored_hash_password = cursor.fetchone()
 
-            # Verify the current_password with the stored hashed password
-            # If it is true then it will update the password
-            if stored_hash_password:
-                try:
-                    if ph.verify(
-                            stored_hash_password[0],
-                            current_password):
-                        # Check the typed New Password and the confirm Password is equal or not
-                        # IF it is equal then it will count the characters in the new password
-                        # If it is greater than 6 then it will update the password
-                        # Otherise It will send a flash message to the frontend saying "Password is too short"
-                        if new_password == new_confirm_password:
-                            if len(new_password) > 6:
-                                cursor.execute("""
-                                            UPDATE User
-                                            SET password =?
-                                            WHERE user_id=?
-                                                """, (ph.hash(new_password), user_id))
-                                conn.commit()
+            # Checks whether user is logged by a gmail account or
+            # by a normal account
+            # If it is a gmail account send a flash messeage saying 
+            # "Users signed in via Google cannot update their password here"
+            auth_provider = session.get("auth_provider")
+            if auth_provider == "manual":
+
+                # Verify the current_password with the stored hashed password
+                # If it is true then it will update the password
+                if stored_hash_password:
+                    try:
+                        if ph.verify(
+                                stored_hash_password[0],
+                                current_password):
+                            # Check the typed New Password and the confirm Password is equal or not
+                            # IF it is equal then it will count the characters in the new password
+                            # If it is greater than 6 then it will update the password
+                            # Otherise It will send a flash message to the frontend saying "Password is too short"
+                            if new_password == new_confirm_password:
+                                if len(new_password) > 6:
+                                    cursor.execute("""
+                                                UPDATE User
+                                                SET password =?
+                                                WHERE user_id=?
+                                                    """, (ph.hash(new_password), user_id))
+                                    conn.commit()
+                                else:
+                                    flash(
+                                        "Password is too short.", category="error")
+                            # IF passwords are not equal then it will send a flash message to the frontend saying "Password are not matched"
                             else:
-                                flash(
-                                    "Password is too short.", category="error")
-                        # IF passwords are not equal then it will send a flash message to the frontend saying "Password are not matched"
-                        else:
-                            flash("Password are not matched", category="error")
-                except (VerifyMismatchError):  # If the password does not match the stored hash
+                                flash("Password are not matched", category="error")
+                    except (VerifyMismatchError):  # If the password does not match the stored hash
+                        flash("Password is not correct", category="error")
+
+                    except InvalidHash:  # If the password hash is invalid
+                        flash(
+                            "Invalid hash format. The hash may be corrupted",
+                            category="error")
+
+                    except Exception as e:  # Catch any other exceptions
+                        flash(f"An error occured: {e}", category="error")
+                else:
                     flash("Password is not correct", category="error")
-
-                except InvalidHash:  # If the password hash is invalid
-                    flash(
-                        "Invalid hash format. The hash may be corrupted",
-                        category="error")
-
-                except Exception as e:  # Catch any other exceptions
-                    flash(f"An error occured: {e}", category="error")
             else:
-                flash("Password is not correct", category="error")
+                flash("Users signed in via Google cannot update their password here",  category="error")
         conn.close()
         return redirect(url_for("settings.settings"))
     else:
