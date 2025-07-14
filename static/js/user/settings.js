@@ -50,21 +50,25 @@ const ShowCurrentPasswordIcon = document.querySelector(
 );
 const currentPasswordBox = document.getElementById("currentPassword");
 
-ShowCurrentPasswordIcon.addEventListener("click", () => {
-  showPassword(
-    ShowCurrentPasswordIcon,
-    HideCurrentPasswordIcon,
-    currentPasswordBox
-  );
-});
+if (ShowCurrentPasswordIcon && HideCurrentPasswordIcon && currentPasswordBox) {
+  ShowCurrentPasswordIcon.addEventListener("click", () => {
+    showPassword(
+      ShowCurrentPasswordIcon,
+      HideCurrentPasswordIcon,
+      currentPasswordBox
+    );
+  });
+}
 
-HideCurrentPasswordIcon.addEventListener("click", () => {
-  HidePassword(
-    HideCurrentPasswordIcon,
-    ShowCurrentPasswordIcon,
-    currentPasswordBox
-  );
-});
+if (HideCurrentPasswordIcon) {
+  HideCurrentPasswordIcon.addEventListener("click", () => {
+    HidePassword(
+      HideCurrentPasswordIcon,
+      ShowCurrentPasswordIcon,
+      currentPasswordBox
+    );
+  });
+}
 
 const HideNewPasswordIcon = document.querySelector(
   ".new-passwords-wrapper .closed-eye-img-pass"
@@ -76,13 +80,17 @@ const ShowNewPasswordIcon = document.querySelector(
 
 const newPasswordBox = document.getElementById("new-password");
 
-ShowNewPasswordIcon.addEventListener("click", () => {
-  showPassword(ShowNewPasswordIcon, HideNewPasswordIcon, newPasswordBox);
-});
+if (ShowNewPasswordIcon) {
+  ShowNewPasswordIcon.addEventListener("click", () => {
+    showPassword(ShowNewPasswordIcon, HideNewPasswordIcon, newPasswordBox);
+  });
+}
 
-HideNewPasswordIcon.addEventListener("click", () => {
-  HidePassword(HideNewPasswordIcon, ShowNewPasswordIcon, newPasswordBox);
-});
+if (HideNewPasswordIcon) {
+  HideNewPasswordIcon.addEventListener("click", () => {
+    HidePassword(HideNewPasswordIcon, ShowNewPasswordIcon, newPasswordBox);
+  });
+}
 
 const hideConfirmNewPasswordIcon = document.querySelector(
   ".confirm-new-password-entry-wrapper .closed-eye-img-pass"
@@ -94,21 +102,29 @@ const showConfirmNewPasswordIcon = document.querySelector(
 
 const confirmNewPasswordBox = document.getElementById("confirm-new-password");
 
-showConfirmNewPasswordIcon.addEventListener("click", () => {
-  showPassword(
-    showConfirmNewPasswordIcon,
-    hideConfirmNewPasswordIcon,
-    confirmNewPasswordBox
-  );
-});
+if (
+  showConfirmNewPasswordIcon &&
+  hideConfirmNewPasswordIcon &&
+  confirmNewPasswordBox
+) {
+  showConfirmNewPasswordIcon.addEventListener("click", () => {
+    showPassword(
+      showConfirmNewPasswordIcon,
+      hideConfirmNewPasswordIcon,
+      confirmNewPasswordBox
+    );
+  });
+}
 
-hideConfirmNewPasswordIcon.addEventListener("click", () => {
-  HidePassword(
-    hideConfirmNewPasswordIcon,
-    showConfirmNewPasswordIcon,
-    confirmNewPasswordBox
-  );
-});
+if (hideConfirmNewPasswordIcon) {
+  hideConfirmNewPasswordIcon.addEventListener("click", () => {
+    HidePassword(
+      hideConfirmNewPasswordIcon,
+      showConfirmNewPasswordIcon,
+      confirmNewPasswordBox
+    );
+  });
+}
 
 // This part gives the preview of what user has selected as his/her profile picture
 // before updating the profile picture
@@ -182,6 +198,13 @@ feedBackForm.addEventListener("submit", (event) => {
 
   const formData = new FormData(feedBackForm);
   formData.append("star", clickedStarButtons.length);
+  feedBackForm.reset();
+  starButtons.forEach((starButton) => {
+    if (clickedStarButtons.includes(starButton)) {
+      clickedStarButtons.splice(clickedStarButtons.indexOf(starButton), 1);
+      starButton.innerHTML = normalStarIcon;
+    }
+  });
 
   fetch(sendFeedback, {
     method: "POST",

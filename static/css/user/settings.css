@@ -427,7 +427,6 @@ textarea {
 }
 
 .email-txt {
-  color: var(--text-color) !important;
   font-size: medium !important;
   margin: 0;
   margin-bottom: 5px;
