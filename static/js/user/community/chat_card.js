@@ -86,7 +86,7 @@ const createQuestionCard = (
   questionCard.classList.add("question-card");
 
   const img = document.createElement("img");
-  img.src = `${STATIC_BASE}${profilePicOfWriter}`;
+  img.src = `${profilePicOfWriter}`;
 
   questionCard.appendChild(img);
 
@@ -178,7 +178,7 @@ const createNewQuestionCard = (
   questionCard.classList.add("question-card");
 
   const img = document.createElement("img");
-  img.src = `${STATIC_BASE}${profilePicOfWriter}`;
+  img.src = `${profilePicOfWriter}`;
 
   questionCard.appendChild(img);
 

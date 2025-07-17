@@ -85,7 +85,7 @@
         <img class="laptop-img"
              src="{{ url_for('static', filename='images/assets/laptop-with-coding-img.svg') }}"
              alt="An image of a laptop with some written codes" />
-        <!--Error box -->
+        {# <!--Error box --> #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if
                 messages %}

@@ -101,6 +101,8 @@ input[type="file"] {
 .profile-section .form-body img {
   min-height: 110px;
   min-width: 110px;
+  max-height: 110px;
+  max-width: 110px;
   border-radius: 50%;
   transition: filter 0.3s ease;
 }

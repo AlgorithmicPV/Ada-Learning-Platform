@@ -50,10 +50,25 @@ def get_all_community_questions_from_db():
         # Gets the Name and profile image of the user who posted the discussion
         # and Store it in user_data
         cursor.execute(
-            "SELECT full_name, profile_image FROM User WHERE user_id=?",
+            "SELECT full_name, profile_image, auth_provider FROM User WHERE user_id=?",
             (posted_user_id,),
         )
         user_data = cursor.fetchall()[0]
+
+        # Gets the auth_provder from the database   
+        # That will help to decide to change the profile image static location
+        # If the auth_provder is manual then I use the static_base to get the correct static location
+        # If the auth_provider is google then I do not use the static base as it is a url given by the google
+        # To do this I convert the user_data to a temperory list and change the profile image location
+        # Then I remove the auth_provder from the list
+        # And then convert the list back to a tuple
+        temp_user_data_list = list(user_data)
+        if user_data[2] == "manual":
+            statice_base = url_for('static', filename='')
+            temp_user_data_list[1] = statice_base + user_data[1]
+        
+        temp_user_data_list.remove(temp_user_data_list[2])
+        user_data = tuple(temp_user_data_list)           
 
         cursor.execute(
             "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,)
@@ -139,6 +154,8 @@ def get_all_community_questions_from_db():
 
     conn.close()
     return question_cards_detail
+
+##### make a function to change the profile image url based on the auth
 
 
 # Route that displays all community questions that happened in the platform
@@ -431,12 +448,20 @@ def discussions(question_id):
 
             # Append the profile image of the user who posted the question
             cursor.execute(
-                "SELECT profile_image FROM User WHERE user_id = ?",
+                "SELECT profile_image, auth_provider FROM User WHERE user_id = ?",
                 (question_details_from_db[0],),
             )
-            profile_image = cursor.fetchone()[0]
-            question_details_that_goes_to_client_side.append(profile_image)
+            posted_user_data = cursor.fetchall()[0]
 
+            temp_user_data_list = list(posted_user_data)
+            if posted_user_data[1] == "manual":
+                statice_base = url_for('static', filename='')
+                temp_user_data_list[0] = statice_base + posted_user_data[0]
+
+            temp_user_data_list.remove(temp_user_data_list[1])
+            profile_image = tuple(temp_user_data_list)
+            # print(profile_image)
+            question_details_that_goes_to_client_side.append(profile_image[0])
             # Check has the user saved this discussion
             # depending on that append "saved" or "unsaved" to the question_details_that_goes_to_client_side list
             # This helps for the frontend to show the correct icon
@@ -562,9 +587,18 @@ def get_answers():
 
             cursor.execute("""
                             SELECT  full_name,
-                                    profile_image FROM User WHERE user_id=?
+                                    profile_image, auth_provider FROM User WHERE user_id=?
                            """, (answered_user_id,))
             answered_user_info = cursor.fetchall()[0]
+            temp_answered_user_info_list = list(answered_user_info)
+
+            if answered_user_info[2] == "manual":
+                statice_base = url_for('static', filename='')
+                temp_answered_user_info_list[1] = statice_base + answered_user_info[1]
+
+            temp_answered_user_info_list.remove(temp_answered_user_info_list[2])
+            answered_user_info = tuple(temp_answered_user_info_list)
+
             answer_detail_from_db += answered_user_info
 
             # Convert the tuple into a list because easier to modify
@@ -680,7 +714,7 @@ def toggle_like():
                      ))
                 liked_answer_id_from_db = cursor.fetchone()
 
-                # if the liked_answer_id has some sort of value it will delete from the AnswerLike table,
+                # if the liked_answer_id has some kind of value it will delete from the AnswerLike table,
                 # and set the like variable to "no"
                 # IF there is no value in the liked_answer_id_from_db,
                 # It will insert the new like answers details to the AnswerLike table

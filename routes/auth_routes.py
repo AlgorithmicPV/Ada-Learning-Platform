@@ -35,8 +35,8 @@ google = oauth.register(
         "scope": "openid email profile"},
 )
 
-
-@auth_bp.route("/login", methods=["GET", "POST"])
+# Route for the Normal Login 
+@auth_bp.route("/login", methods=["GET","POST"])
 def login():
     session.clear()
     if (
@@ -45,58 +45,61 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT password FROM User WHERE email = ?", (email,)
-        )  # Fetch the stored password hash for the given email
-        # stored_hash_password is a tuple, so we need to access the first
-        # element
-        stored_hash_password = (cursor.fetchone())
+        # Validates the email and password fields are not empty 
+        # If they contain only empty spaces it will return a flash message 
+        # saying that "Email and password required"
+        if email != "" and not email.isspace() and password != "" and not password.isspace():
+            conn = sqlite3.connect("database/app.db")
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT password FROM User WHERE email = ?", (email,)
+            )  # Fetch the stored password hash for the given email
+            # stored_hash_password is a tuple, so we need to access the first
+            # element
+            stored_hash_password = cursor.fetchone()
 
-        if stored_hash_password:
-            try:
-                if ph.verify(
-                        stored_hash_password[0],
-                        password):  # Verify the password
-                    session["email"] = email
-                    conn = sqlite3.connect("database/app.db")
-                    cursor = conn.cursor()
-                    cursor.execute(
-                        "SELECT full_name FROM User Where email = ?", (email,)
-                    )  # Fetch the username associated with the email
-                    # stored_username is a tuple, so we need to access the
-                    # first element
-                    stored_username = (cursor.fetchone())
-                    username = stored_username[0]
-                    # Store the username in the session
-                    session["username"] = username
-                    cursor.execute(
-                        "SELECT user_id FROM User Where email = ?", (email,)
-                    )  # Fetch the user_id associated with the email
-                    stored_user_id = cursor.fetchone()
-                    user_id = stored_user_id[0]
-                    # Store the user_id in the session
-                    session["user_id"] = user_id
-                    cursor.close()  # Close the database connection
-                    session["auth_provider"] = "manual"
-                    return redirect(url_for("dashboard.dashboard"))
-            except (
-                VerifyMismatchError
-            ):  # If the password does not match the stored hash
-                flash("Password is not correct", category="error")
-                return redirect(url_for("auth.login"))
-            except InvalidHash:  # If the password hash is invalid
-                flash(
-                    "Invalid hash format. The hash may be corrupted",
-                    category="error")
-                return redirect(url_for("auth.login"))
-            except Exception as e:  # Catch any other exceptions
-                flash(f"An error occured: {e}", category="error")
-                return redirect(url_for("auth.login"))
-        else:  # If the email does not exist in the database
-            flash("Username doesn't exist", category="error")
-            return redirect(url_for("auth.login"))
+            if stored_hash_password:
+                try:
+                    if ph.verify(
+                            stored_hash_password[0],
+                            password):  # Verify the password
+                        session["email"] = email
+                        cursor.execute(
+                            "SELECT full_name FROM User Where email = ?", (email,)
+                        )  # Fetch the username associated with the email
+                        # stored_username is a tuple, so we need to access the
+                        # first element
+                        stored_username = (cursor.fetchone())
+                        username = stored_username[0]
+                        # Store the username in the session
+                        session["username"] = username
+                        cursor.execute(
+                            "SELECT user_id FROM User Where email = ?", (email,)
+                        )  # Fetch the user_id associated with the email
+                        stored_user_id = cursor.fetchone()
+                        user_id = stored_user_id[0]
+                        # Store the user_id in the session
+                        session["user_id"] = user_id
+                        cursor.close()  # Close the database connection
+                        session["auth_provider"] = "manual"
+                        return redirect(url_for("dashboard.dashboard"))
+                except (
+                    VerifyMismatchError
+                ):  # If the password does not match the stored hash
+                    flash("Password is not correct", category="error")
+                    return redirect(url_for("auth.login"))
+                except InvalidHash:  # If the password hash is invalid
+                    flash(
+                        "Invalid hash format. The hash may be corrupted",
+                        category="error")
+                    return redirect(url_for("auth.login"))
+                except Exception as e:  # Catch any other exceptions
+                    flash(f"An error occured: {e}", category="error")
+                    return redirect(url_for("auth.login"))
+            else:  # If the email does not exist in the database
+                flash("User doesn't exist", category="error")
+        else:
+            flash("Email and password required", category="error")
 
     return render_template("auth/login.html")
 

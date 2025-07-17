@@ -112,7 +112,7 @@ const createAnswerCard = (
   answerCard.classList.add("answer-card");
 
   const img = document.createElement("img");
-  img.src = `${STATIC_BASE}${profilePicOfWriter}`;
+  img.src = `${profilePicOfWriter}`;
 
   answerCard.appendChild(img);
 
