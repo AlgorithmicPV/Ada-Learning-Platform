@@ -1,149 +1,176 @@
-{% extends 'user/base.html' %}
-{% block title %}Dashboard{% endblock %}
-{% block
-    extra_css %}
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/user/dashboard.css') }}" />
-{% endblock %}
-{% block content %}
-    <div class="greeting-wrapper">
-        <div class="greeting-txt-wrapper">
-            <p class="greeting-txt">Hello {{ username }}!</p>
-            <img src="{{ url_for('static', filename = 'images/icons/wave_hand.svg') }}"
-                 alt="👋" />
-        </div>
-        <p class="welcome-txt">Welcome to Ada — ready to level up your coding skills today?</p>
+{% extends 'user/base.html' %} {% block title %}Dashboard{% endblock %} {% block
+extra_css %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/user/dashboard.css') }}"
+/>
+{% endblock %} {% block content %}
+<div class="greeting-wrapper">
+  <div class="greeting-txt-wrapper">
+    <p class="greeting-txt">Hello {{ username }}!</p>
+    <img
+      src="{{ url_for('static', filename = 'images/icons/wave_hand.svg') }}"
+      alt="👋"
+    />
+  </div>
+  <p class="welcome-txt">
+    Welcome to Ada — ready to level up your coding skills today?
+  </p>
+</div>
+<div class="block-wrapper">
+  <div class="blocks wrapper-1">
+    <div class="block continue-learning-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/book.svg') }}"
+          alt="📘"
+        />
+        <p>Continue Learning</p>
+      </div>
+      <p class="description">“Python Basics - Loops”</p>
+      <div class="progress-bar">
+        <div class="progress-line"></div>
+      </div>
+      <p class="completed-amount">50% completed</p>
     </div>
-    <div class="block-wrapper">
-        <div class="blocks wrapper-1">
-            <div class="block continue-learning-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/book.svg') }}"
-                         alt="📘" />
-                    <p>Continue Learning</p>
-                </div>
-                <p class="description">“Python Basics - Loops”</p>
-                <div class="progress-bar">
-                    <div class="progress-line"></div>
-                </div>
-                <p class="completed-amount">50% completed</p>
-            </div>
-            <div class="block problem-solved-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/goal.svg') }}"
-                         alt="🎯" />
-                    <p>Problem Solved</p>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-line"></div>
-                </div>
-                <div class="progress-circle">
-                    <div class="line"></div>
-                </div>
-                <p class="completed-amount">13 Questions completed</p>
-            </div>
-        </div>
-        <div class="blocks wrapper-2">
-            <div class="block streak-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/fire.svg') }}"
-                         alt="🔥" />
-                    <p>Streak</p>
-                </div>
-                <p class="description">You're on a 4-day streak! Keep it going!</p>
-            </div>
-            <div class="block community-Buzz-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/speech-bubble.svg') }}"
-                         alt="💬" />
-                    <p>Community Buzz</p>
-                </div>
-                <p class="description">Top question "Why does my if-statement skip?"</p>
-            </div>
-        </div>
-        <div class="blocks wrapper-3">
-            <div class="block leard-board-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/graph.svg') }}"
-                         alt="📊" />
-                    <p>Lead Board</p>
-                </div>
-                <!--Remmebr to use Forloop-->
-                <table>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Problem solved</th>
-                    </tr>
-                    <tr>
-                        <td>01</td>
-                        <td>Tom Jack</td>
-                        <td>{{ 120 }}</td>
-                    </tr>
-                    <tr>
-                        <td>02</td>
-                        <td>Ryan Hood</td>
-                        <td>{{ 100 }}</td>
-                    </tr>
-                    <tr>
-                        <td>03</td>
-                        <td>Tony Mode</td>
-                        <td>{{ 90 }}</td>
-                    </tr>
-                    <tr>
-                        <td>04</td>
-                        <td>Christ Jack</td>
-                        <td>{{ 70 }}</td>
-                    </tr>
-                    <tr>
-                        <td>05</td>
-                        <td>Nimal Abinu</td>
-                        <td>{{ 50 }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div class="block latest-achievement-wrapper">
-                <div class="title">
-                    <img src="{{ url_for('static', filename = 'images/icons/medal.svg') }}"
-                         alt="🏅" />
-                    <p>Latest Achievement</p>
-                </div>
-                <div class="achievement-block-wrapper">
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/bronze-medal.svg') }}"
-                                 alt="🥉" />
-                            <p>Bronze Coins</p>
-                        </div>
-                        <p class="number-of-achievements">10</p>
-                        <p class="description">Earned by completing every 5 Easy challenges</p>
-                    </div>
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/silver-medal.svg') }}"
-                                 alt="🥈" />
-                            <p>Silver Coins</p>
-                        </div>
-                        <p class="number-of-achievements">5</p>
-                        <p class="description">Earned by completing every 5 Medium challenges</p>
-                    </div>
-                    <div class="achievements-block">
-                        <div class="achievement-type">
-                            <img src="{{ url_for('static', filename = 'images/icons/gold-medal.svg') }}"
-                                 alt="🥇" />
-                            <p>Gold Coins</p>
-                        </div>
-                        <p class="number-of-achievements">2</p>
-                        <p class="description">Earned by completing every 5 Hard challenges</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="block problem-solved-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/goal.svg') }}"
+          alt="🎯"
+        />
+        <p>Problem Solved</p>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-line"></div>
+      </div>
+      <div class="progress-circle">
+        <div class="line"></div>
+      </div>
+      <p class="completed-amount">13 Questions completed</p>
     </div>
+  </div>
+  <div class="blocks wrapper-2">
+    <div class="block streak-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/fire.svg') }}"
+          alt="🔥"
+        />
+        <p>Streak</p>
+      </div>
+      <p class="description">You're on a 4-day streak! Keep it going!</p>
+    </div>
+    <div class="block community-Buzz-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/speech-bubble.svg') }}"
+          alt="💬"
+        />
+        <p>Community Buzz</p>
+      </div>
+      <p class="description">Top question "Why does my if-statement skip?"</p>
+    </div>
+  </div>
+  <div class="blocks wrapper-3">
+    <div class="block leard-board-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/graph.svg') }}"
+          alt="📊"
+        />
+        <p>Lead Board</p>
+      </div>
+      <!--Remmebr to use Forloop-->
+      <table>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Problem solved</th>
+        </tr>
+        <tr>
+          <td>01</td>
+          <td>Tom Jack</td>
+          <td>{{ 120 }}</td>
+        </tr>
+        <tr>
+          <td>02</td>
+          <td>Ryan Hood</td>
+          <td>{{ 100 }}</td>
+        </tr>
+        <tr>
+          <td>03</td>
+          <td>Tony Mode</td>
+          <td>{{ 90 }}</td>
+        </tr>
+        <tr>
+          <td>04</td>
+          <td>Christ Jack</td>
+          <td>{{ 70 }}</td>
+        </tr>
+        <tr>
+          <td>05</td>
+          <td>Nimal Abinu</td>
+          <td>{{ 50 }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="block latest-achievement-wrapper">
+      <div class="title">
+        <img
+          src="{{ url_for('static', filename = 'images/icons/medal.svg') }}"
+          alt="🏅"
+        />
+        <p>Latest Achievement</p>
+      </div>
+      <div class="achievement-block-wrapper">
+        <div class="achievements-block">
+          <div class="achievement-type">
+            <img
+              src="{{ url_for('static', filename = 'images/icons/bronze-medal.svg') }}"
+              alt="🥉"
+            />
+            <p>Bronze Coins</p>
+          </div>
+          <p class="number-of-achievements">10</p>
+          <p class="description">
+            Earned by completing every 5 Easy challenges
+          </p>
+        </div>
+        <div class="achievements-block">
+          <div class="achievement-type">
+            <img
+              src="{{ url_for('static', filename = 'images/icons/silver-medal.svg') }}"
+              alt="🥈"
+            />
+            <p>Silver Coins</p>
+          </div>
+          <p class="number-of-achievements">5</p>
+          <p class="description">
+            Earned by completing every 5 Medium challenges
+          </p>
+        </div>
+        <div class="achievements-block">
+          <div class="achievement-type">
+            <img
+              src="{{ url_for('static', filename = 'images/icons/gold-medal.svg') }}"
+              alt="🥇"
+            />
+            <p>Gold Coins</p>
+          </div>
+          <p class="number-of-achievements">2</p>
+          <p class="description">
+            Earned by completing every 5 Hard challenges
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 <!-- Adds inline css because to show the progress bar visually to users We need to pass the Python variable to CSS, as we can't pass dit irectly into an external CSS -->
 {% block inline_css %}
-    <style>
+<style>
   .continue-learning-wrapper .progress-line {
     width: {{ 50 }}%;
   }
@@ -170,6 +197,7 @@
       );
   }
   }
-    </style>
+</style>
+{% endblock %} {% block extra_js %}
+<script src="{{ url_for('static', filename='js/user/dashboard.js') }}"></script>
 {% endblock %}
-{% block extra_js %}<script src="{{ url_for('static', filename='js/user/dashboard.js') }}"></script>{% endblock %}

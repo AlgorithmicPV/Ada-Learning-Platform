@@ -49,65 +49,64 @@ def divide_array_into_chunks(
         )  # Appends the chunk to the new array,
     return new_array
 
+# Function to get all the courses available in the database
+# I used a function to stop the repetion in the code
 
-# This route is used to display all the courses available in the application
-@my_courses_bp.route("/my-courses", methods=["GET", "POST"])
-def all_courses():
-    if "user_id" in session:
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
 
-        user_id = session["user_id"]
+def get_all_courses():
+    conn = sqlite3.connect("database/app.db")
+    cursor = conn.cursor()
+
+    user_id = session["user_id"]
+    cursor.execute(
+        "SELECT course_id, course_name, language_image, course_image, language FROM Course"
+    )
+
+    all_courses_data = cursor.fetchall()
+
+    course_data_with_percentage = []
+
+    for (
+        one_course_set
+    ) in all_courses_data:  # Fetches all the courses data from the database
+        cursor.execute(
+            """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
+            (
+                user_id,
+                one_course_set[0],  # Course ID
+            ),
+        )  # Selects all the completed lessons (number)
+
+        number_of_completed_lessons = cursor.fetchall()
+
+        # Converts into a flat variable as the previous variable
+        # "number_of_completed_lessons" is a list of one element
+        number_of_completed_lessons = number_of_completed_lessons[0][0]
 
         cursor.execute(
-            "SELECT course_id, course_name, language_image, course_image, language FROM Course"
-        )
+            """SELECT COUNT(*) FROM Lesson WHERE course_id =?""",
+            (one_course_set[0],),
+        )  # Gets the total number of lessons available in  a course the database
 
-        all_courses_data = cursor.fetchall()
+        # Gets the total number of lessons available in a course the
+        # database
+        number_of_all_lessons = (cursor.fetchall())
 
-        course_data_with_percentage = []
+        number_of_all_lessons = number_of_all_lessons[0][0]
 
-        for (
-            one_course_set
-        ) in all_courses_data:  # Fetches all the courses data from the database
-            cursor.execute(
-                """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
-                (
-                    user_id,
-                    one_course_set[0],  # Course ID
-                ),
-            )  # Selects all the completed lessons (number)
+        if number_of_all_lessons and number_of_completed_lessons:
+            percentage_of_the_completion = round(
+                (number_of_completed_lessons / number_of_all_lessons) * 100
+            )  # Calculates the percentage of the completion of the course
+        else:
+            percentage_of_the_completion = 0
 
-            number_of_completed_lessons = cursor.fetchall()
+        for j in range(5):  # Appends the course data into a new array
+            course_data_with_percentage.append(one_course_set[j])
 
-            # Converts into a flat variable as the previous variable
-            # "number_of_completed_lessons" is a list of one element
-            number_of_completed_lessons = number_of_completed_lessons[0][0]
-
-            cursor.execute(
-                """SELECT COUNT(*) FROM Lesson WHERE course_id =?""",
-                (one_course_set[0],),
-            )  # Gets the total number of lessons available in  a course the database
-
-            # Gets the total number of lessons available in a course the
-            # database
-            number_of_all_lessons = (cursor.fetchall())
-
-            number_of_all_lessons = number_of_all_lessons[0][0]
-
-            if number_of_all_lessons and number_of_completed_lessons:
-                percentage_of_the_completion = round(
-                    (number_of_completed_lessons / number_of_all_lessons) * 100
-                )  # Calculates the percentage of the completion of the course
-            else:
-                percentage_of_the_completion = 0
-
-            for j in range(5):  # Appends the course data into a new array
-                course_data_with_percentage.append(one_course_set[j])
-
-            # Appends the percentage of the completion of the course into the
-            # new array
-            course_data_with_percentage.append(percentage_of_the_completion)
+        # Appends the percentage of the completion of the course into the
+        # new array
+        course_data_with_percentage.append(percentage_of_the_completion)
 
         cursor.execute("""SELECT COUNT(*) FROM  Course""")
 
@@ -120,8 +119,53 @@ def all_courses():
                 (len(course_data_with_percentage) / number_of_courses)
             ),  # Divdes the length of the course_data_with_percentage by number_of_courses to get the chunk size
         )
+    conn.close()
+    return divided_array
 
-        session["all_courses_data"] = divided_array
+# Function to get all AI generated Courses
+# I used a function to stop the repetion in the code
+
+
+def get_ai_courses(user_id):
+    conn = sqlite3.connect("database/app.db")
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT resource_id, title, status , generated_at FROM Ai_resource WHERE user_id = ?",
+        (user_id,),
+    )
+
+    ai_courses_data_form_db = cursor.fetchall()
+
+    ai_courses = []
+
+    for ai_Course_from_db in ai_courses_data_form_db:
+        ai_courses.append(ai_Course_from_db[0])
+        ai_courses.append(ai_Course_from_db[1])
+        ai_courses.append(ai_Course_from_db[2])
+        ai_courses.append(ai_Course_from_db[3].split("T")[0])
+
+    cursor.execute(
+        "SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,))
+
+    number_of_ai_courses = cursor.fetchone()[0]
+    try:
+        ai_courses_data = divide_array_into_chunks(
+            ai_courses, int(len(ai_courses) / number_of_ai_courses)
+        )
+    except ZeroDivisionError:
+        ai_courses_data = []
+    return ai_courses_data
+
+
+# This route is used to display all the courses available in the application
+@my_courses_bp.route("/my-courses", methods=["GET", "POST"])
+def all_courses():
+    if "user_id" in session:
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+
+        courses_data = get_all_courses()
 
         if request.method == "POST":
 
@@ -148,7 +192,7 @@ def all_courses():
 
         conn.close()
         return render_template(
-            "user/my_courses/all_courses.html", courses_data=divided_array
+            "user/my_courses/all_courses.html", courses_data=courses_data
         )
     else:
         return redirect(url_for("auth.login"))
@@ -159,7 +203,7 @@ def all_courses():
 @my_courses_bp.route("/my-courses/search", methods=["GET"])
 def search_courses():
     if "user_id" in session:
-        all_courses_data = session.get("all_courses_data")
+        all_courses_data = get_all_courses()
         filtered_courses = (
             []
         )  # This will hold the courses that match the search keyword
@@ -223,9 +267,9 @@ def intermediate_route():
         session["lesson_id"] = lesson_id
 
         cursor.execute(
-            "SELECT language FROM Course WHERE  course_id = ?", (course_id,))
-        language = cursor.fetchone()[0]
-        session["language"] = language
+            "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
+        )
+        course_name = cursor.fetchone()[0]
 
         cursor.execute(
             "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
@@ -237,41 +281,6 @@ def intermediate_route():
 
         lesson_title = lesson_titles[0]
 
-        session["lesson_title"] = lesson_title
-
-        cursor.execute(
-            "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
-        )
-        course_name = cursor.fetchone()[0]
-        session["course_name"] = course_name
-
-        user_id = session.get("user_id")
-
-        cursor.execute(
-            "SELECT lesson_id, lesson_title FROM Lesson WHERE course_id = ?",
-            (course_id,),
-        )
-        lessons_data = cursor.fetchall()
-        session["lessons_data"] = lessons_data
-
-        cursor.execute(
-            """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
-            (user_id,
-             course_id,
-             ),
-        )
-        number_of_completed_lessons = cursor.fetchall()[0][0]
-        percentage_of_completion = round(
-            (number_of_completed_lessons / len(lessons_data)) * 100
-        )
-        session["percentage_of_completion"] = percentage_of_completion
-
-        cursor.execute(
-            "SELECT content FROM Lesson WHERE lesson_id = ? AND course_id = ?",
-            (lesson_id, course_id),
-        )
-        lesson_content = cursor.fetchall()
-        session["lesson_content"] = lesson_content[0][0]
 
         # Formats the course name by replacing spaces with hyphens for URL
         # compatibility
@@ -281,55 +290,7 @@ def intermediate_route():
         # compatibility
         formated_lesson_name = "-".join(lesson_title.split(" "))
 
-        cursor.execute(
-            "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
-            (course_id,),
-        )
-
-        number_of_lessons = cursor.fetchone()[0]
-
-        cursor.execute(
-            "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
-            (lesson_id, course_id),
-        )
-
-        # Find the next and previous lesson IDs based on the current lesson order number
-        # This is used to navigate between lessons in the course , which is
-        # useful for the user to navigate through the lessons easily
-        current_lesson_order_number = cursor.fetchone()[0]
-
-        next_lesson_order_number = current_lesson_order_number + 1
-
-        prev_lesson_order_number = current_lesson_order_number - 1
-
-        # If the next lesson order number is less than or equal to the total
-        # number of lessons, fetch the next lesson ID otherwise set it to the
-        # current lesson ID
-        if next_lesson_order_number <= number_of_lessons:
-            cursor.execute(
-                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
-                (next_lesson_order_number, course_id),
-            )
-            next_lesson_id = cursor.fetchone()[0]
-            session["next_lesson_id"] = next_lesson_id
-        else:
-            session["next_lesson_id"] = lesson_id
-
-        # If the previous lesson order number is greater than 0, fetch the previous lesson ID otherwise set it to the current lesson ID
-        # This is to ensure that the user can navigate back to the previous
-        # lesson if they are not on the first lesson
-        if prev_lesson_order_number != 0:
-            cursor.execute(
-                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
-                (prev_lesson_order_number, course_id),
-            )
-            prev_lesson_id = cursor.fetchone()[0]
-            session["prev_lesson_id"] = prev_lesson_id
-        else:
-            session["prev_lesson_id"] = lesson_id
-
-        cursor.close()
-
+        conn.close()
         return redirect(
             url_for(
                 "my_courses.lesson",
@@ -440,16 +401,118 @@ def lesson_completed():
                      methods=["GET", "POST"])
 def lesson(course_name, lesson_name):
     if "user_id" in session:
+        conn = sqlite3.connect("database/app.db")
+        cursor = conn.cursor()
+        course_id = session.get("course_id")
+
+        lesson_id = session.get("lesson_id")
+
+        cursor.execute(
+            "SELECT language FROM Course WHERE  course_id = ?", (course_id,))
+        language = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
+        )
+        lesson_titles = cursor.fetchone()
+
+        if not lesson_titles:
+            abort(404)
+
+        lesson_title = lesson_titles[0]
+
+        cursor.execute(
+            "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
+        )
+        course_name = cursor.fetchone()[0]
+
+        user_id = session.get("user_id")
+
+        cursor.execute(
+            "SELECT lesson_id, lesson_title FROM Lesson WHERE course_id = ?",
+            (course_id,),
+        )
+        lessons_data = cursor.fetchall()
+
+        cursor.execute(
+            """SELECT COUNT(lesson_id) FROM user_lesson WHERE user_id  = ? AND lesson_id IN (SELECT lesson_id FROM Lesson WHERE course_id = ?) AND status = 'completed'""",
+            (user_id,
+             course_id,
+             ),
+        )
+        number_of_completed_lessons = cursor.fetchall()[0][0]
+        percentage_of_completion = round(
+            (number_of_completed_lessons / len(lessons_data)) * 100
+        )
+
+        cursor.execute(
+            "SELECT content FROM Lesson WHERE lesson_id = ? AND course_id = ?",
+            (lesson_id, course_id),
+        )
+        lesson_content = cursor.fetchall()
+        if lesson_content:
+            lesson_content = lesson_content[0][0]
+
+
+
+
+        cursor.execute(
+            "SELECT COUNT(lesson_order) FROM Lesson WHERE course_id =?",
+            (course_id,),
+        )
+
+        number_of_lessons = cursor.fetchone()[0]
+
+        cursor.execute(
+            "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
+            (lesson_id, course_id),
+        )
+
+        # Find the next and previous lesson IDs based on the current lesson order number
+        # This is used to navigate between lessons in the course , which is
+        # useful for the user to navigate through the lessons easily
+        current_lesson_order_number = cursor.fetchone()[0]
+
+        next_lesson_order_number = current_lesson_order_number + 1
+
+        prev_lesson_order_number = current_lesson_order_number - 1
+
+        # If the next lesson order number is less than or equal to the total
+        # number of lessons, fetch the next lesson ID otherwise set it to the
+        # current lesson ID
+        if next_lesson_order_number <= number_of_lessons:
+            cursor.execute(
+                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
+                (next_lesson_order_number, course_id),
+            )
+            next_lesson_id = cursor.fetchone()[0]
+        else:
+            next_lesson_id = lesson_id
+
+        # If the previous lesson order number is greater than 0, fetch the previous lesson ID otherwise set it to the current lesson ID
+        # This is to ensure that the user can navigate back to the previous
+        # lesson if they are not on the first lesson
+        if prev_lesson_order_number != 0:
+            cursor.execute(
+                "SELECT lesson_id FROM Lesson WHERE lesson_order = ? AND course_id =?",
+                (prev_lesson_order_number, course_id),
+            )
+            prev_lesson_id = cursor.fetchone()[0]
+        else:
+            prev_lesson_id = lesson_id
+
+        cursor.close()
+
         return render_template(
             "user/my_courses/lesson.html",
-            course_name=session.get("course_name"),
-            lesson_title=session.get("lesson_title"),
-            lessons_data=session.get("lessons_data"),
-            percentage_of_completion=session.get("percentage_of_completion"),
-            lesson_content=session.get("lesson_content"),
-            language=session.get("language"),
-            next_lesson_id=session.get("next_lesson_id"),
-            prev_lesson_id=session.get("prev_lesson_id"),
+            course_name=course_name,
+            lesson_title=lesson_title,
+            lessons_data=lessons_data,
+            percentage_of_completion=percentage_of_completion,
+            lesson_content=lesson_content,
+            language=language,
+            next_lesson_id=next_lesson_id,
+            prev_lesson_id=prev_lesson_id,
         )
     else:
         return redirect(url_for("auth.login"))
@@ -542,36 +605,7 @@ def ai_courses():
     if "user_id" in session:
         user_id = session.get("user_id")
 
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
-
-        cursor.execute(
-            "SELECT resource_id, title, status , generated_at FROM Ai_resource WHERE user_id = ?",
-            (user_id,),
-        )
-
-        ai_courses_data_form_db = cursor.fetchall()
-
-        ai_courses = []
-
-        for ai_Course_from_db in ai_courses_data_form_db:
-            ai_courses.append(ai_Course_from_db[0])
-            ai_courses.append(ai_Course_from_db[1])
-            ai_courses.append(ai_Course_from_db[2])
-            ai_courses.append(ai_Course_from_db[3].split("T")[0])
-
-        cursor.execute(
-            "SELECT COUNT(resource_id) FROM Ai_resource WHERE user_id = ?", (user_id,))
-
-        number_of_ai_courses = cursor.fetchone()[0]
-        try:
-            ai_courses_data = divide_array_into_chunks(
-                ai_courses, int(len(ai_courses) / number_of_ai_courses)
-            )
-        except ZeroDivisionError:
-            ai_courses_data = []
-
-        session["ai_courses_data"] = ai_courses_data
+        ai_courses_data = get_ai_courses(user_id)
 
         return render_template(
             "user/my_courses/ai_generated_courses.html",
@@ -675,7 +709,8 @@ def generarting_course():
                      methods=["POST", "GET"])
 def search_ai_courses():
     if "user_id" in session:
-        ai_courses_data = session.get("ai_courses_data")
+        user_id = session.get("user_id")
+        ai_courses_data = get_ai_courses(user_id)
         if request.method == "GET":
             keyword = request.args.get("search")
             if not keyword == "" and not keyword.isspace():

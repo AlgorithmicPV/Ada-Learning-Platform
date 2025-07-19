@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, render_template, session, redirect, url_for, request
 from datetime import timedelta
 from argon2 import PasswordHasher
 from dotenv import load_dotenv
@@ -15,6 +15,7 @@ from routes.compiler import compiler_bp
 from routes.community import community_bp
 from routes.practice_hub import practice_hub_bp
 from routes.settings  import settings_bp
+from flask.sessions import SecureCookieSessionInterface
 
 load_dotenv()
 
@@ -75,7 +76,17 @@ def logout():
     else:
         return redirect(url_for("auth.login"))
 
-
+@app.after_request
+def calculate_session_size(response):
+    interface = SecureCookieSessionInterface()
+    serializer = interface.get_signing_serializer(app)
+    
+    if serializer:
+        encoded = serializer.dumps(dict(session))
+        size_bytes = len(encoded.encode('utf-8'))
+        print(f"Session size for {request.path}: {size_bytes} bytes")
+    
+    return response
 if __name__ == "__main__":
     app.run(debug=True)
     # app.run(host='0.0.0.0', port=5000, debug=True)
