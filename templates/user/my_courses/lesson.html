@@ -1,7 +1,7 @@
 {% extends 'user/base.html' %}
 {% block title %}
-    {{ course_name }} - {{
-    lesson_title }}
+    {{  lesson_page_data[0] }} - {{
+    lesson_page_data[2] }}
 {% endblock %}
 {% block content %}
     {% block extra_css %}
@@ -14,20 +14,20 @@
     <div class="lesson-cont-wrapper">
         <!--Lesson top bar with course name and percentage completion-->
         <div class="lesson-cont-top-bar">
-            <p class="course-name">{{ course_name }}</p>
-            <p class="percentage-completion">{{ percentage_of_completion }}%</p>
+            <p class="course-name">{{ lesson_page_data[0] }}</p>
+            <p class="percentage-completion">{{ lesson_page_data[4] }}%</p>
         </div>
         <!--End of lesson top bar-->
         <!--Lesson content-->
         <div class="lesson-cont">
             <!--A sub navigation bar for lesson topics-->
             <div class="lesson-menu-bar">
-                {% for lesson_data in lessons_data %}
+                {% for lesson in lessons_data %}
                     <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
-                        <input type="hidden" name="lesson_id" value="{{ lesson_data[0] }}" />
+                        <input type="hidden" name="lesson_id" value="{{ lesson[0] }}" />
                         <button type="submit"
-                                class="{% if lesson_data[1] == lesson_title %} active-lesson {% else %} lesson-btn {% endif %}">
-                            {{ lesson_data[1] }}
+                                class="{% if lesson[1] == lesson_page_data[2] %} active-lesson {% else %} lesson-btn {% endif %}">
+                            {{ lesson[1] }}
                         </button>
                     </form>
                 {% endfor %}
@@ -48,7 +48,7 @@
                     </button>
                     <div class="next-prev-btns-wrapper">
                         <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
-                            <input type="hidden" name="lesson_id" value="{{ prev_lesson_id }}">
+                            <input type="hidden" name="lesson_id" value="{{ lesson_page_data[6] }}">
                             <button class="prev-btn">
                                 <svg width="20"
                                      height="20"
@@ -67,7 +67,7 @@
                             </button>
                         </form>
                         <form action="{{ url_for("my_courses.intermediate_route") }}" method="post">
-                            <input type="hidden" name="lesson_id" value="{{ next_lesson_id }}">
+                            <input type="hidden" name="lesson_id" value="{{ lesson_page_data[5] }}">
                             <button class="next-btn" type="submit">
                                 <svg width="20"
                                      height="20"
@@ -102,7 +102,7 @@
                 <!--End of top bar-->
                 <!--Lesson title, content and buttons to hear the sound of the lesson content-->
                 <div class="lesson-title-wrapper">
-                    <p class="lesson-title">{{ lesson_title }}</p>
+                    <p class="lesson-title">{{ lesson_page_data[2] }}</p>
                     <button class="speak-btn">
                         <svg xmlns="http://www.w3.org/2000/svg"
                              id="Layer_1"
@@ -116,7 +116,7 @@
                 </div>
                 <!--End of lesson title and buttons-->
                 <!--Lesson content area where the lesson content is displayed-->
-                <div class="content" id="content">{{ lesson_content | safe }}</div>
+                <div class="content" id="content">{{ lesson_page_data[3] | safe }}</div>
                 <!-- Using safe filter to render HTML content -->
                 <div class="down-btn-wrapper">
                     <button class="open-code-editor-btn"
