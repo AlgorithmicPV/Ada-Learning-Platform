@@ -174,7 +174,18 @@ def signup():
             cursor = conn.cursor()
 
             cursor.execute(
-                """INSERT INTO User (user_id, email, full_name, password, auth_provider, theme_preference, join_date, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                """
+                INSERT 
+                INTO User 
+                    (user_id, 
+                    email, 
+                    full_name, 
+                    password, 
+                    auth_provider, 
+                    theme_preference, 
+                    join_date, 
+                    profile_image) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (user_id,
                  email,
                  name,

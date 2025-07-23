@@ -22,140 +22,71 @@ community_bp = Blueprint("community", __name__)
 # If the user is not logged in, it redirects to the login page
 
 
-# Function to get all community questions from the database
-# Used a function because I can use this function to get all community
+
+# I Use a function because I can use this function to get all community
 # questions and filter them according to the below routes
-def get_all_community_questions_from_db():
+def get_all_community_questions_from_db(filter_query):
     conn = sqlite3.connect("database/app.db")
     cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT question_id, user_id, question, created_at FROM Question")
-    question_details = cursor.fetchall()
-
-    # reverse the whole data come from the database
-    # From this latest discussions will show at the top
-    # As the new discussions are added at the end of the database
-    question_details.reverse()
-
-    # Keeps an empty list to store all the question details
-    # Then we can psss this array to client side
-    # to render the question cards
-    question_cards_detail = []
-
-    for question_detail in question_details:
-        posted_user_id = question_detail[1]
-        question_id = question_detail[0]
-
-        # Gets the Name and profile image of the user who posted the discussion
-        # and Store it in user_data
-        cursor.execute(
-            "SELECT full_name, profile_image, auth_provider FROM User WHERE user_id=?",
-            (posted_user_id,),
-        )
-        user_data = cursor.fetchall()[0]
-
-        # Gets the auth_provder from the database   
-        # That will help to decide to change the profile image static location
-        # If the auth_provder is manual then I use the static_base to get the correct static location
-        # If the auth_provider is google then I do not use the static base as it is a url given by the google
-        # To do this I convert the user_data to a temperory list and change the profile image location
-        # Then I remove the auth_provder from the list
-        # And then convert the list back to a tuple
-        temp_user_data_list = list(user_data)
-        if user_data[2] == "manual":
-            statice_base = url_for('static', filename='')
-            temp_user_data_list[1] = statice_base + user_data[1]
-        
-        temp_user_data_list.remove(temp_user_data_list[2])
-        user_data = tuple(temp_user_data_list)           
-
-        cursor.execute(
-            "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,)
-        )
-        number_of_replies = cursor.fetchone()
-
-        # As the question_detail is a tuple, I used += operator to add the user_data and number_of_replies
-        # Because they are also tuples
-        question_detail += user_data
-        question_detail += number_of_replies
-
-        # Convert the question_detail tuple to a list to modify it easily
-        temp_question_detail = list(question_detail)
-
-        today = date.today()
-
-        # Extract the date from the created_at field
-        # and format it to compare with today's date
-        question_date = question_detail[3].split("T")[0]
-
-        # This helps to check, if the quesiont / discussion is posted today
-        # It will show only the time in 12 hour format
-        # If not, it will show the date and time in 12 hour format
-        # This helps for users to find new discussions easily
-        if str(today) == question_date:
-            time_str = question_detail[3].split("T")[1]
-            time_obj = datetime.strptime(time_str, "%H:%M:%S")
-            time_12hr = time_obj.strftime("%I:%M %p")
-            temp_question_detail[3] = time_12hr
-        else:
-            format_string = "%Y-%m-%dT%H:%M:%S"
-            temp_question_detail[3] = str(
-                (datetime.strptime(
-                    question_detail[3],
-                    format_string)).strftime("%Y-%m-%d %I:%M %p"))
-
-        user_id = session.get("user_id")
-
-        if question_detail[1] == user_id:
-            temp_question_detail[4] = "You"
-
-        # Removes the user_id from the question_detail
-        # Because it is not needed for the client side
-        temp_question_detail.remove(question_detail[1])
-
-        # As this platform enables to use markdown for user inputs, but for the preview removes the markdown syntax
-        # and shows the text only for the better user experience and keeps the
-        # same height for each question card
-        temp_question_detail[1] = strip_markdown.strip_markdown(
-            question_detail[2])
-
-        # Checks if the user has saved this discussion
-        # By trying to get a saved_question_id from the Saved_question table where the user_id and question_id matches
-        # If there is value for saved_question_id, it means the user has saved that discussion
-        # and appends "saved" to the temp_question_detail list if not appends "unsaved"
-        # This helps for the frontend to show which icon should be shown for
-        # the save button
-        cursor.execute(
-            "SELECT saved_question_id FROM Saved_question WHERE user_id=? AND question_id=?",
-            (user_id, question_id),
-        )
-
-        saved_question_id = cursor.fetchone()
-
-        if saved_question_id:
-            temp_question_detail.append("saved")
-        else:
-            temp_question_detail.append("unsaved")
-
-        if question_detail[1] == user_id:
-            temp_question_detail.append("you")
-        else:
-            temp_question_detail.append(" ")
-
-        # Converts the temp_question_detail list back to a tuple
-        # Because the question_detail is a tuple and we need to keep the same
-        # data type
-        question_detail = tuple(temp_question_detail)
-
-        # Appends the question_detail tuple to the question_cards_detail list
-        # This list will be returned to the client side
-        question_cards_detail.append(question_detail)
-
+    static_base = url_for('static', filename='') 
+    user_id = session.get("user_id")
+    base_query = """
+            SELECT
+                Q.question_id,
+                Q.question,
+                /*
+                This helps to check, if the quesiont / discussion is posted today
+                It will show only the time in 12 hour format
+                If not, it will show the date and time in 12 hour format
+                This helps for users to find new discussions easily 
+                */
+                CASE 
+                    WHEN DATE(Q.created_at) = DATE('now')
+                    THEN STRFTIME('%I:%M %p', TIME(REPLACE(Q.created_at, 'T', ' '))) 
+                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(Q.created_at, 'T', ' ')) 
+                END AS created_at,
+                CASE 
+                    WHEN U.user_id = :uid THEN 'You' 
+                    ELSE U.full_name
+                END AS posted_user,
+                CASE 
+                    WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                    ELSE U.profile_image
+                END AS profile_image_url,
+                COUNT(A.answer_id) AS number_of_answers,
+                CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM Saved_question SQ
+                        WHERE SQ.question_id = Q.question_id
+                            AND SQ.user_id = :uid
+                    )THEN 'saved'
+                    ELSE 'unsaved'
+                END AS save_status
+            FROM
+                Question Q
+            JOIN
+                User U ON U.user_id = Q.user_id
+            LEFT JOIN
+                Answer A ON A.question_id = Q.question_id
+        """
+    grouping_and_ordering_query = """
+            GROUP BY     
+                Q.question_id
+            ORDER BY Q.created_at DESC
+        """
+    cursor.execute( base_query + filter_query + grouping_and_ordering_query, {"uid" : user_id, "static_base": static_base})
+    question_cards_detail_from_db = cursor.fetchall()
     conn.close()
-    return question_cards_detail
-
-##### make a function to change the profile image url based on the auth
+    if question_cards_detail_from_db: 
+            question_cards_detail = []
+            for question_card in question_cards_detail_from_db:
+                temp_list = list(question_card)
+                temp_list[1] = strip_markdown.strip_markdown(question_card[1])
+                question_cards_detail.append(temp_list)
+            return question_cards_detail
+    else:
+        return ""
 
 
 # Route that displays all community questions that happened in the platform
@@ -174,7 +105,7 @@ def all_community_questions():
 @community_bp.route("/community/get-all-questions")
 def get_all_community_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db()
+        question_cards_detail = get_all_community_questions_from_db("")
         return jsonify(question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -195,13 +126,7 @@ def newest_community_questions():
 @community_bp.route("/community/get-new-questions")
 def get_new_community_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db()
-        new_question_cards_detail = []
-        today = str(date.today())
-        for question_card_detail in question_cards_detail:
-            posted_date = str(parse(question_card_detail[2])).split(" ")[0]
-            if posted_date == today:
-                new_question_cards_detail.append(question_card_detail)
+        new_question_cards_detail = get_all_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now')")
         return jsonify(new_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -222,11 +147,7 @@ def user_community_questions():
 @community_bp.route("/community/get-user-posted-questions")
 def get_user_posted_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db()
-        user_question_cards_detail = []
-        for question_card_detail in question_cards_detail:
-            if question_card_detail[7] == "you":
-                user_question_cards_detail.append(question_card_detail)
+        user_question_cards_detail = get_all_community_questions_from_db("WHERE Q.user_id = :uid")
         return jsonify(user_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -246,11 +167,7 @@ def unanswered_community_questions():
 @community_bp.route("/community/get-unanswered-questions")
 def get_unanswered_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db()
-        unanswered_question_cards_detail = []
-        for question_card_detail in question_cards_detail:
-            if question_card_detail[5] == 0:
-                unanswered_question_cards_detail.append(question_card_detail)
+        unanswered_question_cards_detail = get_all_community_questions_from_db("WHERE A.answer_id IS NULL")
         return jsonify(unanswered_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -271,11 +188,15 @@ def saved_community_questions():
 @community_bp.route("/community/get-saved-questions")
 def get_saved_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db()
-        saved_question_cards_detail = []
-        for question_card_detail in question_cards_detail:
-            if question_card_detail[6] == "saved":
-                saved_question_cards_detail.append(question_card_detail)
+        saved_question_cards_detail = get_all_community_questions_from_db(
+            """
+            WHERE EXISTS (
+            SELECT 1
+            FROM Saved_question SQ
+            WHERE SQ.question_id = Q.question_id
+                AND SQ.user_id = :uid
+            )
+            """)
         return jsonify(saved_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -302,7 +223,13 @@ def add_new_post():
                 created_at = datetime.now().isoformat(timespec="seconds")
 
                 cursor.execute(
-                    "INSERT INTO Question (question_id, user_id, question, created_at) VALUES (?, ?, ?, ?)",
+                    """
+                    INSERT 
+                    INTO Question (question_id, 
+                                    user_id, 
+                                    question, 
+                                    created_at) 
+                    VALUES (?, ?, ?, ?)""",
                     (question_id,
                      user_id,
                      question,
@@ -594,9 +521,11 @@ def get_answers():
 
             if answered_user_info[2] == "manual":
                 statice_base = url_for('static', filename='')
-                temp_answered_user_info_list[1] = statice_base + answered_user_info[1]
+                temp_answered_user_info_list[1] = statice_base + \
+                    answered_user_info[1]
 
-            temp_answered_user_info_list.remove(temp_answered_user_info_list[2])
+            temp_answered_user_info_list.remove(
+                temp_answered_user_info_list[2])
             answered_user_info = tuple(temp_answered_user_info_list)
 
             answer_detail_from_db += answered_user_info
