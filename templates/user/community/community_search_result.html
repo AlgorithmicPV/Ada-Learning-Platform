@@ -15,18 +15,18 @@
 {% block
     discussions_cont %}
     {% if search_result %}
-        {% for answer_card in search_result
+        {% for question_card in search_result
             %}
             <div class="question-card">
-                <img src="{{ url_for('static', filename= answer_card[4]) }}" alt="" />
+                <img src="{{ question_card[4] }}" alt="" />
                 <div class="question-card-cont">
                     <div class="question-card-top-bar">
                         <div>
-                            <p class="writer">{{ answer_card[3] }}</p>
-                            <p class="time">{{ answer_card[2] }}</p>
+                            <p class="writer">{{ question_card[3] }}</p>
+                            <p class="time">{{ question_card[2] }}</p>
                         </div>
-                        <button class="save-btn" data-question-id="{{ answer_card[0] }}">
-                            {% if answer_card[6] == "saved" %}
+                        <button class="save-btn" data-question-id="{{ question_card[0] }}">
+                            {% if question_card[6] == "saved" %}
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      id="Filled"
                                      viewBox="0 0 24 24"
@@ -45,10 +45,10 @@
                             {% endif %}
                         </button>
                     </div>
-                    <p class="question">{{ answer_card[1] }}</p>
-                    <div class="number-of-answers-wrapper">
-                        <p class="number-of-answers">{{ answer_card[5] }}</p>
-                        <button class="number-of-answers" data-question-id="{{ answer_card[0] }}">
+                    <p class="question">{{ question_card[1] }}</p>
+                    <div class="number-of-questions-wrapper">
+                        <p class="number-of-questions">{{ question_card[5] }}</p>
+                        <button class="number-of-questions" data-question-id="{{ question_card[0] }}">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  id="Layer_1"
                                  data-name="Layer 1"

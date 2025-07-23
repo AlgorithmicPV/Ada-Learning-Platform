@@ -22,15 +22,25 @@ community_bp = Blueprint("community", __name__)
 # If the user is not logged in, it redirects to the login page
 
 
+def to_iso_datetime(input_str, fallback_date=None):
+    if fallback_date is None:
+        fallback_date = date.today()
+
+    try:
+        dt = parse(input_str, default=datetime.combine(fallback_date, datetime.min.time()))
+    except Exception as e:
+        raise ValueError(f"Invalid time format: {input_str}") from e
+
+    return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 # I Use a function because I can use this function to get all community
 # questions and filter them according to the below routes
-def get_all_community_questions_from_db(filter_query):
+def get_community_questions_from_db(filter_query):
     conn = sqlite3.connect("database/app.db")
     cursor = conn.cursor()
-    static_base = url_for('static', filename='') 
     user_id = session.get("user_id")
-    base_query = """
+    static_base = url_for('static', filename='')
+    base_query = f"""
             SELECT
                 Q.question_id,
                 Q.question,
@@ -41,9 +51,9 @@ def get_all_community_questions_from_db(filter_query):
                 This helps for users to find new discussions easily 
                 */
                 CASE 
-                    WHEN DATE(Q.created_at) = DATE('now')
-                    THEN STRFTIME('%I:%M %p', TIME(REPLACE(Q.created_at, 'T', ' '))) 
-                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(Q.created_at, 'T', ' ')) 
+                    WHEN DATE(Q.created_at) = DATE('now', 'localtime')
+                    THEN STRFTIME('%I:%M %p', TIME(Q.created_at))
+                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', Q.created_at)
                 END AS created_at,
                 CASE 
                     WHEN U.user_id = :uid THEN 'You' 
@@ -68,7 +78,7 @@ def get_all_community_questions_from_db(filter_query):
             JOIN
                 User U ON U.user_id = Q.user_id
             LEFT JOIN
-                Answer A ON A.question_id = Q.question_id
+                Answer A ON A.question_id = Q.question_id  
         """
     grouping_and_ordering_query = """
             GROUP BY     
@@ -77,6 +87,7 @@ def get_all_community_questions_from_db(filter_query):
         """
     cursor.execute( base_query + filter_query + grouping_and_ordering_query, {"uid" : user_id, "static_base": static_base})
     question_cards_detail_from_db = cursor.fetchall()
+    last_question_id = question_cards_detail_from_db[0][0]
     conn.close()
     if question_cards_detail_from_db: 
             question_cards_detail = []
@@ -87,6 +98,9 @@ def get_all_community_questions_from_db(filter_query):
             return question_cards_detail
     else:
         return ""
+    
+def get_new_community_questions_from_db():
+    pass
 
 
 # Route that displays all community questions that happened in the platform
@@ -105,7 +119,7 @@ def all_community_questions():
 @community_bp.route("/community/get-all-questions")
 def get_all_community_questions():
     if "user_id" in session:
-        question_cards_detail = get_all_community_questions_from_db("")
+        question_cards_detail = get_community_questions_from_db("")
         return jsonify(question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -126,7 +140,7 @@ def newest_community_questions():
 @community_bp.route("/community/get-new-questions")
 def get_new_community_questions():
     if "user_id" in session:
-        new_question_cards_detail = get_all_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now')")
+        new_question_cards_detail = get_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now')")
         return jsonify(new_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -147,7 +161,7 @@ def user_community_questions():
 @community_bp.route("/community/get-user-posted-questions")
 def get_user_posted_questions():
     if "user_id" in session:
-        user_question_cards_detail = get_all_community_questions_from_db("WHERE Q.user_id = :uid")
+        user_question_cards_detail = get_community_questions_from_db("WHERE Q.user_id = :uid")
         return jsonify(user_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -167,7 +181,7 @@ def unanswered_community_questions():
 @community_bp.route("/community/get-unanswered-questions")
 def get_unanswered_questions():
     if "user_id" in session:
-        unanswered_question_cards_detail = get_all_community_questions_from_db("WHERE A.answer_id IS NULL")
+        unanswered_question_cards_detail = get_community_questions_from_db("WHERE A.answer_id IS NULL")
         return jsonify(unanswered_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -188,7 +202,7 @@ def saved_community_questions():
 @community_bp.route("/community/get-saved-questions")
 def get_saved_questions():
     if "user_id" in session:
-        saved_question_cards_detail = get_all_community_questions_from_db(
+        saved_question_cards_detail = get_community_questions_from_db(
             """
             WHERE EXISTS (
             SELECT 1
@@ -310,115 +324,65 @@ def toggle_save():
 @community_bp.route("/community/<question_id>/discussions")
 def discussions(question_id):
     if "user_id" in session:
-        # Check linked question_id is same as the session question_id
-        # IF it is then it will show the discussion page
         if question_id == session.get("question_id"):
             conn = sqlite3.connect("database/app.db")
             cursor = conn.cursor()
-
-            question_details_that_goes_to_client_side = []
-
-            cursor.execute(
-                "SELECT user_id, question, created_at FROM Question WHERE question_id=?",
-                (question_id,),
-            )
-            question_details_from_db = cursor.fetchall()[0]
-
-            # If users have types their question using markdown synatx
-            # converts them into HTML format
-            # and appends to the question_details_that_goes_to_client_side list
-            question_details_that_goes_to_client_side.append(
-                markdown.markdown(question_details_from_db[1])
-            )
-
-            today = date.today()
-
-            # Extract the date from the created_at field
-            # and format it to compare with today's date
-            question_date = question_details_from_db[2].split("T")[0]
-
-            # This helps to check, if the quesiont / discussion is posted today
-            # It will show only the time in 12 hour format
-            # If not, it will show the date and time in 12 hour format
-            # This helps for users to find new discussions easily
-            if str(today) == question_date:
-                time_str = question_details_from_db[2].split("T")[1]
-                time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                time_12hr = time_obj.strftime("%I:%M %p")
-                question_details_that_goes_to_client_side.append(time_12hr)
-            else:
-                format_string = "%Y-%m-%dT%H:%M:%S"
-                question_details_that_goes_to_client_side.append(
-                    str(
-                        (
-                            datetime.strptime(
-                                question_details_from_db[2], format_string
-                            )
-                        ).strftime("%Y-%m-%d %I:%M %p")
-                    )
-                )
-
             user_id = session.get("user_id")
-
-            # For better user experiences, if the question is posted by the logged in user
-            # it will show "You" instead of their name
-            if question_details_from_db[0] == user_id:
-                question_details_that_goes_to_client_side.append("You")
-            else:
-                cursor.execute(
-                    "SELECT full_name FROM User WHERE user_id=?",
-                    (question_details_from_db[0],),
+            static_base = url_for('static', filename='') 
+            cursor.execute(
+                        """
+                        SELECT
+                            Q.question_id,
+                            Q.question,
+                            /*
+                            This helps to check, if the quesiont / discussion is posted today
+                            It will show only the time in 12 hour format
+                            If not, it will show the date and time in 12 hour format
+                            This helps for users to find new discussions easily 
+                            */
+                            CASE 
+                                WHEN DATE(Q.created_at) = DATE('now')
+                                THEN STRFTIME('%I:%M %p', TIME(REPLACE(Q.created_at, 'T', ' '))) 
+                                ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(Q.created_at, 'T', ' ')) 
+                            END AS created_at,
+                            CASE 
+                                WHEN U.user_id = :uid THEN 'You' 
+                                ELSE U.full_name
+                            END AS posted_user,
+                            CASE 
+                                WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                                ELSE U.profile_image
+                            END AS profile_image_url,
+                            COUNT(A.answer_id) AS number_of_answers,
+                            CASE
+                                WHEN EXISTS (
+                                    SELECT 1
+                                    FROM Saved_question SQ
+                                    WHERE SQ.question_id = Q.question_id
+                                        AND SQ.user_id = :uid
+                                )THEN 'saved'
+                                ELSE 'unsaved'
+                            END AS save_status
+                        FROM
+                            Question Q
+                        JOIN
+                            User U ON U.user_id = Q.user_id
+                        LEFT JOIN
+                            Answer A ON A.question_id = Q.question_id
+                        WHERE Q.question_id = :qid                             
+                        """, {"uid": user_id, "qid" : question_id, "static_base":static_base})
+            question_details_from_db = cursor.fetchall()
+            if question_details_from_db:
+                question_details_that_goes_to_client_side = list(question_details_from_db[0])
+                question_details_that_goes_to_client_side[1] = markdown.markdown(question_details_that_goes_to_client_side[1],extensions=['fenced_code'])
+                return render_template(
+                    "user/community/discussions.html",
+                    question_detail=question_details_that_goes_to_client_side,
                 )
-                posted_user_name = cursor.fetchone()[0]
-                question_details_that_goes_to_client_side.append(
-                    posted_user_name)
-
-            # Append the profile image of the user who posted the question
-            cursor.execute(
-                "SELECT profile_image, auth_provider FROM User WHERE user_id = ?",
-                (question_details_from_db[0],),
-            )
-            posted_user_data = cursor.fetchall()[0]
-
-            temp_user_data_list = list(posted_user_data)
-            if posted_user_data[1] == "manual":
-                statice_base = url_for('static', filename='')
-                temp_user_data_list[0] = statice_base + posted_user_data[0]
-
-            temp_user_data_list.remove(temp_user_data_list[1])
-            profile_image = tuple(temp_user_data_list)
-            # print(profile_image)
-            question_details_that_goes_to_client_side.append(profile_image[0])
-            # Check has the user saved this discussion
-            # depending on that append "saved" or "unsaved" to the question_details_that_goes_to_client_side list
-            # This helps for the frontend to show the correct icon
-            cursor.execute(
-                "SELECT saved_question_id FROM Saved_question WHERE user_id=? AND question_id=?",
-                (user_id, question_id),
-            )
-
-            saved_question_id = cursor.fetchone()
-
-            if saved_question_id:
-                question_details_that_goes_to_client_side.append("saved")
             else:
-                question_details_that_goes_to_client_side.append("unsaved")
-
-            # Counts the number of replies for the question and appends it to
-            # the question_details_that_goes_to_client_side list
-            cursor.execute(
-                "SELECT COUNT(*) FROM Answer WHERE question_id = ?", (question_id,))
-            number_of_replies = cursor.fetchone()[0]
-            question_details_that_goes_to_client_side.append(number_of_replies)
-
-            # Appends question_id to the question_details_that_goes_to_client_side list
-            # This helps to toggle the save and unsave functionality
-            question_details_that_goes_to_client_side.append(question_id)
-
-            return render_template(
-                "user/community/discussions.html",
-                question_detail=question_details_that_goes_to_client_side,
-            )
+                return redirect(url_for("community.all_community_questions"))
+        else:
+            return redirect(url_for("community.all_community_questions"))
     else:
         return redirect(url_for("auth.login"))
 
@@ -472,11 +436,20 @@ def add_answers():
                 answer_id = str(uuid.uuid4())
                 question_id = session.get("question_id")
                 user_id = session.get("user_id")
-                cursor.execute("""INSERT INTO Answer
-                               (answer_id, question_id, user_id, content, created_at)
-                               VALUES
-                               (?, ?, ?, ?, ?)""",
-                               (answer_id, question_id, user_id, user_answer, created_at))
+                cursor.execute("""
+                               INSERT 
+                               INTO Answer
+                               (answer_id, 
+                               question_id, 
+                               user_id, 
+                               content, 
+                               created_at)
+                               VALUES (?, ?, ?, ?, ?)""",
+                               (answer_id, 
+                                question_id, 
+                                user_id, 
+                                user_answer, 
+                                created_at))
 
                 conn.commit()
                 conn.close()
@@ -497,116 +470,47 @@ def get_answers():
 
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
+        static_base = url_for('static', filename='') 
 
-        answers_details_that_go_to_the_frontend = []
+        user_id = session.get("user_id")
 
-        cursor.execute("""
-                        SELECT answer_id,
-                                user_id,
-                                content,
-                                created_at FROM Answer WHERE question_id = ?
-                       """, (question_id,))
+        cursor.execute(
+            """
+            SELECT 
+                A.answer_id,
+                A.content,
+                CASE 
+                WHEN DATE(A.created_at) = DATE('now')
+                    THEN STRFTIME('%I:%M %p', TIME(REPLACE(A.created_at, 'T', ' '))) 
+                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(A.created_at, 'T', ' ')) 
+                END AS created_at,
+                CASE 
+                WHEN U.user_id = :uid THEN 'You' 
+                    ELSE U.full_name
+                END AS answered_user,
+                CASE 
+                WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                    ELSE U.profile_image
+                END AS profile_image_url,
+                COUNT(AL.answer_id) AS number_of_likes,
+                CASE
+                WHEN EXISTS (
+                    SELECT 1
+                        FROM AnswerLike AL
+                        WHERE A.answer_id = AL.answer_id
+                            AND A.user_id = :uid
+                    )THEN 'like'
+                    ELSE 'unlike'
+                END AS like_status
+            FROM Answer A
+            JOIN User U ON U.user_id = A.user_id
+            LEFT JOIN AnswerLike AL ON AL.answer_id = A.answer_id
+            WHERE question_id = :qid
+            GROUP BY A.answer_id
+        """, {"uid": user_id, "qid": question_id, "static_base": static_base})
 
-        answers_details_from_db = cursor.fetchall()
-
-        for answer_detail_from_db in answers_details_from_db:
-            answered_user_id = answer_detail_from_db[1]
-
-            cursor.execute("""
-                            SELECT  full_name,
-                                    profile_image, auth_provider FROM User WHERE user_id=?
-                           """, (answered_user_id,))
-            answered_user_info = cursor.fetchall()[0]
-            temp_answered_user_info_list = list(answered_user_info)
-
-            if answered_user_info[2] == "manual":
-                statice_base = url_for('static', filename='')
-                temp_answered_user_info_list[1] = statice_base + \
-                    answered_user_info[1]
-
-            temp_answered_user_info_list.remove(
-                temp_answered_user_info_list[2])
-            answered_user_info = tuple(temp_answered_user_info_list)
-
-            answer_detail_from_db += answered_user_info
-
-            # Convert the tuple into a list because easier to modify
-            temp_array_of_answers_details = list(answer_detail_from_db)
-
-            # If user'answer is in markdown syntax ocnvert them into the HTML format
-            # and append to the temp_array_of_answers_details list
-            temp_array_of_answers_details[2] = markdown.markdown(
-                answer_detail_from_db[2])
-
-            user_id = session.get("user_id")
-
-            # If the answers is done by that relevant logged in user, changes username into "You"
-            # This gives better user experience and easier to find their
-            # answers
-            if answer_detail_from_db[1] == user_id:
-                temp_array_of_answers_details[4] = "You"
-
-            today = date.today()
-
-            # Extract the date from the created_at field
-            # and format it to compare with today's date
-            question_date = answer_detail_from_db[3].split("T")[0]
-
-            # This helps to check, if the quesiont / discussion is posted today
-            # It will show only the time in 12 hour format
-            # If not, it will show the date and time in 12 hour format
-            # This helps for users to find new discussions easily
-            if str(today) == question_date:
-                time_str = answer_detail_from_db[3].split("T")[1]
-                time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                time_12hr = time_obj.strftime("%I:%M %p")
-                temp_array_of_answers_details[3] = time_12hr
-            else:
-                format_string = "%Y-%m-%dT%H:%M:%S"
-                temp_array_of_answers_details[3] = (
-                    str(
-                        (
-                            datetime.strptime(
-                                answer_detail_from_db[3], format_string
-                            )
-                        ).strftime("%Y-%m-%d %I:%M %p")
-                    )
-                )
-
-            # Remove the user_id from the array as it is not needed for the
-            # frontend
-            temp_array_of_answers_details.remove(answer_detail_from_db[1])
-
-            # Counts the number of likes for the answer
-            # and appends it to the temp_array_of_answers_details list
-            cursor.execute("""
-                            SELECT COUNT(*) FROM AnswerLike WHERE answer_id=?
-                           """, (answer_detail_from_db[0],))
-
-            number_of_likes = cursor.fetchone()[0]
-            temp_array_of_answers_details.append(number_of_likes)
-
-            # This part helps to the frontend to set the relevant icon for the like button
-            # It is done by checking is relevanr logges user_id and answer_id
-            # is in the AnswerLike table
-            cursor.execute(
-                "SELECT like_id FROM AnswerLike WHERE user_id=? AND answer_id=?",
-                (user_id, answer_detail_from_db[0]),
-            )
-
-            like_id = cursor.fetchone()
-
-            if like_id:
-                temp_array_of_answers_details.append("like")
-            else:
-                temp_array_of_answers_details.append("unlike")
-
-            # Append the answer_id to the temp_array_of_answers_details list
-            answers_details_that_go_to_the_frontend.append(
-                temp_array_of_answers_details)
-
+        answers_details_that_go_to_the_frontend = cursor.fetchall()
         return jsonify(answers_details_that_go_to_the_frontend)
-
     else:
         return redirect(url_for("auth.login"))
 
@@ -715,7 +619,7 @@ def search_questions():
             keyword = request.args.get("search")
             search_result = []
             if not keyword == "" and not keyword.isspace():
-                question_cards_detail = get_all_community_questions_from_db()
+                question_cards_detail = get_community_questions_from_db("")
                 for question_card_detail in question_cards_detail:
 
                     # Converts the question from the database to plain text
