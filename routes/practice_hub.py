@@ -7,8 +7,6 @@ import markdown
 practice_hub_bp = Blueprint("practice_hub", __name__)
 
 # This Route shows the all the unsolved Challenges
-
-
 @practice_hub_bp.route("/practice-hub")
 def uncomplete_practice_challenges():
     if "user_id" in session:
@@ -17,41 +15,43 @@ def uncomplete_practice_challenges():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
-        cursor.execute("""SELECT challenge_id,
-                                number,
-                                challenge_title,
-                                difficulty_level
-                                FROM Challenge""")
-        all_challenges = cursor.fetchall()
-
-        # Finds the status of each challenge,
-        # If the status is None, appends "-" to the unsolve_challenges
-        # That sign helps user to indetify that user hasn't done that challenge
-        # If the status's value is "Started" it will append that value
-        # This means user has started the challenge but hasn't done
-        # I used status[0] because when we get data from the database we get it
-        # as a tuple
-        for challenge in all_challenges:
-            cursor.execute("""
-                          SELECT status
-                           FROM Challenge_attempt
-                           WHERE challenge_id=? AND
-                           user_id=?""", (challenge[0], user_id,))
-
-            status = cursor.fetchone()
-            if status is None:
-                challenge += ("-",)
-                unsolved_challenges.append(challenge)
-
-            if status:
-                if status[0] == "Started":
-                    challenge += ("Started",)
-                    unsolved_challenges.append(challenge)
+        cursor.execute(
+            """
+            SELECT 
+                C.challenge_id,
+                C.number,
+                C.challenge_title,
+                C.difficulty_level,
+                CASE
+                    WHEN
+                        (
+                        SELECT CA.status 
+                        FROM Challenge_attempt CA
+                        WHERE CA.challenge_id = C.challenge_id
+                            AND CA.user_id = :uid 
+                        ) IS NULL
+                    THEN '-'
+                    ELSE (
+                        SELECT CA.status 
+                        FROM Challenge_attempt CA
+                        WHERE CA.challenge_id = C.challenge_id
+                            AND CA.user_id = :uid 
+                        )
+                END AS status            
+            FROM Challenge C
+            WHERE (
+                SELECT CA.status 
+                FROM Challenge_attempt CA
+                WHERE CA.challenge_id = C.challenge_id
+                    AND CA.user_id = :uid 
+            ) IS NOT 'Completed'
+        """, {"uid": user_id})
+        unsolved_challenges = cursor.fetchall()
+        conn.close()
 
         # I assigned the page title in here
         # Because I am using the same template to show the search result
         page_title = "Unsolved"
-        conn.close()
         return render_template(
             "user/practice_hub/unsolved_challenges.html",
             page_title=page_title,
@@ -76,6 +76,8 @@ def validate_challenge_id():
             conn = sqlite3.connect("database/app.db")
             cursor = conn.cursor()
 
+            # Validates the challenge id comes from client side w=
+            # with the database
             cursor.execute("""
                             SELECT challenge_id
                             FROM Challenge
@@ -86,22 +88,19 @@ def validate_challenge_id():
 
             if challenge_id_from_db:
                 user_id = session.get("user_id")
-                cursor.execute("""
-                              SELECT status
-                               FROM Challenge_attempt
-                               WHERE challenge_id=? AND
-                               user_id=?""", (client_challenge_id, user_id,))
-
-                status = cursor.fetchone()
-                if status is None:
-                    challenge_attempt_id = str(uuid.uuid4())
-                    cursor.execute("""
-                                INSERT INTO
-                                Challenge_attempt
-                                (id, user_id, challenge_id, status) VALUES
-                                (?, ?, ?, ?)
-                               """, (challenge_attempt_id, user_id, client_challenge_id, "Started"))
-                    conn.commit()
+                challenge_attempt_id = str(uuid.uuid4())
+                cursor.execute(
+                    """
+                        -- Insert a new challenge attempt with status 'Started' if not already attempted
+                        INSERT INTO Challenge_attempt (id, user_id, challenge_id, status)
+                        SELECT :caid, :uid, :cid, 'Started'
+                        WHERE NOT EXISTS (
+                            SELECT 1
+                            FROM Challenge_attempt
+                            WHERE challenge_id = :cid AND user_id = :uid
+                        );
+                    """, {'caid': challenge_attempt_id, 'uid' : user_id, 'cid' : client_challenge_id})
+                conn.commit()
 
                 session["challenge_id"] = client_challenge_id
 
@@ -134,8 +133,6 @@ def validate_challenge_id():
         return redirect(url_for("auth.login"))
 
 # This Route shows the Challenge and the code editor etc..
-
-
 @practice_hub_bp.route("/practice-hub/<challenge_title>")
 def show_challenge(challenge_title):
     if "user_id" in session:
@@ -251,60 +248,25 @@ def completed_practice_challenges():
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
-        # Gets all the Challenges from the database
-        cursor.execute("""SELECT challenge_id,
-                                number,
-                                challenge_title,
-                                difficulty_level
-                                FROM Challenge""")
-        all_challenges = cursor.fetchall()
-
-        # Selects all the Challenges that the user has completed
-        # Then those Challeneges are added to the completed_challenges list
-        for challenge in all_challenges:
-            cursor.execute("""
-                          SELECT status
-                           FROM Challenge_attempt
-                           WHERE challenge_id=? AND
-                           user_id=?""", (challenge[0], user_id,))
-
-            status = cursor.fetchone()
-            if status:
-                if status[0] == "Completed":
-
-                    # Gets dates that relevant challenge are completed
-                    # IF the date is today it will show the time 
-                    # This if for better user expereince
-                    cursor.execute("""
-                                SELECT completed_at FROM
-                                Challenge_attempt
-                                WHERE challenge_id=? AND
-                                user_id=?""", (challenge[0], user_id,))
-                    completed_at_from_db = cursor.fetchone()[0]
-                    format_string = "%Y-%m-%dT%H:%M:%S"
-                    today = date.today()
-
-                    completed_date = completed_at_from_db.split("T")[0]
-
-                    if str(today) == completed_date:
-                        time_str = completed_at_from_db.split("T")[1]
-                        time_obj = datetime.strptime(time_str, "%H:%M:%S")
-                        time_12hr = time_obj.strftime("%I:%M %p")
-                        challenge += (time_12hr,)
-                    else:
-                        format_string = "%Y-%m-%dT%H:%M:%S"
-                        challenge += (
-                            str(
-                                (
-                                    datetime.strptime(
-                                        completed_at_from_db, format_string
-                                    )
-                                ).strftime("%Y-%m-%d %I:%M %p")
-                            ),
-                        )
-
-                    completed_challenges.append(challenge)
-
+        cursor.execute(
+            """
+                SELECT 
+                    C.challenge_id,
+                    C.number,
+                    C.challenge_title,
+                    C.difficulty_level,
+                    CASE 
+                        WHEN DATE(CA.completed_at) = DATE('now', 'localtime')
+                            THEN STRFTIME('%I:%M %p', TIME(CA.completed_at))
+                            ELSE STRFTIME('%Y-%m-%d %I:%M %p', CA.completed_at)
+                    END AS completed_at
+                FROM Challenge C
+                JOIN challenge_attempt CA 
+                    ON CA.challenge_id = C.challenge_id 
+                    AND CA.status = 'Completed'
+                    AND CA.user_id = ?
+            """, (user_id,))
+        completed_challenges = cursor.fetchall()
         conn.close()
 
         return render_template(
@@ -317,20 +279,9 @@ def completed_practice_challenges():
 @practice_hub_bp.route("/practice-hub/search", methods=["GET"])
 def search():
     if "user_id" in session:
-
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
-        cursor.execute("""SELECT challenge_id,
-                                number,
-                                challenge_title,
-                                difficulty_level
-                                FROM Challenge""")
-        all_challenges = cursor.fetchall()
-
-        filtered_challenges = (
-            []
-        )  # This will hold the courses that match the search keyword
         if request.method == "GET":
             keyword = request.args.get(
                 "search"
@@ -338,19 +289,15 @@ def search():
                 # lowercase for case-insensitive search
             ).lower()
             if not keyword == "" and not keyword.isspace():
-                for challenge in all_challenges:
-                    for word in challenge:
-                        word = str(
-                            word
-                            # Converts each word in the course block to
-                            # lowercase for case-insensitive search
-                        ).lower()
-                        # Checks if the keyword is present in any word of the
-                        # course block
-                        if (keyword in word):
-                            filtered_challenges.append(challenge)
-                            break
-
+                cursor.execute("""
+                       SELECT challenge_id,
+                                number,
+                                challenge_title,
+                                difficulty_level
+                                FROM Challenge
+                        WHERE challenge_title LIKE ?
+                       """, ((f'%{keyword}%',)))
+                filtered_challenges = cursor.fetchall()
                 return render_template(
                     "user/practice_hub/search_result.html",
                     challenges=filtered_challenges, page_title="Search Result"

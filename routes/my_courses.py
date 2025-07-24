@@ -142,7 +142,6 @@ def all_courses():
         if request.method == "POST":
             course_id = request.form.get("course_id")
 
-
             cursor.execute("SELECT course_id FROM Course WHERE course_id = ?", (course_id,))
 
             course_id_tuple = cursor.fetchall()

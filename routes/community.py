@@ -87,7 +87,6 @@ def get_community_questions_from_db(filter_query):
         """
     cursor.execute( base_query + filter_query + grouping_and_ordering_query, {"uid" : user_id, "static_base": static_base})
     question_cards_detail_from_db = cursor.fetchall()
-    last_question_id = question_cards_detail_from_db[0][0]
     conn.close()
     if question_cards_detail_from_db: 
             question_cards_detail = []
@@ -140,7 +139,7 @@ def newest_community_questions():
 @community_bp.route("/community/get-new-questions")
 def get_new_community_questions():
     if "user_id" in session:
-        new_question_cards_detail = get_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now')")
+        new_question_cards_detail = get_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now', 'localtime')")
         return jsonify(new_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -341,9 +340,9 @@ def discussions(question_id):
                             This helps for users to find new discussions easily 
                             */
                             CASE 
-                                WHEN DATE(Q.created_at) = DATE('now')
-                                THEN STRFTIME('%I:%M %p', TIME(REPLACE(Q.created_at, 'T', ' '))) 
-                                ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(Q.created_at, 'T', ' ')) 
+                                WHEN DATE(Q.created_at) = DATE('now', 'localtime')
+                                THEN STRFTIME('%I:%M %p', TIME(Q.created_at)) 
+                                ELSE STRFTIME('%Y-%m-%d %I:%M %p', Q.created_at) 
                             END AS created_at,
                             CASE 
                                 WHEN U.user_id = :uid THEN 'You' 
@@ -439,11 +438,11 @@ def add_answers():
                 cursor.execute("""
                                INSERT 
                                INTO Answer
-                               (answer_id, 
-                               question_id, 
-                               user_id, 
-                               content, 
-                               created_at)
+                                    (answer_id, 
+                                    question_id, 
+                                    user_id, 
+                                    content, 
+                                    created_at)
                                VALUES (?, ?, ?, ?, ?)""",
                                (answer_id, 
                                 question_id, 
@@ -461,8 +460,6 @@ def add_answers():
 # This route gets all the answers that are relevant to the question that user clicked
 # THis route passes the answers to the client side in every 2.5 seconds
 # To keep anwers updated
-
-
 @community_bp.route("/community/get-answers")
 def get_answers():
     if "user_id" in session:
@@ -480,7 +477,7 @@ def get_answers():
                 A.answer_id,
                 A.content,
                 CASE 
-                WHEN DATE(A.created_at) = DATE('now')
+                WHEN DATE(A.created_at) = DATE('now', 'localtime')
                     THEN STRFTIME('%I:%M %p', TIME(REPLACE(A.created_at, 'T', ' '))) 
                     ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(A.created_at, 'T', ' ')) 
                 END AS created_at,
@@ -518,8 +515,6 @@ def get_answers():
 # If user has likes the answer it will comver to unlike and other way around
 # It also counts the number of likes for the answer and sends it to the
 # client side
-
-
 @community_bp.route("/community/toggle-like", methods=["POST"])
 def toggle_like():
     if "user_id" in session:
