@@ -173,8 +173,8 @@ def dashboard():
                 SELECT E1.*
                 FROM Enrollment E1
                 WHERE E1.status = 'started'
-                AND DATETIME(REPLACE(E1.enrolled_at, 'T', ' ')) = (
-                    SELECT MAX(DATETIME(REPLACE(E2.enrolled_at, 'T', ' ')))
+                AND DATETIME(REPLACE(E1.last_accessed, 'T', ' ')) = (
+                    SELECT MAX(DATETIME(REPLACE(E2.last_accessed, 'T', ' ')))
                     FROM Enrollment E2
                     WHERE E2.user_id = :uid
                     AND E2.status = 'started'

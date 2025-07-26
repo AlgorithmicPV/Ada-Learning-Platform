@@ -140,17 +140,37 @@ def all_courses():
             timestamp = datetime.now().isoformat(timespec="seconds")
 
             cursor.execute("""
-                            INSERT INTO Enrollment
-                                (enrollment_id,
-                                user_id,
-                                course_id,
-                                enrolled_at,
-                                status)
-                            SELECT ?, ?, ?, ?, ?
-                           WHERE NOT EXISTS (
-                                SELECT 1 FROM Enrollment
-                                WHERE user_id = ? AND course_id = ?)
-                           """, (enrollment_id, user_id, course_id, timestamp, "started", user_id, course_id))
+                INSERT INTO Enrollment (
+                    enrollment_id,
+                    user_id,
+                    course_id,
+                    enrolled_at,
+                    status,
+                    last_accessed
+                )
+                SELECT ?, ?, ?, ?, ?, ?
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM Enrollment
+                    WHERE user_id = ? AND course_id = ?
+                )
+            """, (
+                enrollment_id,
+                user_id,
+                course_id,
+                timestamp,
+                "started",
+                timestamp,  
+                user_id,
+                course_id
+            ))
+
+
+            cursor.execute("""
+                UPDATE Enrollment
+                SET last_accessed = ?
+                WHERE user_id = ? AND course_id = ? AND status = 'started'
+            """, (timestamp, user_id, course_id))
+
 
             conn.commit()
 
