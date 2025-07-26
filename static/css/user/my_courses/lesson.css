@@ -134,6 +134,7 @@
 .done-btn,
 .open-code-editor-btn {
   background-color: var(--text-color);
+  text-decoration: none;
   border: none;
   padding-left: 20px;
   padding-right: 20px;

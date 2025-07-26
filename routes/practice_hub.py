@@ -7,6 +7,8 @@ import markdown
 practice_hub_bp = Blueprint("practice_hub", __name__)
 
 # This Route shows the all the unsolved Challenges
+
+
 @practice_hub_bp.route("/practice-hub")
 def uncomplete_practice_challenges():
     if "user_id" in session:
@@ -17,7 +19,7 @@ def uncomplete_practice_challenges():
 
         cursor.execute(
             """
-            SELECT 
+            SELECT
                 C.challenge_id,
                 C.number,
                 C.challenge_title,
@@ -25,25 +27,25 @@ def uncomplete_practice_challenges():
                 CASE
                     WHEN
                         (
-                        SELECT CA.status 
+                        SELECT CA.status
                         FROM Challenge_attempt CA
                         WHERE CA.challenge_id = C.challenge_id
-                            AND CA.user_id = :uid 
+                            AND CA.user_id = :uid
                         ) IS NULL
                     THEN '-'
                     ELSE (
-                        SELECT CA.status 
+                        SELECT CA.status
                         FROM Challenge_attempt CA
                         WHERE CA.challenge_id = C.challenge_id
-                            AND CA.user_id = :uid 
+                            AND CA.user_id = :uid
                         )
-                END AS status            
+                END AS status
             FROM Challenge C
             WHERE (
-                SELECT CA.status 
+                SELECT CA.status
                 FROM Challenge_attempt CA
                 WHERE CA.challenge_id = C.challenge_id
-                    AND CA.user_id = :uid 
+                    AND CA.user_id = :uid
             ) IS NOT 'Completed'
         """, {"uid": user_id})
         unsolved_challenges = cursor.fetchall()
@@ -99,7 +101,7 @@ def validate_challenge_id():
                             FROM Challenge_attempt
                             WHERE challenge_id = :cid AND user_id = :uid
                         );
-                    """, {'caid': challenge_attempt_id, 'uid' : user_id, 'cid' : client_challenge_id})
+                    """, {'caid': challenge_attempt_id, 'uid': user_id, 'cid': client_challenge_id})
                 conn.commit()
 
                 session["challenge_id"] = client_challenge_id
@@ -133,6 +135,8 @@ def validate_challenge_id():
         return redirect(url_for("auth.login"))
 
 # This Route shows the Challenge and the code editor etc..
+
+
 @practice_hub_bp.route("/practice-hub/<challenge_title>")
 def show_challenge(challenge_title):
     if "user_id" in session:
@@ -189,10 +193,12 @@ def solution():
     else:
         return redirect(url_for("auth.login"))
 
-# This route sends solution to the page that shows all challenges 
-# When the user clicks on the solution button it will sends 
+# This route sends solution to the page that shows all challenges
+# When the user clicks on the solution button it will sends
 # the solution for selected language through the AJAX
 # In default it has set to python language
+
+
 @practice_hub_bp.route("/practice-hub/solution-challenges", methods=["POST"])
 def solutions():
     if "user_id" in session:
@@ -240,6 +246,8 @@ def solutions():
         return redirect(url_for("auth.login"))
 
 # This is routes shows the all the completed Challenges by the user
+
+
 @practice_hub_bp.route("/practice-hub/completed")
 def completed_practice_challenges():
     if "user_id" in session:
@@ -250,19 +258,19 @@ def completed_practice_challenges():
 
         cursor.execute(
             """
-                SELECT 
+                SELECT
                     C.challenge_id,
                     C.number,
                     C.challenge_title,
                     C.difficulty_level,
-                    CASE 
+                    CASE
                         WHEN DATE(CA.completed_at) = DATE('now', 'localtime')
                             THEN STRFTIME('%I:%M %p', TIME(CA.completed_at))
                             ELSE STRFTIME('%Y-%m-%d %I:%M %p', CA.completed_at)
                     END AS completed_at
                 FROM Challenge C
-                JOIN challenge_attempt CA 
-                    ON CA.challenge_id = C.challenge_id 
+                JOIN challenge_attempt CA
+                    ON CA.challenge_id = C.challenge_id
                     AND CA.status = 'Completed'
                     AND CA.user_id = ?
             """, (user_id,))
@@ -276,6 +284,8 @@ def completed_practice_challenges():
         return redirect(url_for("auth.login"))
 
 # Route that filters the challenges by the users' Keywprds
+
+
 @practice_hub_bp.route("/practice-hub/search", methods=["GET"])
 def search():
     if "user_id" in session:
@@ -296,7 +306,8 @@ def search():
                                 difficulty_level
                                 FROM Challenge
                         WHERE challenge_title LIKE ?
-                       """, ((f'%{keyword}%',)))
+                            OR difficulty_level LIKE ?
+                       """, ((f'%{keyword}%', f'%{keyword}%')))
                 filtered_challenges = cursor.fetchall()
                 return render_template(
                     "user/practice_hub/search_result.html",

@@ -119,10 +119,8 @@
                 <div class="content" id="content">{{ lesson_page_data[3] | safe }}</div>
                 <!-- Using safe filter to render HTML content -->
                 <div class="down-btn-wrapper">
-                    <button class="open-code-editor-btn"
-                            onclick="window.location.href='{{ url_for("my_courses.code_editor") }}'">
-                        Open Editor
-                    </button>
+                    <a href="{{ url_for("my_courses.code_editor") }}"
+                       class="open-code-editor-btn">Open Editor</a>
                     <form action="{{ url_for("my_courses.lesson_completed") }}" method="post">
                         <input type="hidden" name="completed" value="completed">
                         <button class="done-btn" type="submit">Done</button>

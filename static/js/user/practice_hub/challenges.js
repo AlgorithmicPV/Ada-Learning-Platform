@@ -3,6 +3,7 @@ const selectedLanguageWrapper = document.querySelector(
 );
 const optionsWrapper = document.querySelector(".options-wrapper");
 const selectedLanguage = document.querySelector(".selected-language");
+const floatWrapper = document.querySelector(".float-wrapper");
 let showingOptionsWrapper = false;
 
 const showOptionsWrapper = () => {
@@ -10,10 +11,12 @@ const showOptionsWrapper = () => {
     showingOptionsWrapper = false;
     optionsWrapper.style.opacity = 0;
     optionsWrapper.style.display = "none";
+    floatWrapper.style.display = "none";
   } else {
     showingOptionsWrapper = true;
     optionsWrapper.style.opacity = 1;
     optionsWrapper.style.display = "flex";
+    floatWrapper.style.display = "flex";
   }
 };
 
@@ -26,7 +29,6 @@ options.forEach((option) => {
     language = lang;
     const selectedContent = option.innerHTML;
     selectedLanguage.innerHTML = selectedContent;
-    console.log(language);
     fetch(get_solution_url, {
       method: "POST",
       headers: {
@@ -79,6 +81,7 @@ const solutionCloseBtn = document.querySelector(".solution-close-btn");
 const hideSolution = () => {
   solutionsWrapper.style.opacity = 0;
   solutionsWrapper.style.display = "none";
+  selectedLanguage.innerHTML = "<p>Python</p>";
 };
 
 solutionCloseBtn.addEventListener("click", () => {

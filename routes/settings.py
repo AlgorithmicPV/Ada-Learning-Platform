@@ -21,6 +21,8 @@ def allowed_file(filename):
         '.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # This route shows the setting page
+
+
 @settings_bp.route("/settings")
 def settings():
     if "user_id" in session:
@@ -28,7 +30,6 @@ def settings():
         cursor = conn.cursor()
 
         auth_provider = session.get("auth_provider")
-
 
         user_id = session.get("user_id")
 
@@ -39,11 +40,16 @@ def settings():
         if user_data:
             user_data = user_data[0]
 
-        return render_template("user/settings.html", user_data=user_data, auth_provider = auth_provider)
+        return render_template(
+            "user/settings.html",
+            user_data=user_data,
+            auth_provider=auth_provider)
     else:
         return redirect(url_for("auth.login"))
 
 # This route updates the username, the email and the profile image of the user
+
+
 @settings_bp.route("/settings/profile-update", methods=["POST"])
 def profile_update():
     if "user_id" in session:
@@ -66,9 +72,10 @@ def profile_update():
 
             # Checks if the username and email are not empty
             if not new_username == "" and not new_username.isspace():
-                # If the new username has more than two characters 
+                # If the new username has more than two characters
                 # Before updating the database
-                # If not, sends a flash message to the frontend saying Username is too short
+                # If not, sends a flash message to the frontend saying Username
+                # is too short
                 if len(new_username) > 2:
                     cursor.execute("""
                                 UPDATE User
@@ -80,7 +87,7 @@ def profile_update():
                     flash("Username is too short.", category="error")
 
             # Checks whether user is logged by a gmail account or
-            # by a normal account 
+            # by a normal account
             # If it is a normal account give access to change the email
             auth_provider = session.get("auth_provider")
             if auth_provider == "manual":
@@ -92,7 +99,8 @@ def profile_update():
                     email_from_db = cursor.fetchone()
                     # if the database output is None,
                     # It will check does new email have @ mark
-                    # If the email doesn't have @ mark, it will send a flash message to the frontend saying Invalid email
+                    # If the email doesn't have @ mark, it will send a flash
+                    # message to the frontend saying Invalid email
                     if email_from_db is None:
                         if "@" in new_email:
                             cursor.execute("""
@@ -103,7 +111,8 @@ def profile_update():
                             conn.commit()
                         else:
                             flash("Invalid email!", category="error")
-                    # IF the new email is same as the current email, it will pass
+                    # IF the new email is same as the current email, it will
+                    # pass
                     elif email_from_db[0] == current_email:
                         pass
                     else:
@@ -122,7 +131,8 @@ def profile_update():
                     return 'Invalid file type', 400
 
                 # Adds user_id to the name of the uploaded image
-                # This prevents from overwriting other users' images if i used the username
+                # This prevents from overwriting other users' images if i used
+                # the username
                 filename = secure_filename(user_id) + ext
 
                 # Saves the image to the static folder
@@ -165,7 +175,8 @@ def change_password():
             new_password = request.form.get("new-password")
             new_confirm_password = request.form.get("confirm-new-password")
 
-            # Gets the actual hashed password that related to the logged in user
+            # Gets the actual hashed password that related to the logged in
+            # user
             cursor.execute("""
                         SELECT password
                         FROM User
@@ -175,7 +186,7 @@ def change_password():
 
             # Checks whether user is logged by a gmail account or
             # by a normal account
-            # If it is a gmail account send a flash messeage saying 
+            # If it is a gmail account send a flash messeage saying
             # "Users signed in via Google cannot update their password here"
             auth_provider = session.get("auth_provider")
             if auth_provider == "manual":
@@ -190,7 +201,8 @@ def change_password():
                             # Check the typed New Password and the confirm Password is equal or not
                             # IF it is equal then it will count the characters in the new password
                             # If it is greater than 6 then it will update the password
-                            # Otherise It will send a flash message to the frontend saying "Password is too short"
+                            # Otherise It will send a flash message to the
+                            # frontend saying "Password is too short"
                             if new_password == new_confirm_password:
                                 if len(new_password) > 6:
                                     cursor.execute("""
@@ -202,9 +214,12 @@ def change_password():
                                 else:
                                     flash(
                                         "Password is too short.", category="error")
-                            # IF passwords are not equal then it will send a flash message to the frontend saying "Password are not matched"
+                            # IF passwords are not equal then it will send a
+                            # flash message to the frontend saying "Password
+                            # are not matched"
                             else:
-                                flash("Password are not matched", category="error")
+                                flash(
+                                    "Password are not matched", category="error")
                     except (VerifyMismatchError):  # If the password does not match the stored hash
                         flash("Password is not correct", category="error")
 
@@ -218,13 +233,17 @@ def change_password():
                 else:
                     flash("Password is not correct", category="error")
             else:
-                flash("Users signed in via Google cannot update their password here",  category="error")
+                flash(
+                    "Users signed in via Google cannot update their password here",
+                    category="error")
         conn.close()
         return redirect(url_for("settings.settings"))
     else:
         return redirect(url_for("auth.login"))
 
 # This route is used to delete the user account permenantly from all the tables
+
+
 @settings_bp.route("/settings/delete-account", methods=["POST"])
 def delete_account():
     if "user_id" in session:
@@ -265,19 +284,22 @@ def delete_account():
         return redirect(url_for("auth.login"))
 
 # THis route is used to get feedback from the user
+
+
 @settings_bp.route("/settings/get-feedback", methods=["POST"])
 def feedback():
     if "user_id" in session:
         if request.method == "POST":
             user_id = session.get("user_id")
-            
+
             # Gets the user feedback and star rating
             userfeedback = request.form['comment']
             star = int(request.form['star'])
 
             # Check whether the user feedback is empty or not
             # This it check the number of stars are in between 0 and 5
-            # If all above conditions are satisfied then it will store the feedback in the database
+            # If all above conditions are satisfied then it will store the
+            # feedback in the database
             if not userfeedback == "" and not userfeedback.isspace():
                 if star <= 5 and star >= 0:
                     id = str(uuid.uuid4())

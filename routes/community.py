@@ -27,7 +27,11 @@ def to_iso_datetime(input_str, fallback_date=None):
         fallback_date = date.today()
 
     try:
-        dt = parse(input_str, default=datetime.combine(fallback_date, datetime.min.time()))
+        dt = parse(
+            input_str,
+            default=datetime.combine(
+                fallback_date,
+                datetime.min.time()))
     except Exception as e:
         raise ValueError(f"Invalid time format: {input_str}") from e
 
@@ -35,6 +39,8 @@ def to_iso_datetime(input_str, fallback_date=None):
 
 # I Use a function because I can use this function to get all community
 # questions and filter them according to the below routes
+
+
 def get_community_questions_from_db(filter_query):
     conn = sqlite3.connect("database/app.db")
     cursor = conn.cursor()
@@ -48,18 +54,18 @@ def get_community_questions_from_db(filter_query):
                 This helps to check, if the quesiont / discussion is posted today
                 It will show only the time in 12 hour format
                 If not, it will show the date and time in 12 hour format
-                This helps for users to find new discussions easily 
+                This helps for users to find new discussions easily
                 */
-                CASE 
+                CASE
                     WHEN DATE(Q.created_at) = DATE('now', 'localtime')
                     THEN STRFTIME('%I:%M %p', TIME(Q.created_at))
                     ELSE STRFTIME('%Y-%m-%d %I:%M %p', Q.created_at)
                 END AS created_at,
-                CASE 
-                    WHEN U.user_id = :uid THEN 'You' 
+                CASE
+                    WHEN U.user_id = :uid THEN 'You'
                     ELSE U.full_name
                 END AS posted_user,
-                CASE 
+                CASE
                     WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
                     ELSE U.profile_image
                 END AS profile_image_url,
@@ -78,26 +84,28 @@ def get_community_questions_from_db(filter_query):
             JOIN
                 User U ON U.user_id = Q.user_id
             LEFT JOIN
-                Answer A ON A.question_id = Q.question_id  
+                Answer A ON A.question_id = Q.question_id
         """
     grouping_and_ordering_query = """
-            GROUP BY     
+            GROUP BY
                 Q.question_id
             ORDER BY Q.created_at DESC
         """
-    cursor.execute( base_query + filter_query + grouping_and_ordering_query, {"uid" : user_id, "static_base": static_base})
+    cursor.execute(base_query + filter_query + grouping_and_ordering_query,
+                   {"uid": user_id, "static_base": static_base})
     question_cards_detail_from_db = cursor.fetchall()
     conn.close()
-    if question_cards_detail_from_db: 
-            question_cards_detail = []
-            for question_card in question_cards_detail_from_db:
-                temp_list = list(question_card)
-                temp_list[1] = strip_markdown.strip_markdown(question_card[1])
-                question_cards_detail.append(temp_list)
-            return question_cards_detail
+    if question_cards_detail_from_db:
+        question_cards_detail = []
+        for question_card in question_cards_detail_from_db:
+            temp_list = list(question_card)
+            temp_list[1] = strip_markdown.strip_markdown(question_card[1])
+            question_cards_detail.append(temp_list)
+        return question_cards_detail
     else:
         return ""
-    
+
+
 def get_new_community_questions_from_db():
     pass
 
@@ -139,7 +147,8 @@ def newest_community_questions():
 @community_bp.route("/community/get-new-questions")
 def get_new_community_questions():
     if "user_id" in session:
-        new_question_cards_detail = get_community_questions_from_db("WHERE  DATE(Q.created_at) = DATE('now', 'localtime')")
+        new_question_cards_detail = get_community_questions_from_db(
+            "WHERE  DATE(Q.created_at) = DATE('now', 'localtime')")
         return jsonify(new_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -160,7 +169,8 @@ def user_community_questions():
 @community_bp.route("/community/get-user-posted-questions")
 def get_user_posted_questions():
     if "user_id" in session:
-        user_question_cards_detail = get_community_questions_from_db("WHERE Q.user_id = :uid")
+        user_question_cards_detail = get_community_questions_from_db(
+            "WHERE Q.user_id = :uid")
         return jsonify(user_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -180,7 +190,8 @@ def unanswered_community_questions():
 @community_bp.route("/community/get-unanswered-questions")
 def get_unanswered_questions():
     if "user_id" in session:
-        unanswered_question_cards_detail = get_community_questions_from_db("WHERE A.answer_id IS NULL")
+        unanswered_question_cards_detail = get_community_questions_from_db(
+            "WHERE A.answer_id IS NULL")
         return jsonify(unanswered_question_cards_detail)
     else:
         return redirect(url_for("auth.login"))
@@ -237,11 +248,11 @@ def add_new_post():
 
                 cursor.execute(
                     """
-                    INSERT 
-                    INTO Question (question_id, 
-                                    user_id, 
-                                    question, 
-                                    created_at) 
+                    INSERT
+                    INTO Question (question_id,
+                                    user_id,
+                                    question,
+                                    created_at)
                     VALUES (?, ?, ?, ?)""",
                     (question_id,
                      user_id,
@@ -327,9 +338,9 @@ def discussions(question_id):
             conn = sqlite3.connect("database/app.db")
             cursor = conn.cursor()
             user_id = session.get("user_id")
-            static_base = url_for('static', filename='') 
+            static_base = url_for('static', filename='')
             cursor.execute(
-                        """
+                """
                         SELECT
                             Q.question_id,
                             Q.question,
@@ -337,18 +348,18 @@ def discussions(question_id):
                             This helps to check, if the quesiont / discussion is posted today
                             It will show only the time in 12 hour format
                             If not, it will show the date and time in 12 hour format
-                            This helps for users to find new discussions easily 
+                            This helps for users to find new discussions easily
                             */
-                            CASE 
+                            CASE
                                 WHEN DATE(Q.created_at) = DATE('now', 'localtime')
-                                THEN STRFTIME('%I:%M %p', TIME(Q.created_at)) 
-                                ELSE STRFTIME('%Y-%m-%d %I:%M %p', Q.created_at) 
+                                THEN STRFTIME('%I:%M %p', TIME(Q.created_at))
+                                ELSE STRFTIME('%Y-%m-%d %I:%M %p', Q.created_at)
                             END AS created_at,
-                            CASE 
-                                WHEN U.user_id = :uid THEN 'You' 
+                            CASE
+                                WHEN U.user_id = :uid THEN 'You'
                                 ELSE U.full_name
                             END AS posted_user,
-                            CASE 
+                            CASE
                                 WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
                                 ELSE U.profile_image
                             END AS profile_image_url,
@@ -368,12 +379,14 @@ def discussions(question_id):
                             User U ON U.user_id = Q.user_id
                         LEFT JOIN
                             Answer A ON A.question_id = Q.question_id
-                        WHERE Q.question_id = :qid                             
-                        """, {"uid": user_id, "qid" : question_id, "static_base":static_base})
+                        WHERE Q.question_id = :qid
+                        """, {"uid": user_id, "qid": question_id, "static_base": static_base})
             question_details_from_db = cursor.fetchall()
             if question_details_from_db:
-                question_details_that_goes_to_client_side = list(question_details_from_db[0])
-                question_details_that_goes_to_client_side[1] = markdown.markdown(question_details_that_goes_to_client_side[1],extensions=['fenced_code'])
+                question_details_that_goes_to_client_side = list(
+                    question_details_from_db[0])
+                question_details_that_goes_to_client_side[1] = markdown.markdown(
+                    question_details_that_goes_to_client_side[1], extensions=['fenced_code'])
                 return render_template(
                     "user/community/discussions.html",
                     question_detail=question_details_that_goes_to_client_side,
@@ -436,18 +449,18 @@ def add_answers():
                 question_id = session.get("question_id")
                 user_id = session.get("user_id")
                 cursor.execute("""
-                               INSERT 
+                               INSERT
                                INTO Answer
-                                    (answer_id, 
-                                    question_id, 
-                                    user_id, 
-                                    content, 
+                                    (answer_id,
+                                    question_id,
+                                    user_id,
+                                    content,
                                     created_at)
                                VALUES (?, ?, ?, ?, ?)""",
-                               (answer_id, 
-                                question_id, 
-                                user_id, 
-                                user_answer, 
+                               (answer_id,
+                                question_id,
+                                user_id,
+                                user_answer,
                                 created_at))
 
                 conn.commit()
@@ -460,6 +473,8 @@ def add_answers():
 # This route gets all the answers that are relevant to the question that user clicked
 # THis route passes the answers to the client side in every 2.5 seconds
 # To keep anwers updated
+
+
 @community_bp.route("/community/get-answers")
 def get_answers():
     if "user_id" in session:
@@ -467,25 +482,25 @@ def get_answers():
 
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
-        static_base = url_for('static', filename='') 
+        static_base = url_for('static', filename='')
 
         user_id = session.get("user_id")
 
         cursor.execute(
             """
-            SELECT 
+            SELECT
                 A.answer_id,
                 A.content,
-                CASE 
+                CASE
                 WHEN DATE(A.created_at) = DATE('now', 'localtime')
-                    THEN STRFTIME('%I:%M %p', TIME(REPLACE(A.created_at, 'T', ' '))) 
-                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(A.created_at, 'T', ' ')) 
+                    THEN STRFTIME('%I:%M %p', TIME(REPLACE(A.created_at, 'T', ' ')))
+                    ELSE STRFTIME('%Y-%m-%d %I:%M %p', REPLACE(A.created_at, 'T', ' '))
                 END AS created_at,
-                CASE 
-                WHEN U.user_id = :uid THEN 'You' 
+                CASE
+                WHEN U.user_id = :uid THEN 'You'
                     ELSE U.full_name
                 END AS answered_user,
-                CASE 
+                CASE
                 WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
                     ELSE U.profile_image
                 END AS profile_image_url,
@@ -515,6 +530,8 @@ def get_answers():
 # If user has likes the answer it will comver to unlike and other way around
 # It also counts the number of likes for the answer and sends it to the
 # client side
+
+
 @community_bp.route("/community/toggle-like", methods=["POST"])
 def toggle_like():
     if "user_id" in session:

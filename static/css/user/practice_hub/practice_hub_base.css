@@ -83,6 +83,14 @@
   /* Hides the button to show the input box in larger screens */
 }
 
+.float-wrapper {
+  background-color: green;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: none;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .cont {

@@ -14,7 +14,7 @@ from routes.ai_chat import ai_chat_bp
 from routes.compiler import compiler_bp
 from routes.community import community_bp
 from routes.practice_hub import practice_hub_bp
-from routes.settings  import settings_bp
+from routes.settings import settings_bp
 from flask.sessions import SecureCookieSessionInterface
 
 load_dotenv()
@@ -22,7 +22,8 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("app_secret_key")
 app.permanent_session_lifetime = timedelta(days=1)
-app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'images' ,'profile_pics')
+app.config['UPLOAD_FOLDER'] = os.path.join(
+    app.root_path, 'static', 'images', 'profile_pics')
 ph = PasswordHasher()
 
 oauth.init_app(app)
@@ -36,20 +37,27 @@ app.register_blueprint(auth_bp)
 # Dashboard of the application
 app.register_blueprint(dashboard_bp)
 
-# My Courses Page
+# My Courses section
 app.register_blueprint(my_courses_bp)
 
-app.register_blueprint(errors)
-
+# Ai chat
 app.register_blueprint(ai_chat_bp)
 
+# Compiler
 app.register_blueprint(compiler_bp)
 
+# Community section
 app.register_blueprint(community_bp)
 
+# Practice hub section
 app.register_blueprint(practice_hub_bp)
 
+# Settings Page
 app.register_blueprint(settings_bp)
+
+# Error section
+app.register_blueprint(errors)
+
 
 @app.context_processor
 def inject_user_info():
@@ -65,8 +73,9 @@ def inject_user_info():
         auth_provider = session.get("auth_provider")
         if result and result[0]:
             profile_pic = result[0]
-            return dict(profile_pic=profile_pic, auth_provider = auth_provider)
+            return dict(profile_pic=profile_pic, auth_provider=auth_provider)
     return dict(profile_pic="images/profile_pics/default-pic.png")
+
 
 @app.route("/logout")
 def logout():
@@ -76,18 +85,20 @@ def logout():
     else:
         return redirect(url_for("auth.login"))
 
+
 @app.after_request
 def calculate_session_size(response):
     interface = SecureCookieSessionInterface()
     serializer = interface.get_signing_serializer(app)
-    
+
     if serializer:
         encoded = serializer.dumps(dict(session))
         size_bytes = len(encoded.encode('utf-8'))
         print(f"Session size for {request.path}: {size_bytes} bytes")
-    
+
     return response
+
+
 if __name__ == "__main__":
     app.run(debug=True)
     # app.run(host='0.0.0.0', port=5000, debug=True)
-

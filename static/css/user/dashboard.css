@@ -39,7 +39,6 @@ body {
   width: 100%;
   font-family: "Inter";
   overflow: hidden;
-  color: ;
 }
 
 .greeting-wrapper {
@@ -121,7 +120,8 @@ body {
 
 .description,
 .progress-bar,
-.completed-amount {
+.completed-amount,
+.empty {
   margin-left: 20px !important;
 }
 
@@ -139,6 +139,11 @@ body {
   height: 8px;
   border-radius: 50px;
   transition: all 0.5s ease;
+}
+
+.empty {
+  color: var(--second-text-color);
+  margin: 0;
 }
 
 .completed-amount {

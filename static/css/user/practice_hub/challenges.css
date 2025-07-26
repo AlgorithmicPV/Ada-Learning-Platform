@@ -78,7 +78,6 @@ td button:hover svg {
 
 .solutions-wrapper {
   position: absolute;
-  background-color: red;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);

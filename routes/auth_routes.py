@@ -32,11 +32,13 @@ google = oauth.register(
     client_secret=os.getenv("Client_secret"),
     server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
     client_kwargs={
-        "scope": "openid email profile"},
-)
+        "scope": "openid email profile",
+        "prompt": "select_account"})
 
-# Route for the Normal Login 
-@auth_bp.route("/login", methods=["GET","POST"])
+# Route for the Normal Login
+
+
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
     if (
@@ -45,8 +47,8 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
 
-        # Validates the email and password fields are not empty 
-        # If they contain only empty spaces it will return a flash message 
+        # Validates the email and password fields are not empty
+        # If they contain only empty spaces it will return a flash message
         # saying that "Email and password required"
         if email != "" and not email.isspace() and password != "" and not password.isspace():
             conn = sqlite3.connect("database/app.db")
@@ -175,16 +177,16 @@ def signup():
 
             cursor.execute(
                 """
-                INSERT 
-                INTO User 
-                    (user_id, 
-                    email, 
-                    full_name, 
-                    password, 
-                    auth_provider, 
-                    theme_preference, 
-                    join_date, 
-                    profile_image) 
+                INSERT
+                INTO User
+                    (user_id,
+                    email,
+                    full_name,
+                    password,
+                    auth_provider,
+                    theme_preference,
+                    join_date,
+                    profile_image)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (user_id,
                  email,
@@ -227,7 +229,7 @@ def authorize_google():
     userInfo = userToken["userinfo"]
     username = userInfo["given_name"]
     email = userInfo["email"]
-    profile_pic = userInfo["picture"] 
+    profile_pic = userInfo["picture"]
     google_id = userInfo["sub"]
     cursor.execute("SELECT email FROM User")
     email_list = cursor.fetchall()
