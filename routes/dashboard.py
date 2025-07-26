@@ -105,17 +105,19 @@ def dashboard():
                         GROUP_CONCAT(DISTINCT DATE(dt) ORDER BY DATE(dt) DESC)
                     FROM (
                         SELECT AR.generated_at AS dt FROM Ai_resource AR WHERE AR.user_id = U.user_id
-                        UNION ALL
+                        UNION
                         SELECT A.created_at FROM Answer A WHERE A.user_id = U.user_id
-                        UNION ALL
+                        UNION
                         SELECT CA.completed_at FROM Challenge_attempt CA WHERE CA.user_id = U.user_id
-                        UNION ALL
+                        UNION
                         SELECT E.enrolled_at FROM Enrollment E WHERE E.user_id = U.user_id
-                        UNION ALL
+                        UNION
+                        SELECT E.last_accessed FROM Enrollment E WHERE E.user_id = U.user_id
+                        UNION
                         SELECT Q.created_at FROM Question Q WHERE Q.user_id = U.user_id
-                        UNION ALL
+                        UNION
                         SELECT UL.completed_at FROM User_lesson UL WHERE UL.user_id = U.user_id
-                        UNION ALL
+                        UNION
                         SELECT U2.join_date FROM User U2 WHERE U2.user_id = U.user_id
                     ) AS combined_dates
                 ) AS all_available_dates,

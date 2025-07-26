@@ -1,0 +1,99 @@
+/* Default styles (light theme) */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  flex-direction: row;
+  gap: 40px;
+  color: #010104;
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Robot image */
+body > img {
+  height: 80%;
+  max-width: 90vw;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Text and button container */
+body > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  text-align: center;
+}
+
+body h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #1e1e1e;
+}
+
+body h3 {
+  font-weight: normal;
+  color: #555;
+  margin: 10px 0 20px;
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background-color: transparent;
+  color: #ffffff;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+/* Dark theme styles */
+.dark body {
+  background-color: #010104;
+  color: #eee;
+}
+
+.dark body h1 {
+  color: #ffffff;
+}
+
+.dark body h3 {
+  color: #ccc;
+}
+
+.dark .back-btn {
+  /* background-color: #2196f3; */
+  color: white;
+}
+
+.dark .back-btn:hover {
+  /* background-color: #1976d2; */
+}
