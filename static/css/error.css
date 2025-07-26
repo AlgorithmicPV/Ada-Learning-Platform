@@ -28,8 +28,7 @@ body {
 
 /* Robot image */
 body > img {
-  height: 80%;
-  max-width: 90vw;
+  max-height: 80%;
   animation: float 3s ease-in-out infinite;
 }
 
@@ -90,10 +89,22 @@ body h3 {
 }
 
 .dark .back-btn {
-  /* background-color: #2196f3; */
+  background-color: #2196f3;
   color: white;
 }
 
 .dark .back-btn:hover {
-  /* background-color: #1976d2; */
+  background-color: #1976d2;
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1200px) {
+  body {
+    flex-direction: column;
+  }
+
+  /* Robot image */
+  body > img {
+    max-height: 50%;
+  }
 }
