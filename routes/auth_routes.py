@@ -37,7 +37,7 @@ google = oauth.register(
 
 # Route for the Normal Login
 
-
+# TODO: Check the email provider using string.endswith 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
@@ -59,6 +59,7 @@ def login():
             # stored_hash_password is a tuple, so we need to access the first
             # element
             stored_hash_password = cursor.fetchone()
+
 
             if stored_hash_password:
                 try:

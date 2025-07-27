@@ -93,68 +93,72 @@ def check_answers():
         if request.method == "POST":
             data = request.get_json()
             user_code = data.get("user_code")
+            
+            if user_code:
+                conn = sqlite3.connect("database/app.db")
+                cursor = conn.cursor()
 
-            conn = sqlite3.connect("database/app.db")
-            cursor = conn.cursor()
+                challenge_id = session.get("challenge_id")
+                user_id = session.get("user_id")
 
-            challenge_id = session.get("challenge_id")
-            user_id = session.get("user_id")
+                cursor.execute("""
+                                SELECT status
+                                FROM Challenge_attempt
+                                WHERE challenge_id=? AND
+                                user_id=?""", (challenge_id, user_id,))
 
-            cursor.execute("""
-                              SELECT status
-                               FROM Challenge_attempt
-                               WHERE challenge_id=? AND
-                               user_id=?""", (challenge_id, user_id,))
-
-            status = cursor.fetchone()
-            if status:
-                redirect_url = url_for(
-                    "practice_hub.uncomplete_practice_challenges")
-                if status[0] == "Started":
-                    cursor.execute("""
-                                    SELECT question
-                                FROM Challenge WHERE challenge_id=?
-                            """, (challenge_id,))
-
-                    challenge = cursor.fetchone()[0]
-
-                    language = session.get("language")
-                    response = client.chat.completions.create(
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": f"Given the code {user_code} and the challenge {challenge} from this programming language {language}, determine if the solution is correct. Reply only with Correct or Incorrect.",
-                            },
-                            {
-                                "role": "user",
-                                "content": f"code: {user_code}, challenge : {challenge} and programing language: {language}",
-                            },
-                        ],
-                        temperature=1,
-                        top_p=1,
-                        model=model,
-                    )
-
-                    is_solution_correct = response.choices[0].message.content
-
-                    print(is_solution_correct)
-
-                    if is_solution_correct == "Correct":
-                        completed_at = datetime.now().isoformat(timespec="seconds")
-
+                status = cursor.fetchone()
+                if status:
+                    redirect_url = url_for(
+                        "practice_hub.uncomplete_practice_challenges")
+                    if status[0] == "Started":
                         cursor.execute("""
-                        UPDATE Challenge_attempt
-                        SET completed_at = ?, status = ?
-                        WHERE user_id = ? AND challenge_id = ?
-                        """, (completed_at, "Completed", user_id, challenge_id))
+                                        SELECT question
+                                    FROM Challenge WHERE challenge_id=?
+                                """, (challenge_id,))
 
-                        conn.commit()
-                        conn.close()
-                        return jsonify({"redirect_url": redirect_url})
-                elif status[0] == "Completed":
-                    return jsonify({"redirect_url": redirect_url})
+                        challenge = cursor.fetchone()[0]
+
+                        language = session.get("language")
+                        response = client.chat.completions.create(
+                            messages=[
+                                {
+                                    "role": "system",
+                                    "content": f"Given the code {user_code} and the challenge {challenge} from this programming language {language}, determine if the solution is correct. Reply only with Correct or Incorrect.",
+                                },
+                                {
+                                    "role": "user",
+                                    "content": f"code: {user_code}, challenge : {challenge} and programing language: {language}",
+                                },
+                            ],
+                            temperature=1,
+                            top_p=1,
+                            model=model,
+                        )
+
+                        is_solution_correct = response.choices[0].message.content
+
+                        print(is_solution_correct)
+
+                        if is_solution_correct == "Correct":
+                            completed_at = datetime.now().isoformat(timespec="seconds")
+
+                            cursor.execute("""
+                            UPDATE Challenge_attempt
+                            SET completed_at = ?, status = ?
+                            WHERE user_id = ? AND challenge_id = ?
+                            """, (completed_at, "Completed", user_id, challenge_id))
+
+                            conn.commit()
+                            conn.close()
+                            return jsonify({"redirect_url": redirect_url})
+                        else:
+                            return jsonify({"message": "Incorrect solution, Give another try!"})
+                    elif status[0] == "Completed":
+                        return jsonify({"redirect_url": url_for(
+                        "practice_hub.uncomplete_practice_challenges")})
             else:
                 return jsonify(
-                    {"solutionNotCorrect": "Hmm, not quite! Check your code and have another go — you've got this!"})
+                    {"message": "You have to type the solution in the given code editor"})
     else:
         return redirect(url_for("auth.login"))

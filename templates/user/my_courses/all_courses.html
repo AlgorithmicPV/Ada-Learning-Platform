@@ -31,7 +31,7 @@
                         </div>
                         <div class="txt-wrapper">
                             <p class="course-title">{{ course_data[1] }}</p>
-                            <p class="completed-amt">{{ course_data[5] }}% complete</p>
+                            <p class="completed-amt">{{ course_data[5] | round | int }}% complete</p>
                         </div>
                         <!-- This form is for small screens and this hides in large screens -->
                         <form class="small-screen-start-course"

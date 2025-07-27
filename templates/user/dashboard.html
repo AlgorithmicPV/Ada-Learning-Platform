@@ -30,7 +30,7 @@
                     <div class="progress-bar">
                         <div class="progress-line"></div>
                     </div>
-                    <p class="completed-amount">{{ dashboard_data[6] }}% completed</p>
+                    <p class="completed-amount">{{ dashboard_data[6] | round | int}}% completed</p>
                 {% endif %}
             </div>
             <div class="block problem-solved-wrapper"
@@ -149,21 +149,27 @@
 
   /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
   @media only screen and (max-width: 1200px) {
-    .continue-learning-wrapper .progress-line {
+    {% if dashboard_data[6] is not none %}
+            .continue-learning-wrapper .progress-line {
       width: {{ 100 }}%;
       background: conic-gradient(
-        #d8b731 0deg {{ 180 }}deg,
+        #d8b731 0deg {{ (dashboard_data[6] * 360 )/100 }}deg,
         transparent 0deg 360deg
       );
   }
+    {% endif %}
+
+    {% if dashboard_data[7] is not none %}
 
   .problem-solved-wrapper .progress-line {
       width: {{ 100 }}%;
       background: conic-gradient(
-        #d87f31 0deg {{ 46 }}deg,
+        #d87f31 0deg {{ (dashboard_data[7] * 360 )/100 }}deg,
         transparent 0deg 360deg
       );
   }
+    {% endif %}
+
   }
     </style>
 {% endblock %}

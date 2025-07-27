@@ -383,14 +383,23 @@ def discussions(question_id):
                         """, {"uid": user_id, "qid": question_id, "static_base": static_base})
             question_details_from_db = cursor.fetchall()
             if question_details_from_db:
-                question_details_that_goes_to_client_side = list(
-                    question_details_from_db[0])
-                question_details_that_goes_to_client_side[1] = markdown.markdown(
-                    question_details_that_goes_to_client_side[1], extensions=['fenced_code'])
-                return render_template(
-                    "user/community/discussions.html",
-                    question_detail=question_details_that_goes_to_client_side,
-                )
+                # Checks the question id is not empty
+                # This is because if a user delete his account, the question id will be empty
+                # then at the same time, if another user reads the discussion, there will be an error
+                # To avoid that error, we check if the question id is not empty
+                # question_details_from_db[0][0] is the question id
+                if question_details_from_db[0][0]:
+                    question_details_that_goes_to_client_side = list(
+                        question_details_from_db[0])
+                    if question_details_that_goes_to_client_side[1]:
+                        question_details_that_goes_to_client_side[1] = markdown.markdown(
+                            question_details_that_goes_to_client_side[1], extensions=['fenced_code'])
+                    return render_template(
+                        "user/community/discussions.html",
+                        question_detail=question_details_that_goes_to_client_side,
+                    )
+                else:
+                    return redirect(url_for("community.all_community_questions"))
             else:
                 return redirect(url_for("community.all_community_questions"))
         else:

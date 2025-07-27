@@ -15,7 +15,7 @@
         <!--Lesson top bar with course name and percentage completion-->
         <div class="lesson-cont-top-bar">
             <p class="course-name">{{ lesson_page_data[0] }}</p>
-            <p class="percentage-completion">{{ lesson_page_data[4] }}%</p>
+            <p class="percentage-completion">{{ lesson_page_data[4] | round | int }}%</p>
         </div>
         <!--End of lesson top bar-->
         <!--Lesson content-->

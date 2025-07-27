@@ -1,3 +1,11 @@
+function celebrate() {
+  confetti({
+    particleCount: 500,
+    spread: 100000,
+    origin: { y: 0.6 },
+  });
+}
+
 const mainTopBar = document.querySelector(".top-bar");
 const challengeTopBar = document.querySelector(
   ".sub-navigation-bar-practice-hub"
@@ -78,7 +86,6 @@ const doneButton = document.querySelector(".done-btn");
 
 doneButton.addEventListener("click", () => {
   let userCode = window.editor.getValue();
-  console.log(check_answers_url);
 
   fetch(check_answers_url, {
     method: "POST",
@@ -88,13 +95,22 @@ doneButton.addEventListener("click", () => {
     body: JSON.stringify({ user_code: userCode }),
   })
     .then((response) => response.json())
-    .then((data) => console.log(data))
+    .then((data) => {
+      if (data["message"]) {
+        console.log(data["incorrect"]);
+      } else {
+        celebrate();
+        setTimeout(() => {
+          window.location.href = data["redirect_url"];
+        }, 3000);
+      }
+    })
     .catch((error) => console.error(error));
 });
 
 const toggleSolution = document.querySelector(".toggle-solution");
 const solutionCode = document.querySelector(".solution .code");
-const solution = document.querySelector(".solution")
+const solution = document.querySelector(".solution");
 
 toggleSolution.addEventListener("click", () => {
   fetch(get_solution_url, {
@@ -122,7 +138,5 @@ const hideSolution = () => {
 };
 
 solutionCloseBtn.addEventListener("click", () => {
-  hideSolution()
-})
-
-
+  hideSolution();
+});

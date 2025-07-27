@@ -66,7 +66,7 @@
 }
 
 .nested li {
-  margin-left: 5em;
+  /* margin-left: 5em; */
 }
 
 .nested ul {
@@ -81,14 +81,14 @@ li {
 .nested li ul {
   border-left: 1px solid var(--second-text-color);
   position: relative;
-  margin-left: 20px;
+  margin-left: 25px;
 }
 
 .nested li ul::before {
   content: "";
   border-bottom: 1px solid var(--second-text-color);
   position: absolute;
-  width: 2.5em;
+  width: 0.5em;
   top: 1em;
 }
 
@@ -116,6 +116,8 @@ li {
   width: 90%;
   flex: 1;
   padding-bottom: 60px;
+  margin-left: 10px; /* Adds some space beween the answer-card and the nested line 
+                        making the layout clearer for the user*/
 }
 
 .question-card img,

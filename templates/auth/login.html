@@ -29,7 +29,7 @@
                 <div class="password-entry-wrapper">
                     <input type="password" name="password" id="password" required="" />
                     <label for="name">Password</label>
-                    {# <!--Added svg code directly because it is easy to handle with css and JS, rather than adding as <img> tag--> #}
+                    {# Added svg code directly because it is easy to handle with css and JS, rather than adding as <img> tag #}
                     <svg xmlns="http://www.w3.org/2000/svg"
                          id="Outline"
                          viewBox="0 0 24 24"
@@ -58,7 +58,7 @@
                 Sign in with Google
             </button>
         </div>
-        {# <!--Error box --> #}
+        {# Error box #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if
                 messages %}
@@ -89,7 +89,7 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-        {# <!--End of the error box--> #}
+        {# End of the error box #}
         <script src="{{ url_for('static', filename='js/auth/login.js') }}"></script>
     </body>
 </html>

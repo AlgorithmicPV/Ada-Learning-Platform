@@ -122,8 +122,11 @@ def dashboard():
                     ) AS combined_dates
                 ) AS all_available_dates,
 
+                -- Uses CAST to convert the result to an integer 
+                -- It is nice to round the result to the nearest whole number for UI purposes
+
                 -- 1 coin per 5 easy challenges completed
-                CAST(ROUND(1.0 * (
+                CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
                     JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
@@ -134,7 +137,7 @@ def dashboard():
 
 
                 -- 1 coin per 5 medium challenges
-                CAST(ROUND(1.0 * (
+                CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
                     JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
@@ -144,7 +147,7 @@ def dashboard():
                 ) / 5) AS INTEGER) AS silver_coins,
 
                 -- 1 coin per 5 hard challenges
-                CAST(ROUND(1.0 * (
+                CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
                     JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
