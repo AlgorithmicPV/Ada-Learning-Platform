@@ -180,7 +180,7 @@ def all_courses():
 
         conn.close()
         return render_template(
-            "user/my_courses/all_courses.html", courses_data=courses_data
+            "user/my_courses/all-courses.html", courses_data=courses_data
         )
     else:
         return redirect(url_for("auth.login"))
@@ -249,7 +249,7 @@ def search_courses():
                 # Uses the same variable name as the original route to reduce
                 # the repetition of code in the template
                 return render_template(
-                    "user/my_courses/search_result_all_courses.html",
+                    "user/my_courses/search-result-all-courses.html",
                     courses_data=course_data,
                 )
             else:
@@ -617,11 +617,11 @@ def completed_courses():
         completed_courses_data = cursor.fetchall()
         if completed_courses_data:
             return render_template(
-                "user/my_courses/completed_courses.html",
+                "user/my_courses/completed-courses.html",
                 courses_data=completed_courses_data)
         else:
             return render_template(
-                "user/my_courses/completed_courses.html")
+                "user/my_courses/completed-courses.html")
     else:
         return redirect(url_for("auth.login"))
 
@@ -634,7 +634,7 @@ def code_editor():
     if "user_id" in session:
         language = session.get("language")
         return render_template(
-            "user/my_courses/code_editor.html", language=language)
+            "user/my_courses/code-editor.html", language=language)
     else:
         return redirect(url_for("auth.login"))
 
@@ -648,7 +648,7 @@ def ai_courses():
         ai_courses_data = get_ai_courses(user_id)
 
         return render_template(
-            "user/my_courses/ai_generated_courses.html",
+            "user/my_courses/ai-generated-courses.html",
             ai_courses_data=ai_courses_data)
     else:
         return redirect(url_for("auth.login"))
@@ -778,7 +778,7 @@ def search_ai_courses():
                     """, (user_id, search_term))
                 searched_ai_courses_data = cursor.fetchall()
                 return render_template(
-                    "user/my_courses/search_ai_courses.html",
+                    "user/my_courses/search-ai-courses.html",
                     ai_courses_data=searched_ai_courses_data,
                 )
             else:
@@ -860,7 +860,7 @@ def ai_course(course_name):
         session["ai_course_topic"] = title
 
         return render_template(
-            "user/my_courses/ai_course.html",
+            "user/my_courses/ai-course.html",
             content=content,
             course_name=title)
     else:

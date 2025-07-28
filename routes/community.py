@@ -115,7 +115,7 @@ def get_new_community_questions_from_db():
 def all_community_questions():
     if "user_id" in session:
         return render_template(
-            "user/community/community_all.html",
+            "user/community/community-all.html",
         )
     else:
         return redirect(url_for("auth.login"))
@@ -136,7 +136,7 @@ def get_all_community_questions():
 @community_bp.route("/community/newest")
 def newest_community_questions():
     if "user_id" in session:
-        return render_template("user/community/community_new.html")
+        return render_template("user/community/community-new.html")
     else:
         return redirect(url_for("auth.login"))
 
@@ -158,7 +158,7 @@ def get_new_community_questions():
 @community_bp.route("/community/you")
 def user_community_questions():
     if "user_id" in session:
-        return render_template("user/community/community_user.html")
+        return render_template("user/community/community-user.html")
     else:
         return redirect(url_for("auth.login"))
 
@@ -180,7 +180,7 @@ def get_user_posted_questions():
 @community_bp.route("/community/unanswered")
 def unanswered_community_questions():
     if "user_id" in session:
-        return render_template("user/community/community_unanswered.html")
+        return render_template("user/community/community-unanswered.html")
     else:
         return redirect(url_for("auth.login"))
 
@@ -201,7 +201,7 @@ def get_unanswered_questions():
 @community_bp.route("/community/saved")
 def saved_community_questions():
     if "user_id" in session:
-        return render_template("user/community/community_saved.html")
+        return render_template("user/community/community-saved.html")
     else:
         return redirect(url_for("auth.login"))
 
@@ -712,7 +712,7 @@ def search_questions():
                         search_result.append(question_card_detail)
 
                 return render_template(
-                    "user/community/community_search_result.html",
+                    "user/community/community-search-result.html",
                     search_result=search_result)
             else:
                 return redirect(url_for("community.all_community_questions"))

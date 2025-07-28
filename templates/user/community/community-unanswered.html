@@ -1,0 +1,15 @@
+{% extends 'user/community/community-base.html' %} {% block title %} Community -
+Unanswered {% endblock %} {% block extra_css %} {{ super() }}
+
+<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+/>
+{% endblock %} {% block content %}{{ super() }}{% endblock %} {% block extra_js
+%} {{ super() }}
+<script>
+  window.urlForQuestions = "{{ url_for("community.get_unanswered_questions") }}";
+</script>
+
+{% endblock %}

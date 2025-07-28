@@ -1,10 +1,10 @@
 {% set form_action = url_for('my_courses.search_ai_courses') %} {% extends
-'user/my_courses/my_courses_base.html' %}
+'user/my_courses/my-courses-base.html' %}
 {% block title %}AI-Generated Courses{% endblock %}
 {% block extra_css %}
     {{ super() }}
     <link rel="stylesheet"
-          href="{{ url_for('static', filename = 'css/user/my_courses/ai_generated_courses.css') }}" />
+          href="{{ url_for('static', filename = 'css/user/my_courses/ai-generated-courses.css') }}" />
     <script>
     // Check if the user has seen the warning message and depending on that set the attribute to show or hide the warning
   const usersawmsg = sessionStorage.getItem("usersawmsg") || "no"; 
@@ -114,5 +114,5 @@
 {% endblock %}
 {% block extra_js %}
     <script>let ai_course_url = "{{ url_for('my_courses.generarting_course') }}";</script>
-    <script src="{{  url_for('static', filename='js/user/my_courses/ai_generated_courses.js') }}"></script>
+    <script src="{{  url_for('static', filename='js/user/my_courses/ai-generated-courses.js') }}"></script>
 {% endblock %}

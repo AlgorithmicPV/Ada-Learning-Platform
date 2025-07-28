@@ -1,5 +1,5 @@
 {% set form_action = url_for('my_courses.search_courses') %}
-{% extends 'user/my_courses/my_courses_base.html' %}
+{% extends 'user/my_courses/my-courses-base.html' %}
 {% block title %}
     All
     Courses
@@ -7,7 +7,7 @@
 {% block extra_css %}
     {{ super() }}
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/user/my_courses/all_courses.css') }}" />
+          href="{{ url_for('static', filename='css/user/my_courses/all-courses.css') }}" />
 {% endblock %}
 {% block content %}
     {{ super() }}

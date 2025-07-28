@@ -1,9 +1,5 @@
-{% extends 'user/community/community_base.html' %} {% block title %} Community -
+{% extends 'user/community/community-base.html' %} {% block title %} Community -
 Search Result {% endblock %} {% block extra_css %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename = 'css/user/community/chat_card.css') }}"
-/>
 <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 <link
   rel="stylesheet"
@@ -89,17 +85,8 @@ discussions_cont %} {% if search_result %} {% for question_card in search_result
     alt="No result Image"
   />
 </div>
-{% endif %} {% endblock %} {% block extra_js %} {{ super() }}
+{% endif %} {% endblock %} {% block extra_js %}
 <script>
-  const questionGateUrl  = "{{ url_for("community.check_qid") }}";
-  const toggleSaveUrl = "{{ url_for("community.toggle_save") }}";
-  const urlForQuestions = "{{ url_for("community.get_new_community_questions") }}";
-  const STATIC_BASE = "{{ url_for('static', filename='') }}";
+  window.urlForQuestions = "{{ url_for("community.search_questions") }}";
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
-<script src="{{ url_for('static', filename='js/user/community/search_result.js') }}"></script>
-<script>
-  hljs.highlightAll();
-</script>
-{% endblock %}
+{{ super() }} {% endblock %}

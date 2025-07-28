@@ -2,7 +2,7 @@
 {% block title %}{{ course_name }}{% endblock %}
 {% block extra_css %}
     <link rel="stylesheet"
-          href="{{ url_for("static", filename = 'css/user/my_courses/ai_course.css') }}">
+          href="{{ url_for("static", filename = 'css/user/my_courses/ai-course.css') }}">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -94,7 +94,7 @@
 {% endblock %}
 {% block extra_js %}
     <script>let chat_url = '{{ url_for("ai_chat.ai_course_chat")  }}';</script>
-    <script src="{{  url_for('static', filename='js/user/my_courses/ai_course.js') }}"></script>
+    <script src="{{  url_for('static', filename='js/user/my_courses/ai-course.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
     <script>hljs.highlightAll();</script>

@@ -1,4 +1,4 @@
-import { createQuestionCard, createNewQuestionCard } from "./chat_card.js";
+import { createQuestionCard, createNewQuestionCard } from "./question-card.js";
 
 let numberOfChatCards = 0;
 

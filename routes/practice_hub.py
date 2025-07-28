@@ -55,7 +55,7 @@ def uncomplete_practice_challenges():
         # Because I am using the same template to show the search result
         page_title = "Unsolved"
         return render_template(
-            "user/practice_hub/unsolved_challenges.html",
+            "user/practice_hub/unsolved-challenges.html",
             page_title=page_title,
             challenges=unsolved_challenges)
     else:
@@ -278,7 +278,7 @@ def completed_practice_challenges():
         conn.close()
 
         return render_template(
-            "user/practice_hub/completed_challenges.html",
+            "user/practice_hub/completed-challenges.html",
             challenges=completed_challenges)
     else:
         return redirect(url_for("auth.login"))
@@ -310,7 +310,7 @@ def search():
                        """, ((f'%{keyword}%', f'%{keyword}%')))
                 filtered_challenges = cursor.fetchall()
                 return render_template(
-                    "user/practice_hub/search_result.html",
+                    "user/practice_hub/search-result.html",
                     challenges=filtered_challenges, page_title="Search Result"
                 )
             else:

@@ -1,4 +1,4 @@
-{% extends 'user/practice_hub/practice_hub_base.html' %} {% block title
+{% extends 'user/practice_hub/practice-hub-base.html' %} {% block title
 %}Practice hub - {{ challenge_info[2] }}{% endblock %} {% block extra_css %} {{
 super() }}
 <link
@@ -246,6 +246,6 @@ super() }}
 <script src="{{ url_for('static', filename = 'js/user/practice_hub/challenge.js')}}"></script>
 <script
   type="module"
-  src="{{ url_for('static', filename = 'js/user/base_code_editor.js')}}"
+  src="{{ url_for('static', filename = 'js/user/base-code-editor.js')}}"
 ></script>
 {% endblock %}
