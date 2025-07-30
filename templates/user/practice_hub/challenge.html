@@ -1,5 +1,5 @@
-{% extends 'user/practice_hub/practice-hub-base.html' %} {% block title
-%}Practice hub - {{ challenge_info[2] }}{% endblock %} {% block extra_css %} {{
+{% extends 'user/practice_hub/practice-hub-base.html' %} {% block title %}
+Practice hub - {{ challenge_info[2] }} {% endblock %} {% block extra_css %} {{
 super() }}
 <link
   rel="stylesheet"
@@ -17,9 +17,11 @@ super() }}
       {{ challenge_info[1] }}.{{ challenge_info[2] }}
     </p>
     <div class="challenge">{{ challenge_info[3] | safe }}</div>
+    {% if challenge_info[4] != 'Completed' %}
     <div class="done-btn-wrapper">
       <button class="done-btn">Done</button>
     </div>
+    {% endif %}
   </div>
   <div class="code-env-wrapper">
     <div class="code-env-header">
@@ -224,6 +226,8 @@ super() }}
   </button>
   <div class="code"></div>
 </div>
+{% endblock %} {% block floatingItems %} {{ super() }}
+<div class="message-box"></div>
 {% endblock %} {% block extra_js %} {{ super() }}
 <script>
   require.config({
@@ -236,6 +240,7 @@ super() }}
   let send_language_url = `{{ url_for("compiler.get_the_language") }}`;
   let check_answers_url = `{{ url_for("ai_chat.check_answers") }}`;
   let get_solution_url = `{{ url_for("practice_hub.solution") }}`;
+  let image_url = `{{ url_for('static', filename = 'images/assets/solution_error.png')}}`;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
@@ -243,7 +248,10 @@ super() }}
 <script>
   hljs.highlightAll();
 </script>
-<script src="{{ url_for('static', filename = 'js/user/practice_hub/challenge.js')}}"></script>
+<script
+  type="module"
+  src="{{ url_for('static', filename = 'js/user/practice_hub/challenge.js')}}"
+></script>
 <script
   type="module"
   src="{{ url_for('static', filename = 'js/user/base-code-editor.js')}}"

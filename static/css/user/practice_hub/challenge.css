@@ -450,6 +450,59 @@ code {
   border-radius: 15px;
 }
 
+.message-box {
+  opacity: 0;
+  display: none;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: var(--transparent-background-color);
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+}
+
+.solution-wrong-msg-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.solution-wrong-msg-wrapper img {
+  height: 250px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.solution-wrong-msg-wrapper .heading-txt {
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.solution-wrong-msg-wrapper .msg-txt {
+  font-size: large;
+  width: 250px;
+  text-align: center;
+}
+
+/* Floating animation */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .challenge-main-wrapper {

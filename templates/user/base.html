@@ -265,7 +265,7 @@
                 </div>
             </div>
         </div>
-        {% block floatingItems %}{% endblock %}
+        {% block floatingItems %}<div class="alert-box-wrapper"></div>{% endblock %}
         <script src="{{ url_for('static', filename='js/user/base.js') }}"></script>
         {% block inline_css %}{% endblock %}
         {% block extra_js %}{% endblock %}

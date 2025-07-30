@@ -43,10 +43,13 @@ html {
 .cont.page-loaded {
   opacity: 1;
   transform: scale(1);
+  display: flex;
+  flex-direction: column;
 }
 
 body {
-  margin: 0; /* Removes default margin because it is easy to customize */
+  margin: 0;
+  /* Removes default margin because it is easy to customize */
   background-color: var(--background-color);
   color: var(--text-color);
   display: flex;
@@ -61,11 +64,12 @@ body {
 [data-sidebar="expanded"] .navigation-bar-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(
-    100vh - 30px
-  ); /* Removes 30px from the height as there is a padding of 15px from top and down */
-  padding: 15px; /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
-  border-right: var(--border-color) 1px solid; /* Adds a border to only the right side to separate from the dashboard */
+  height: calc(100vh - 30px);
+  /* Removes 30px from the height as there is a padding of 15px from top and down */
+  padding: 15px;
+  /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
+  border-right: var(--border-color) 1px solid;
+  /* Adds a border to only the right side to separate from the dashboard */
   width: 200px;
   transition: 0.2s ease-in-out all;
 }
@@ -73,20 +77,24 @@ body {
 [data-sidebar="collapsed"] .navigation-bar-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(
-    100vh - 30px
-  ); /* Removes 30px from the height as there is a padding of 15px from top and down */
-  padding: 15px; /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
-  border-right: var(--border-color) 1px solid; /* Adds a border to only the right side to separate from the dashboard */
+  height: calc(100vh - 30px);
+  /* Removes 30px from the height as there is a padding of 15px from top and down */
+  padding: 15px;
+  /* Keeps some spaces around the content on the navigation bar, which helps to see the content clearly for users */
+  border-right: var(--border-color) 1px solid;
+  /* Adds a border to only the right side to separate from the dashboard */
   width: min-content;
   transition: 0.2s ease-in-out all;
 }
 
 [data-sidebar="expanded"] .navigation-bar-wrapper button {
-  border: none; /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
-  background-color: transparent; /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
+  border: none;
+  /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
+  background-color: transparent;
+  /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
   color: var(--second-text-color);
-  margin-bottom: 10px; /* Sets some spaces between buttons in the navigation bar */
+  margin-bottom: 10px;
+  /* Sets some spaces between buttons in the navigation bar */
   padding: 10px;
   border-radius: 50px;
   display: flex;
@@ -100,10 +108,13 @@ body {
 }
 
 [data-sidebar="collapsed"] .navigation-bar-wrapper button {
-  border: none; /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
-  background-color: transparent; /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
+  border: none;
+  /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
+  background-color: transparent;
+  /* Default keeps the background colour transparent which helps uthe ser to understand that they are not on that relevant page */
   color: var(--second-text-color);
-  margin-bottom: 10px; /* Sets some spaces between buttons in the navigation bar */
+  margin-bottom: 10px;
+  /* Sets some spaces between buttons in the navigation bar */
   padding: 10px;
   border-radius: 50px;
   display: flex;
@@ -117,33 +128,37 @@ body {
 }
 
 [data-sidebar="expanded"] .navigation-bar-wrapper button p {
-  margin: 0; /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
+  margin: 0;
+  /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
   transition: 0.2s ease-in-out all;
   display: block;
 }
 
 [data-sidebar="collapsed"] .navigation-bar-wrapper button p {
-  margin: 0; /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
+  margin: 0;
+  /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
   transition: 0.2s ease-in-out all;
   display: none;
 }
 
 .menu-cloppased-button {
-  width: min-content !important; /* Fixes the width of the image as this is the menu close button */
+  width: min-content !important;
+  /* Fixes the width of the image as this is the menu close button */
 }
 
 .menu-cloppased-button svg {
-  margin: 0 !important; /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
+  margin: 0 !important;
+  /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
 }
 
 .menu-cloppased-button svg {
-  margin: 0 !important; /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
+  margin: 0 !important;
+  /* Removes unnecessary spaces as there is no text, ensuring a perfect circular button */
 }
 
 .active {
-  background-color: var(
-    --primary-color
-  ) !important; /* Adds a background colour to show that user in the dashboard */
+  background-color: var(--primary-color) !important;
+  /* Adds a background colour to show that user in the dashboard */
   color: var(--home-text-color) !important;
 }
 
@@ -158,7 +173,8 @@ body {
 [data-sidebar="expanded"] .navigation-bar-wrapper svg {
   height: 20px;
   width: 20px;
-  margin-right: 10px; /* Adds some space between the icon and  text in each button for better visualization */
+  margin-right: 10px;
+  /* Adds some space between the icon and  text in each button for better visualization */
   transition: 0.2s ease-in-out all;
   fill: var(--text-color);
 }
@@ -166,26 +182,28 @@ body {
 [data-sidebar="collapsed"] .navigation-bar-wrapper svg {
   height: 20px;
   width: 20px;
-  margin-right: 0; /* Adds some space between the icon and  text in each button for better visualization */
+  margin-right: 0;
+  /* Adds some space between the icon and  text in each button for better visualization */
   transition: 0.2s ease-in-out all;
   fill: var(--text-color);
 }
 
 .logout-btn {
-  margin-top: auto; /* Keeps the logout button at the bottom of the vertical navigation bar, to prevent users from accidentally clicking on the logout button */
+  margin-top: auto;
+  /* Keeps the logout button at the bottom of the vertical navigation bar, to prevent users from accidentally clicking on the logout button */
 }
 
 .main-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: calc(
-    100vw - 200px
-  ); /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
+  width: calc(100vw - 200px);
+  /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
 }
 
 .top-bar {
-  margin: 15px; /* Adds some space around the top bar to prevent it from touching the top of the screen and other <div>s */
+  margin: 15px;
+  /* Adds some space around the top bar to prevent it from touching the top of the screen and other <div>s */
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -220,7 +238,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  margin-right: 15px; /* Adds some space between this div and the corner of the screen */
+  margin-right: 15px;
+  /* Adds some space between this div and the corner of the screen */
 }
 
 .profile-pic {
@@ -243,9 +262,12 @@ body {
 
 /* Target the vertical scrollbar thumb */
 *::-webkit-scrollbar-thumb {
-  background-color: transparent; /* Thumb color */
-  border: 1px solid var(--second-text-color); /* White border around the thumb */
-  border-radius: 10px; /* Rounded corners (optional) */
+  background-color: transparent;
+  /* Thumb color */
+  border: 1px solid var(--second-text-color);
+  /* White border around the thumb */
+  border-radius: 10px;
+  /* Rounded corners (optional) */
 }
 
 /* Track area behind the thumb */
@@ -261,26 +283,75 @@ body {
 .cont {
   padding-left: 30px;
   padding-right: 15px;
-  width: calc(
-    100% - 30px
-  ); /* Removes 30px from the full width because of the padding otherwise it will over flow*/
+  width: calc(100% - 30px);
+  /* Removes 30px from the full width because of the padding otherwise it will over flow*/
   max-width: 1500px;
-  margin: 0 auto; /* This helps center on very small screens too */
+  margin: 0 auto;
+  /* This helps center on very small screens too */
 }
 
 /* Styles menu collapsed button for smaller screens */
 .small-screen {
-  display: none; /* Hides in the larger screen */
+  display: none;
+  /* Hides in the larger screen */
 }
 
 .menu-wrapper-small-screen {
   display: none;
 }
 
+.alert-box-wrapper {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+}
+
+.alert-box-wrapper div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  padding: 15px;
+  height: 20px;
+  width: max-content;
+  background-color: var(--transparent-background-color);
+  opacity: 0;
+  transform: translateX(100%); /* Start off-screen right */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.warning-alert-box {
+  border: 2px solid #ffd016bc;
+  border-left: 7px solid #ffd016bc;
+}
+
+.warning-alert-box p {
+  color: #ffd016;
+}
+
+.success-alert-box {
+  border: 2px solid #00ff26ba;
+  border-left: 7px solid #00ff26ba;
+}
+
+.success-alert-box p {
+  color: #00ff26;
+}
+
+.error-alert-box {
+  border: 2px solid #ff0000c3;
+  border-left: 7px solid #ff0000c3;
+}
+
+.error-alert-box p {
+  color: #ff0000;
+}
+
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1280px) {
   .navigation-bar-wrapper {
-    display: none !important; /* Hides the vertical navigation bar */
+    display: none !important;
+    /* Hides the vertical navigation bar */
   }
 
   .cont {
@@ -295,7 +366,8 @@ body {
 
   /* Styles menu collapsed button for smaller screens */
   .small-screen {
-    display: flex; /* Shows this button */
+    display: flex;
+    /* Shows this button */
   }
 
   /* Styles the menu screen in small screens */

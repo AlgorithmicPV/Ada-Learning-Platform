@@ -147,11 +147,20 @@ def show_challenge(challenge_title):
 
         challenge_id = session.get("challenge_id")
         cursor.execute("""
-            SELECT challenge_id,
-                    number,
-                    challenge_title,
-                    question FROM Challenge WHERE challenge_id=?
-                    """, (challenge_id,))
+                    SELECT 
+                        challenge_id,
+                        number,
+                        challenge_title,
+                        question,
+                        (
+                        SELECT status
+                        FROM Challenge_attempt
+                        WHERE challenge_id = :cid
+                            AND user_id = :uid
+                        ) as status
+                    FROM Challenge 
+                    WHERE challenge_id= :cid
+                    """, {"cid": challenge_id, "uid": session.get("user_id")})
         challenge_info = cursor.fetchall()[0]
         challenge_info_list = list(challenge_info)
         challenge_info_list[3] = markdown.markdown(challenge_info_list[3])

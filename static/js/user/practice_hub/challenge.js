@@ -1,3 +1,6 @@
+import { solutionWrongMsg } from "./solution-wrong-msg.js";
+import { showAlertMessages } from "./../message-handler.js";
+
 function celebrate() {
   confetti({
     particleCount: 500,
@@ -59,20 +62,19 @@ selectedLanguageWrapper.addEventListener("click", () => {
 
 const options = document.querySelectorAll(".option");
 
-let language = "python";
+window.language = "python";
 options.forEach((option) => {
   option.addEventListener("click", () => {
     const lang = option.dataset.value;
-    language = lang;
+    window.language = lang;
     const selectedContent = option.innerHTML;
     selectedLanguage.innerHTML = selectedContent;
-    console.log(language);
     fetch(send_language_url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ language: language }),
+      body: JSON.stringify({ language: window.language }),
     })
       .then((response) => response.json())
       .then((data) => console.log(data))
@@ -84,30 +86,39 @@ options.forEach((option) => {
 
 const doneButton = document.querySelector(".done-btn");
 
-doneButton.addEventListener("click", () => {
-  let userCode = window.editor.getValue();
-
-  fetch(check_answers_url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ user_code: userCode }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data["message"]) {
-        console.log(data["incorrect"]);
-      } else {
-        celebrate();
-        setTimeout(() => {
-          window.location.href = data["redirect_url"];
-        }, 3000);
-      }
-    })
-    .catch((error) => console.error(error));
-});
-
+if (doneButton) {
+  doneButton.addEventListener("click", () => {
+    let userCode = window.editor.getValue();
+    if (userCode) {
+      fetch(check_answers_url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_code: userCode }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data["message_type"] == "solution_wrong") {
+            solutionWrongMsg(image_url);
+          } else if (data["message_type"] == "warning") {
+            showAlertMessages("warning", data["message"]);
+          } else {
+            celebrate();
+            setTimeout(() => {
+              window.location.href = data["redirect_url"];
+            }, 3000);
+          }
+        })
+        .catch((error) => console.error(error));
+    } else {
+      showAlertMessages(
+        "warning",
+        "You have to type the solution in the given code editor"
+      );
+    }
+  });
+}
 const toggleSolution = document.querySelector(".toggle-solution");
 const solutionCode = document.querySelector(".solution .code");
 const solution = document.querySelector(".solution");
@@ -118,7 +129,7 @@ toggleSolution.addEventListener("click", () => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ language: language }),
+    body: JSON.stringify({ language: window.language }),
   })
     .then((response) => response.json())
     .then((data) => {

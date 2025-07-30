@@ -93,7 +93,7 @@ def check_answers():
         if request.method == "POST":
             data = request.get_json()
             user_code = data.get("user_code")
-            
+
             if user_code:
                 conn = sqlite3.connect("database/app.db")
                 cursor = conn.cursor()
@@ -153,12 +153,15 @@ def check_answers():
                             conn.close()
                             return jsonify({"redirect_url": redirect_url})
                         else:
-                            return jsonify({"message": "Incorrect solution, Give another try!"})
+                            return jsonify({"message_type": "solution_wrong"})
                     elif status[0] == "Completed":
                         return jsonify({"redirect_url": url_for(
-                        "practice_hub.uncomplete_practice_challenges")})
+                            "practice_hub.uncomplete_practice_challenges")})
             else:
-                return jsonify(
-                    {"message": "You have to type the solution in the given code editor"})
+                return jsonify({
+                    "message": "You have to type the solution in the given code editor",
+                    "message_type": "warning"
+                })
+
     else:
         return redirect(url_for("auth.login"))

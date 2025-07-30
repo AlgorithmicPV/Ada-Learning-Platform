@@ -14,7 +14,7 @@ def get_the_language():
         if request.is_json and request.method == "POST":
             data = request.get_json()
             session["language"] = data.get("language")
-        return "", 204
+        return "", 200
     else:
         return redirect(url_for("auth.login"))
 

@@ -1,7 +1,7 @@
 // This JavaScript file is the base foundation for the code editors used in this platform
 // This code is responsible for setting up the Monaco Editor and handling theme toggling
-require(["vs/editor/editor.main"], function () {
-  let activatedLanguage = language;
+require(["vs/editor/editor.main"], function() {
+  let activatedLanguage = window.language;
   // Create the editor instance
   window.editor = monaco.editor.create(document.querySelector(".code-editor"), {
     value: ``,
