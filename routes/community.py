@@ -66,7 +66,7 @@ def get_community_questions_from_db(filter_query):
                     ELSE U.full_name
                 END AS posted_user,
                 CASE
-                    WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                    WHEN U.profile_image NOT LIKE 'https%' THEN :static_base || U.profile_image
                     ELSE U.profile_image
                 END AS profile_image_url,
                 COUNT(A.answer_id) AS number_of_answers,
@@ -360,7 +360,7 @@ def discussions(question_id):
                                 ELSE U.full_name
                             END AS posted_user,
                             CASE
-                                WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                                WHEN U.profile_image NOT LIKE 'https%' THEN :static_base || U.profile_image
                                 ELSE U.profile_image
                             END AS profile_image_url,
                             COUNT(A.answer_id) AS number_of_answers,
@@ -510,7 +510,7 @@ def get_answers():
                     ELSE U.full_name
                 END AS answered_user,
                 CASE
-                WHEN U.auth_provider = 'manual' THEN :static_base || U.profile_image
+                WHEN U.profile_image NOT LIKE 'https%' THEN :static_base || U.profile_image
                     ELSE U.profile_image
                 END AS profile_image_url,
                 COUNT(AL.answer_id) AS number_of_likes,
@@ -528,6 +528,7 @@ def get_answers():
             LEFT JOIN AnswerLike AL ON AL.answer_id = A.answer_id
             WHERE question_id = :qid
             GROUP BY A.answer_id
+            ORDER BY DATE(A.created_at) ASC
         """, {"uid": user_id, "qid": question_id, "static_base": static_base})
 
         answers_details_that_go_to_the_frontend = cursor.fetchall()

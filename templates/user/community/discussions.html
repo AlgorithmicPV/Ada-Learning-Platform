@@ -73,13 +73,17 @@
     </div>
 {% endblock %}
 {% block extra_js %}
-    {{ super() }}
     <script>
-  window.getAnswersUrl = "{{ url_for("community.get_answers") }}";
-  window.addAnswersUrl = "{{ url_for("community.add_answers") }}";
-  window.questionId = "{{ question_detail[0] }}";
-  window.toggleLikeUrl = "{{ url_for("community.toggle_like") }}";
-  window.numberOfanswersUrl = "{{ url_for("community.get_number_of_answers")  }}";
+  const toggleSaveUrl = "{{ url_for("community.toggle_save") }}";
+  const getAnswersUrl = "{{ url_for("community.get_answers") }}"; 
+  const addAnswersUrl = "{{ url_for("community.add_answers") }}";
+  const questionId = "{{ question_detail[0] }}";
+  const toggleLikeUrl = "{{ url_for("community.toggle_like") }}";
+  const numberOfAnswersUrl = "{{ url_for("community.get_number_of_answers")  }}";
+  const urlForQuestions =  "{{ url_for("community.toggle_like") }}"; 
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+    <script>hljs.highlightAll();</script>
     <script src="{{ url_for('static', filename='js/user/community/discussions.js') }}"></script>
 {% endblock %}

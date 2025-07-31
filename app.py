@@ -70,10 +70,14 @@ def inject_user_info():
         cursor.execute(
             "SELECT profile_image FROM User WHERE user_id=?", (user_id,))
         result = cursor.fetchone()
-        auth_provider = session.get("auth_provider")
+        # auth_provider = session.get("auth_provider")
         if result and result[0]:
             profile_pic = result[0]
-            return dict(profile_pic=profile_pic, auth_provider=auth_provider)
+            if profile_pic.startswith("https"):
+                image_source  = "remote"
+            else:
+                image_source = "local"
+            return dict(profile_pic=profile_pic, image_source=image_source)
     return dict(profile_pic="images/profile_pics/default-pic.png")
 
 

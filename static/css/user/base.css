@@ -246,6 +246,7 @@ body {
   height: 30px;
   width: 30px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .app_logo {
@@ -306,7 +307,8 @@ body {
   top: 25px;
 }
 
-.alert-box-wrapper div {
+.alert-box-wrapper div,
+.error-box-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,9 +317,11 @@ body {
   height: 20px;
   width: max-content;
   background-color: var(--transparent-background-color);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.alert-box-wrapper div {
   opacity: 0;
   transform: translateX(100%); /* Start off-screen right */
-  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .warning-alert-box {
@@ -338,13 +342,23 @@ body {
   color: #00ff26;
 }
 
-.error-alert-box {
+.error-alert-box,
+.error-box-wrapper {
   border: 2px solid #ff0000c3;
   border-left: 7px solid #ff0000c3;
 }
 
-.error-alert-box p {
+.error-alert-box p,
+.error-box-wrapper p {
   color: #ff0000;
+}
+
+.error-box-wrapper {
+  height: fit-content !important;
+}
+
+.error-box-wrapper p {
+  margin: 0;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */

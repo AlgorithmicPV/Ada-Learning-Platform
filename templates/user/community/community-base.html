@@ -101,7 +101,7 @@
         <!--Body of the posting question wrapper-->
         <!--User can type their question here-->
         <div class="posting-question-wrapper-body">
-            {% if auth_provider == "manual" %}
+            {% if image_source == "local" %}
                 <img class="profile-pic"
                      src="{{ url_for('static', filename = profile_pic) }}"
                      alt="profile_pic">

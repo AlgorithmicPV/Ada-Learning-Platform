@@ -12,7 +12,6 @@
         <link rel="stylesheet"
               href="{{ url_for('static', filename='css/user/base.css') }}" />
         <script src="{{ url_for('static', filename='js/user/theme.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/user/menu.js') }}"></script>
         <script>
   (() => {
 
@@ -239,12 +238,12 @@
                         </svg>
                     </button>
                     <!-- <div class="profile-pic"> -->
-                    {% if auth_provider == "manual" %}
+                    {% if image_source == "remote" %}
+                        <img class="profile-pic" src="{{ profile_pic }}" alt="profile_pic">
+                    {% else %}
                         <img class="profile-pic"
                              src="{{ url_for('static', filename = profile_pic) }}"
                              alt="profile_pic">
-                    {% else %}
-                        <img class="profile-pic" src="{{ profile_pic }}" alt="profile_pic">
                     {% endif %}
                     <!-- </div> -->
                     <!--Menu cloppased button for smaller screen-->

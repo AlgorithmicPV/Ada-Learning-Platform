@@ -19,7 +19,7 @@
                   enctype="multipart/form-data">
                 <div class="form-body">
                     <div class="profile-img-update-wrapper">
-                        {% if auth_provider == "manual" %}
+                        {% if image_source == "local" %}
                             <img id="profilePreview"
                                  src="{{ url_for('static', filename=user_data[2]) }}"
                                  alt="profile-pic" />

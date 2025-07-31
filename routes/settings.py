@@ -127,33 +127,34 @@ def profile_update():
                 # validates the file type is an image
                 ext = os.path.splitext(file.filename)[1].lower()
 
-                if ext not in ALLOWED_EXTENSIONS:
-                    return 'Invalid file type', 400
+                if ext in ALLOWED_EXTENSIONS:
+                    # Doesn't use the file name of the uploaded image
+                    # because it will cause overwritting another file with the same file name
+                    # Therefore uses uuid4 generated code for the filename
+                    filename = secure_filename(str(uuid.uuid4())) + ext
 
-                # Adds user_id to the name of the uploaded image
-                # This prevents from overwriting other users' images if i used
-                # the username
-                filename = secure_filename(user_id) + ext
+                    # Saves the image to the static folder
+                    upload_folder = os.path.join(
+                        current_app.root_path, 'static', 'images', 'profile_pics')
+                    os.makedirs(upload_folder, exist_ok=True)
 
-                # Saves the image to the static folder
-                upload_folder = os.path.join(
-                    current_app.root_path, 'static', 'images', 'profile_pics')
-                os.makedirs(upload_folder, exist_ok=True)
+                    save_path = os.path.join(upload_folder, filename)
+                    file.save(save_path)
 
-                save_path = os.path.join(upload_folder, filename)
-                file.save(save_path)
+                    # Updates the database with the new profile image location
+                    profile_image = f"images/profile_pics/{filename}"
 
-                # Updates the database with the new profile image location
-                profile_image = f"images/profile_pics/{filename}"
+                    cursor.execute("""
+                            UPDATE USER
+                            SET profile_image=?
+                            WHERE user_id=?
+                                """, (profile_image, user_id,))
 
-                cursor.execute("""
-                        UPDATE USER
-                        SET profile_image=?
-                        WHERE user_id=?
-                            """, (profile_image, user_id,))
+                    conn.commit()
+                else:
+                    flash("Invalid image format.", category="error")
 
-                conn.commit()
-            conn.close()
+                conn.close()
             return redirect(url_for("settings.settings"))
     else:
         return redirect(url_for("auth.login"))

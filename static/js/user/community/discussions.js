@@ -223,6 +223,7 @@ const getAnswers = () => {
           );
         }
       } else if (data.length != numberOfAnswerCards) {
+        console.log(data)
         let newAnswers = data.slice(numberOfAnswerCards);
         for (let i = 0; i < newAnswers.length; i++) {
           createAnswerCard(
@@ -250,7 +251,7 @@ setInterval(getAnswers, 2500);
 const numberOfAnswers = document.querySelector(".number-of-answers");
 
 const updateNumberofAnswers = () => {
-  fetch(numberOfanswersUrl)
+  fetch(numberOfAnswersUrl)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
