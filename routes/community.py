@@ -399,7 +399,8 @@ def discussions(question_id):
                         question_detail=question_details_that_goes_to_client_side,
                     )
                 else:
-                    return redirect(url_for("community.all_community_questions"))
+                    return redirect(
+                        url_for("community.all_community_questions"))
             else:
                 return redirect(url_for("community.all_community_questions"))
         else:

@@ -15,7 +15,21 @@
     {{ super() }}
     <!--Wrapper that shows all AI-generated courses by the user-->
     <div class="ai-generated-courses-wrapper">
-        {% if ai_courses_data %}
+        {% if ai_courses_data|length  == 0 %}
+            <div class="no-result-wrapper"
+                 style="height: 100%;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center">
+                <img style="width: auto;
+                            height: 500px"
+                     class="no-result-image"
+                     src="{{ url_for('static', filename='images/assets/no_result.png') }}"
+                     alt="No result Image" />
+            </div>
+        {% endif %}
+        {% if ai_courses_data != "null" %}
             {% for ai_course in ai_courses_data %}
                 <!--{{ai_course[0]}} means course ID-->
                 <!--{{ ai_course[1] }} means course name-->
@@ -44,18 +58,16 @@
                 </div>
                 <!--End of AI course block-->
             {% endfor %}
-        {% else %}
-            <div class="no-result-wrapper"
-                 style="height: 100%;
-                        width: 100%;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center">
-                <img style="width: auto;
-                            height: 500px"
-                     class="no-result-image"
-                     src="{{ url_for('static', filename='images/assets/no_result.png') }}"
-                     alt="No result Image" />
+        {% elif ai_courses_data == "null" %}
+            <div class="null-wrapper">
+                <h1>Create Your Own Learning Course</h1>
+                <p>Desing a custom course by telling us what you want to learn. We'll generate lessons for you</p>
+                <hr>
+                <ol>
+                    <li>Click the + button to begin</li>
+                    <li>Type what you want to learn</li>
+                    <li>We'll generate your course for you</li>
+                </ol>
             </div>
         {% endif %}
     </div>
@@ -96,19 +108,7 @@
             <button>X</button>
         </div>
         <!--End of warning message-->
-        <!--Loader animation that shows while the AI-generated course is being created-->
-        <div class="loader">
-            <div class="square" id="sq1"></div>
-            <div class="square" id="sq2"></div>
-            <div class="square" id="sq3"></div>
-            <div class="square" id="sq4"></div>
-            <div class="square" id="sq5"></div>
-            <div class="square" id="sq6"></div>
-            <div class="square" id="sq7"></div>
-            <div class="square" id="sq8"></div>
-            <div class="square" id="sq9"></div>
-        </div>
-        <!--End of loader animation-->
+        {% include "components/loader.html" %}
     </div>
     <!--End of input wrapper for creating a new AI-generated course-->
 {% endblock %}

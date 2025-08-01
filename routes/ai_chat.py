@@ -29,8 +29,8 @@ def chat():
             data = request.get_json()
             user_input = data.get("user_input")
             code_output = session.get("output_of_code")
-            del session['output_of_code']
-            del session["user_code"]
+            # del session['output_of_code']
+            # del session["user_code"]
             response = client.chat.completions.create(
                 messages=[
                     {

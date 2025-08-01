@@ -1,6 +1,6 @@
 // This JavaScript file is the base foundation for the code editors used in this platform
 // This code is responsible for setting up the Monaco Editor and handling theme toggling
-require(["vs/editor/editor.main"], function() {
+require(["vs/editor/editor.main"], function () {
   let activatedLanguage = window.language;
   // Create the editor instance
   window.editor = monaco.editor.create(document.querySelector(".code-editor"), {
@@ -120,6 +120,21 @@ document.querySelector(".btn-to-show-input").addEventListener("click", () => {
   document.querySelector(".btn-to-show-input").classList.add("active-btn");
 });
 
+const loadWrapper = document.querySelector(".loader-wrapper");
+const loader = document.querySelector(".loader");
+
+const showLoader = () => {
+  loadWrapper.style.display = "flex";
+  loader.style.opacity = 1;
+  loader.style.visibility = "visible";
+};
+
+const hideLoader = () => {
+  loadWrapper.style.display = "none";
+  loader.style.opacity = 0;
+  loader.style.visibility = "hidden";
+};
+
 // Initially show the output section and hide the AI assistance section
 output_wrapper.style.display = "flex";
 ai_assistance_wrapper.style.display = "none";
@@ -134,6 +149,8 @@ const send_the_code = async () => {
     user_code: user_code, // The code written by the user in the editor
     user_input: user_input, // The input provided by the user for the code execution (works with python)
   };
+  showLoader();
+  output_wrapper.style.display = "none";
 
   try {
     const response = await fetch(fetch_url, {
@@ -146,6 +163,9 @@ const send_the_code = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+    hideLoader();
+    output_wrapper.style.display = "flex";
+
     const result = await response.json();
 
     // Make a wrapper for the terminal line
@@ -187,6 +207,8 @@ const ai_chat = async () => {
   const send_user_input = {
     user_input: user_input,
   };
+  showLoader();
+  ai_assistance_wrapper.style.display = "none";
 
   try {
     const response = await fetch(chat_url, {
@@ -199,6 +221,9 @@ const ai_chat = async () => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+    hideLoader();
+    ai_assistance_wrapper.style.display = "flex";
+
     const result = await response.json();
 
     // Create a conversation wrapper to display the user input and AI response

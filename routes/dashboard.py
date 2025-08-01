@@ -122,7 +122,7 @@ def dashboard():
                     ) AS combined_dates
                 ) AS all_available_dates,
 
-                -- Uses CAST to convert the result to an integer 
+                -- Uses CAST to convert the result to an integer
                 -- It is nice to round the result to the nearest whole number for UI purposes
 
                 -- 1 coin per 5 easy challenges completed

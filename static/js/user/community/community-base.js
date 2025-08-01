@@ -1,5 +1,7 @@
 // Javascript code for community base page
 
+import { showAlertMessages } from "../../message-handler.js";
+
 const show_search_box = document.querySelector(".show-the-input-box");
 
 console.log(show_search_box);
@@ -122,8 +124,7 @@ const postTheQuestion = () => {
       document.querySelector(".user-question-input").value = "";
     })
     .catch((error) => {
-      console.error("Submission failed:", error);
-      alert("Something went wrong. Please try again later.");
+      showAlertMessages("error", error);
     });
 };
 

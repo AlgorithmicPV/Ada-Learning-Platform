@@ -16,6 +16,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from dotenv import load_dotenv
 from extensions import oauth
+from utils import validate_email_address
 
 load_dotenv()
 
@@ -37,7 +38,9 @@ google = oauth.register(
 
 # Route for the Normal Login
 
-# TODO: Check the email provider using string.endswith 
+# TODO: Check the email provider using string.endswith
+
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     session.clear()
@@ -59,7 +62,6 @@ def login():
             # stored_hash_password is a tuple, so we need to access the first
             # element
             stored_hash_password = cursor.fetchone()
-
 
             if stored_hash_password:
                 try:
@@ -100,7 +102,7 @@ def login():
                     flash(f"An error occured: {e}", category="error")
                     return redirect(url_for("auth.login"))
             else:  # If the email does not exist in the database
-                flash("User doesn't exist", category="error")
+                flash("User does not exist", category="error")
         else:
             flash("Email and password required", category="error")
 
@@ -132,19 +134,6 @@ def signup():
             for email_from_db in email_tuple:
                 saved_emails.append(email_from_db)
 
-        # cursor.execute("SELECT full_name FROM User")
-        # full_name_list = cursor.fetchall()
-
-        # saved_names = []  # An array to collect all the names from the
-        # database
-
-        # # Converts the full_name_list into a flat array to easily check if the
-        # # entered name is valid or not. full_name_list is a list of 1-element
-        # # tuples
-        # for name_tuple in full_name_list:
-        #     for name_from_db in name_tuple:
-        #         saved_names.append(name_from_db)
-
         conn.close()
 
         if not email or not name or not password or not confirm_password:
@@ -162,7 +151,7 @@ def signup():
         elif len(password) < 6:
             flash("Password is too short.", category="error")
 
-        elif "@" not in email:
+        elif validate_email_address(email) == "invalid":
             flash("Invalid email!", category="error")
 
         else:

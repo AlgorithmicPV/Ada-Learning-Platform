@@ -1,5 +1,5 @@
 import { solutionWrongMsg } from "./solution-wrong-msg.js";
-import { showAlertMessages } from "./../message-handler.js";
+import { showAlertMessages } from "./../../../js/message-handler.js";
 
 function celebrate() {
   confetti({

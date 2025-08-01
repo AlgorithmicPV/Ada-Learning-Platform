@@ -224,6 +224,7 @@ tr:nth-child(n + 5) {
   background-color: var(--small-blocks-color);
   padding: 15px;
   border-radius: 15px;
+  height: 100%;
 }
 
 .achievement-type {

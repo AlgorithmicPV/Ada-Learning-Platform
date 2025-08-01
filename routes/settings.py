@@ -7,6 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
+from utils import validate_email_address
 
 
 settings_bp = Blueprint("settings", __name__)
@@ -80,8 +81,12 @@ def profile_update():
                     cursor.execute("""
                                 UPDATE User
                                 SET full_name = ?
-                                WHERE user_id=?
-                                    """, (new_username, user_id,))
+                                WHERE user_id=?  AND full_name != ?
+                                    """, (new_username, user_id, new_username))
+                    if cursor.rowcount != 0:
+                        flash(
+                            "Username updated successfully!",
+                            category="success")
                     conn.commit()
                 else:
                     flash("Username is too short.", category="error")
@@ -102,15 +107,21 @@ def profile_update():
                     # If the email doesn't have @ mark, it will send a flash
                     # message to the frontend saying Invalid email
                     if email_from_db is None:
-                        if "@" in new_email:
+                        validate_email = validate_email_address(new_email)
+                        if validate_email == "invalid":
+                            flash("Invalid email!", category="error")
+                        else:
                             cursor.execute("""
                                         UPDATE User
                                         SET email = ?
-                                        WHERE user_id=?
-                                            """, (new_email, user_id,))
+                                        WHERE user_id=? AND email != ?
+                                            """, (new_email, user_id, new_email))
+
+                            flash(
+                                "Your email address has been updated",
+                                category="success")
+
                             conn.commit()
-                        else:
-                            flash("Invalid email!", category="error")
                     # IF the new email is same as the current email, it will
                     # pass
                     elif email_from_db[0] == current_email:
@@ -149,13 +160,17 @@ def profile_update():
                             SET profile_image=?
                             WHERE user_id=?
                                 """, (profile_image, user_id,))
-
+                    flash(
+                        "Looking good! Your profile picture has been updated.",
+                        category="success")
                     conn.commit()
                 else:
                     flash("Invalid image format.", category="error")
 
                 conn.close()
+
             return redirect(url_for("settings.settings"))
+
     else:
         return redirect(url_for("auth.login"))
 
@@ -212,6 +227,9 @@ def change_password():
                                                 WHERE user_id=?
                                                     """, (ph.hash(new_password), user_id))
                                     conn.commit()
+                                    flash(
+                                        "Password changed successfully. You are all set!",
+                                        category="success")
                                 else:
                                     flash(
                                         "Password is too short.", category="error")

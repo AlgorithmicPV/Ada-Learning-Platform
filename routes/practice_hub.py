@@ -147,7 +147,7 @@ def show_challenge(challenge_title):
 
         challenge_id = session.get("challenge_id")
         cursor.execute("""
-                    SELECT 
+                    SELECT
                         challenge_id,
                         number,
                         challenge_title,
@@ -158,7 +158,7 @@ def show_challenge(challenge_title):
                         WHERE challenge_id = :cid
                             AND user_id = :uid
                         ) as status
-                    FROM Challenge 
+                    FROM Challenge
                     WHERE challenge_id= :cid
                     """, {"cid": challenge_id, "uid": session.get("user_id")})
         challenge_info = cursor.fetchall()[0]

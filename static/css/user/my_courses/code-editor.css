@@ -38,7 +38,7 @@
 
 .code-editor {
   height: 100%;
-  width: 800px;
+  flex: 1;
 }
 
 .terminal {
@@ -229,6 +229,14 @@
 .ai-response {
   background-color: var(--primary-color);
   color: var(--home-text-colorr);
+}
+
+.loader-wrapper {
+  height: 100%;
+  width: 100%;
+  display: none;
+  justify-content: center;
+  position: relative;
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */

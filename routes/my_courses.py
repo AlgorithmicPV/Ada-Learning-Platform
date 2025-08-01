@@ -109,7 +109,7 @@ def get_ai_courses(user_id):
     if ai_courses_data_form_db:
         return ai_courses_data_form_db
     else:
-        return None
+        return "null"
 
 # This route is used to display all the courses available in the application
 
@@ -159,18 +159,16 @@ def all_courses():
                 course_id,
                 timestamp,
                 "started",
-                timestamp,  
+                timestamp,
                 user_id,
                 course_id
             ))
-
 
             cursor.execute("""
                 UPDATE Enrollment
                 SET last_accessed = ?
                 WHERE user_id = ? AND course_id = ? AND status = 'started'
             """, (timestamp, user_id, course_id))
-
 
             conn.commit()
 

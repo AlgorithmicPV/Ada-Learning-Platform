@@ -1,3 +1,5 @@
+from email_validator import validate_email, EmailNotValidError
+
 # Function to divide an array into chunks of a specified size
 # This is used to display the courses in a grid format on the frontend
 def divide_array_into_chunks(
@@ -16,3 +18,12 @@ def divide_array_into_chunks(
             ]
         )  # Appends the chunk to the new array,
     return new_array
+
+
+def validate_email_address(email):
+    try:
+        emailinfo = validate_email(email, check_deliverability=False)
+        return "valid"
+    except EmailNotValidError as e:
+        return "invalid"
+

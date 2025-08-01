@@ -38,24 +38,6 @@ open_confirm_password_img.addEventListener("click", () => {
   document.getElementById("confirm-password").type = "text";
 });
 
-//close the error box when the user clicks the cross-icon
-const crossIcon = document.querySelector(".error-box-wrapper .cross-icon");
-
-if (crossIcon) {
-  crossIcon.addEventListener("click", () => {
-    document.querySelector(".error-box-wrapper").style.display = "none";
-  });
-}
-
-// //close the error box when the user clicks the cross-icon
-// document
-//   .querySelector(".wrapper_error_fields_are_not_completed .cross-icon")
-//   .addEventListener("click", () => {
-//     document.querySelector(
-//       ".wrapper_error_fields_are_not_completed"
-//     ).style.display = "none";
-//   });
-
 const clearinput = () => {
   document.getElementById("search").value = "";
 };
