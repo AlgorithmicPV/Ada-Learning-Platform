@@ -74,7 +74,7 @@ def inject_user_info():
         if result and result[0]:
             profile_pic = result[0]
             if profile_pic.startswith("https"):
-                image_source  = "remote"
+                image_source = "remote"
             else:
                 image_source = "local"
             return dict(profile_pic=profile_pic, image_source=image_source)

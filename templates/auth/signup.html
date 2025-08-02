@@ -13,7 +13,7 @@
               href="{{ url_for('static', filename='css/message-handler.css') }}" />
     </head>
     <body>
-        <!--Form for creating new accounts-->
+        {# Form for creating new accounts #}
         <form method="post"
               action="{{ url_for("auth.signup") }}"
               class="create-an-account-form-wrapper"
@@ -37,7 +37,7 @@
                        required="required"
                        value="" />
                 <label for="name">Password</label>
-                <!--Added svg code directly because it is easy to handle with css and JS, rather than adding as <img> tag-->
+                {# Added svg code directly because it is easy to handle with css and JS, rather than adding as <img> tag #}
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Outline"
                      viewBox="0 0 24 24"
@@ -83,11 +83,11 @@
             </div>
             <button type="submit" class="submit">Create Account</button>
         </form>
-        <!--End of the form for creating new accounts-->
+        {# End of the form for creating new accounts #}
         <img class="laptop-img"
              src="{{ url_for('static', filename='images/assets/laptop-with-coding-img.svg') }}"
              alt="An image of a laptop with some written codes" />
-        {# <!--Error box --> #}
+        {# Error box #}
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if
                 messages %}
@@ -96,17 +96,17 @@
                         {% if category ==
                             'error' %}
                             <script type="module">
-                      import { showAlertMessages } from './../../static/js/message-handler.js'
-                      let alertType = `{{ category }}`;
-                      let alertMessage = `{{ message }}`;
-                      showAlertMessages(alertType, alertMessage) 
+                                import {showAlertMessages} from './../../static/js/message-handler.js'
+                                let alertType = `{{ category }}`;
+                                let alertMessage = `{{ message }}`;
+                                showAlertMessages(alertType, alertMessage) 
                             </script>
                         {% endif %}
                     {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
-        <!--End of the error box-->
+        {# End of the error box #}
         <script src="{{ url_for('static', filename='js/auth/signup.js') }}"></script>
     </body>
 </html>

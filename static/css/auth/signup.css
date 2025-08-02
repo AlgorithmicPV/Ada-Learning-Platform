@@ -4,6 +4,7 @@
 
 @import url("../auth/auth-base.css");
 
+/* Styles the Signup / Create account form */
 .create-an-account-form-wrapper {
   width: 100%;
   display: flex;
@@ -14,24 +15,16 @@
   gap: 15px;
 }
 
+/* Styles the 'CREATE AN ACCOUNT' text */
 .title {
   font-size: large;
   font-family: "Inter";
   color: #ebe9fc;
 }
 
-.email-entry-wrapper,
-.name-entry-wrapper,
-.password-entry-wrapper,
-.confirm-password-entry-wrapper {
-  position: relative;
-  height: 40px;
-  line-height: 40px;
-  width: 400px;
-  margin: 15px;
-}
-
-/* Styles the Hide password icons in password box and confirm password box */
+/* Styles the Hide password icons and Show password icons in password box */
+.eye-img-confirm-pass,
+.eye-img-pass,
 .closed-eye-img-confirm-pass,
 .closed-eye-img-pass {
   fill: #ebe9fc7a;
@@ -43,28 +36,17 @@
   transition: 0.3s ease all;
   cursor: pointer;
   width: min-content;
+}
+
+/* Hide closed-eye icon initially (password is hidden by default) */
+.closed-eye-img-confirm-pass,
+.closed-eye-img-pass {
   display: none;
 }
 
+/* Hover style for password toggle to indicate it’s clickable */
 .closed-eye-img-confirm-pass:hover,
-.closed-eye-img-pass:hover {
-  fill: #ebe9fc;
-}
-
-/* Styles the Show password icons in password box and confirm password box */
-.eye-img-confirm-pass,
-.eye-img-pass {
-  fill: #ebe9fc7a;
-  height: 20px;
-  width: 20px;
-  position: absolute;
-  right: 0;
-  z-index: 15;
-  transition: 0.3s ease all;
-  cursor: pointer;
-  width: min-content;
-}
-
+.closed-eye-img-pass:hover,
 .eye-img-confirm-pass:hover,
 .eye-img-pass:hover {
   fill: #ebe9fc;
@@ -90,14 +72,6 @@
     padding: 30px;
     width: 100%;
     gap: 20px;
-  }
-
-  .name-entry-wrapper,
-  .email-entry-wrapper,
-  .password-entry-wrapper,
-  .confirm-password-entry-wrapper {
-    /* Use calc() to ensure there is padding between the form fields and the screen edges. */
-    width: calc(100% - 60px);
   }
 
   .laptop-img {

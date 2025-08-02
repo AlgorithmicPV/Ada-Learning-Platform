@@ -17,9 +17,3 @@ show_password_img.addEventListener("click", () => {
   show_password_img.style.display = "none";
   document.getElementById("password").type = "text";
 });
-
-const clearinput = () => {
-  document.getElementById("search").value = "";
-};
-
-window.addEventListener("pageshow", clearinput);

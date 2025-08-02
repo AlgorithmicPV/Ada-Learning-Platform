@@ -4,44 +4,39 @@
 
 @import url("../auth/auth-base.css");
 
+/* Styles the login wrapper (holds the form) and the main wrapper (includes form and extra elements) */
 .wrapper,
 .login-wrapper {
   width: 100%;
+  /* Expands to fill the entire container width */
   display: flex;
+  /* Uses flex, it is easy to handle the layout */
   justify-content: center;
   align-items: center;
   flex-direction: column;
   font-family: "Inter";
   gap: 15px;
-  font-family: "Inter";
 }
 
-.email-entry-wrapper,
-.name-entry-wrapper,
-.password-entry-wrapper,
-.confirm-password-entry-wrapper {
-  position: relative;
-  height: 40px;
-  line-height: 40px;
-  width: 400px;
-  margin: 15px;
-}
-
-/* Styles the Hide password icons in password box */
-.closed-eye-img-pass {
+/* Styles the Hide password icons and Show password icons in password box */
+.closed-eye-img-pass,
+.eye-img-pass {
   fill: #ebe9fc7a;
   height: 20px;
   width: 20px;
   position: absolute;
+  /* Positions element inside a relatively positioned input wrapper */
   right: 0;
   z-index: 15;
+  /* Brings to top layer for clickability */
   transition: 0.3s ease all;
   cursor: pointer;
   width: min-content;
-  display: none;
 }
 
-.closed-eye-img-pass:hover {
+/* Hover style for password toggle to indicate it’s clickable */
+.closed-eye-img-pass:hover,
+.eye-img-pass:hover {
   fill: #ebe9fc;
 }
 
@@ -58,10 +53,12 @@
   width: min-content;
 }
 
-.eye-img-pass:hover {
-  fill: #ebe9fc;
+/* Hide closed-eye icon initially (password is hidden by default) */
+.closed-eye-img-pass {
+  display: none;
 }
 
+/* Styles 'Create an Account' and 'or' */
 p,
 a {
   margin-top: 20px;
@@ -70,12 +67,12 @@ a {
   transition: 0.3s ease all;
 }
 
-p:hover,
+/* Hover style for 'Create an Account' to show it's clickable */
 a:hover {
   color: #ebe9fc;
 }
 
-/* Styles the google logo in the button */
+/* Styles the google logo in the 'Sign in with Google' button */
 button img {
   height: 30px;
   width: auto;
@@ -95,8 +92,9 @@ button img {
     padding: 0;
   }
 
+  /* Styles the laptop image */
   .laptop-img {
-    all: unset;
+    all: unset; /* Clears all styles for easier custom styling */
     border-radius: 15px;
     height: 300px;
     width: 300px;
@@ -108,21 +106,13 @@ button img {
   }
 
   .login-wrapper {
-    all: unset;
+    all: unset; /* Clears all styles for easier custom styling */
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     padding: 0;
     width: 100%;
-    gap: 20px;
-  }
-
-  .name-entry-wrapper,
-  .email-entry-wrapper,
-  .password-entry-wrapper,
-  .confirm-password-entry-wrapper {
-    /* Use calc() to ensure there is padding between the form fields and the screen edges. */
-    width: calc(100% - 100px);
+    gap: 20px; /* Keeps spacing for better readability */
   }
 }

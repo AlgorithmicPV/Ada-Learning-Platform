@@ -1,6 +1,6 @@
-/* ====================================
+/* =========================================
    Login Page and Signup Page common Styles
-   ==================================== */
+   ========================================= */
 
 @font-face {
   font-family: "Inter";
@@ -19,6 +19,7 @@
 body {
   background-color: #010104;
   display: flex;
+  /* Uses flex — easier to handle and control the layout */
   border: none;
   margin: 0;
   flex-direction: row;
@@ -28,14 +29,29 @@ body {
   overflow-x: hidden;
 }
 
+/* Styles the app logo */
 .logo {
   height: 100px;
 }
 
+/* Wrapper styles for input fields and password visibility toggle */
+.email-entry-wrapper,
+.name-entry-wrapper,
+.password-entry-wrapper,
+.confirm-password-entry-wrapper {
+  position: relative;
+  /* Sets boundary for absolutely positioned input inside */
+  height: 40px;
+  line-height: 40px;
+  width: 400px;
+  margin: 15px;
+}
+
+/* Styles input field */
 input {
-  position: absolute;
+  position: absolute; /* Needed for placeholder shrink animation */
   width: 100%;
-  outline: none;
+  outline: none; /* To give a modern web look */
   background-color: transparent;
   transition: 0.3s ease all;
   height: 40px;
@@ -45,18 +61,21 @@ input {
   color: #ebe9fc;
   padding-left: 25px;
   font-size: medium;
-  z-index: 10;
+  z-index: 10; /* z-index 10 is needed, or the placeholder blocks user typing */
 }
 
+/* Styles labels in inputs */
 label {
-  position: absolute;
+  position: absolute; /* Needed for the shrinking animation on the placeholder */
   transition: 0.2s ease;
   padding-left: 25px;
   font-size: medium;
   color: #ebe9fc71;
-  z-index: 5;
+  z-index: 5; /* z-index set to 5 so it's under the input and doesn't block clicking */
 }
 
+/* Styles the label when input is focused or has valid text */
+/* Shrinks label to match modern web UI style */
 input:focus + label,
 input:valid + label {
   height: 5px;
@@ -66,12 +85,14 @@ input:valid + label {
   color: #ebe9fc;
 }
 
+/* Changes bottom border color when user clicks or enters valid input */
 input:focus,
 input:valid {
   border-bottom: 2px solid #ebe9fc;
   background-color: transparent;
 }
 
+/* Styles the laptop image */
 .laptop-img {
   height: 100vh;
   margin-left: auto;
@@ -79,6 +100,7 @@ input:valid {
   border-bottom-left-radius: 20px;
 }
 
+/* Styles all the buttons */
 button {
   background-color: #ebe9fc;
   color: black;
@@ -96,6 +118,18 @@ button {
   flex-direction: row;
 }
 
+/* On hover, scales the button to show it's clickable and interactive */
 button:hover {
   transform: scale(1.1);
+}
+
+/* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+@media only screen and (max-width: 1200px) {
+  .name-entry-wrapper,
+  .email-entry-wrapper,
+  .password-entry-wrapper,
+  .confirm-password-entry-wrapper {
+    /* Use calc() to ensure there is padding between the form fields and the screen edges. */
+    width: calc(100% - 60px);
+  }
 }
