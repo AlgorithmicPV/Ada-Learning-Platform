@@ -158,6 +158,8 @@ def signup():
 
             user_id = str(uuid.uuid4())  # Creates a new primary key
 
+            image_id = str(uuid.uuid4()) 
+
             timestamp = datetime.now().isoformat(
                 timespec="seconds"
             )  # Gets the current time
@@ -185,7 +187,7 @@ def signup():
                     "manual",
                     "dark",
                     datetime.fromisoformat(timestamp),
-                 "images/profile_pics/default-pic.png",
+                 f"https://api.dicebear.com/9.x/identicon/svg?seed={image_id}",
                  ),
             )
 

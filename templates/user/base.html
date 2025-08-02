@@ -134,7 +134,8 @@
                     <path d="M23.707.293h0a1,1,0,0,0-1.414,0L12,10.586,1.707.293a1,1,0,0,0-1.414,0h0a1,1,0,0,0,0,1.414L10.586,12,.293,22.293a1,1,0,0,0,0,1.414h0a1,1,0,0,0,1.414,0L12,13.414,22.293,23.707a1,1,0,0,0,1.414,0h0a1,1,0,0,0,0-1.414L13.414,12,23.707,1.707A1,1,0,0,0,23.707.293Z" />
                 </svg>
             </button>
-            <button class="home-btn {% if request.path.startswith('/dashboard') %}active{% endif %}">
+            <button class="home-btn {% if request.path.startswith('/dashboard') %}active{% endif %}"
+                    onclick="window.location.href='{{ url_for("dashboard.dashboard") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -145,7 +146,8 @@
                 </svg>
                 <p>Home</p>
             </button>
-            <button class="my-course-btn {% if request.path.startswith('/my-courses') %}active{% endif %}">
+            <button class="my-course-btn {% if request.path.startswith('/my-courses') %}active{% endif %}"
+                    onclick="window.location.href='{{ url_for("my_courses.all_courses") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -156,7 +158,8 @@
                 </svg>
                 <p>My Course</p>
             </button>
-            <button class="practice-hub-btn {% if request.path.startswith('/practice-hub') %}active{% endif %}">
+            <button class="practice-hub-btn {% if request.path.startswith('/practice-hub') %}active{% endif %}"
+                    onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -165,7 +168,8 @@
                 </svg>
                 <p>Practice Hub</p>
             </button>
-            <button class="community-btn">
+            <button class="community-btn {% if request.path.startswith('/community') %}active{% endif %}"
+                    onclick="window.location.href='{{ url_for("community.all_community_questions") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -176,7 +180,8 @@
                 </svg>
                 <p>Community</p>
             </button>
-            <button class="setting-btn">
+            <button class="setting-btn {% if request.path.startswith('/settings') %}active{% endif %}"
+                     onclick="window.location.href='{{ url_for("settings.settings") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -186,7 +191,8 @@
                 </svg>
                 <p>Settings</p>
             </button>
-            <button class="logout-btn">
+            <button class="logout-btn"
+                    onclick="window.location.href='{{ url_for("logout") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink"
                      version="1.1"

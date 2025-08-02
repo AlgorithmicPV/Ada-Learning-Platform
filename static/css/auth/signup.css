@@ -1,26 +1,8 @@
-@font-face {
-  font-family: "Inter";
-  src: url("../../fonts/Inter.ttc") format("truetype");
-  font-style: normal;
-  font-style: normal;
-  font-weight: normal;
-}
-:root {
-  --transparent-background-color: #000000a7;
-}
-body {
-  background-color: #010104;
-  display: flex;
-  border: none;
-  margin: 0;
-  flex-direction: row;
-  width: 100%;
-  overflow-x: hidden;
-}
+/* ====================================
+   Sognup Page Styles
+   ==================================== */
 
-.logo {
-  height: 100px;
-}
+@import url("../auth/auth-base.css");
 
 .create-an-account-form-wrapper {
   width: 100%;
@@ -47,69 +29,6 @@ body {
   line-height: 40px;
   width: 400px;
   margin: 15px;
-}
-
-input {
-  position: absolute;
-  width: 100%;
-  outline: none;
-  background-color: transparent;
-  transition: 0.3s ease all;
-  height: 40px;
-  line-height: 40px;
-  border: none;
-  border-bottom: 2px solid #ebe9fc90;
-  color: #ebe9fc;
-  padding-left: 25px;
-  font-size: medium;
-  z-index: 10;
-}
-
-label {
-  position: absolute;
-  transition: 0.2s ease;
-  padding-left: 25px;
-  font-size: medium;
-  color: #ebe9fc71;
-  z-index: 5;
-}
-
-input:focus + label,
-input:valid + label {
-  height: 5px;
-  line-height: 20px;
-  transform: translate(-15px, -20px);
-  font-size: small;
-  color: #ebe9fc;
-}
-
-input:focus,
-input:valid {
-  border-bottom: 2px solid #ebe9fc;
-  background-color: transparent;
-}
-
-.laptop-img {
-  height: 100vh;
-  margin-left: auto;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-}
-
-button {
-  background-color: #ebe9fc;
-  color: black;
-  border: none;
-  font-family: "Inter";
-  padding: 10px 30px 10px 30px;
-  font-size: medium;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s ease all;
-}
-
-button:hover {
-  transform: scale(1.1);
 }
 
 /* Styles the Hide password icons in password box and confirm password box */
@@ -157,7 +76,8 @@ button:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Gets the full avaialbe height of the screen to center the elements */
+    /* Use the full viewport height to allow vertical centering of the form. */
+    height: 100vh;
     width: 100%;
   }
 
@@ -176,16 +96,12 @@ button:hover {
   .email-entry-wrapper,
   .password-entry-wrapper,
   .confirm-password-entry-wrapper {
-    width: calc(
-      100% - 60px
-    ); /* Keeps some spaces beween screen edge and the <div>s for better appearance */
+    /* Use calc() to ensure there is padding between the form fields and the screen edges. */
+    width: calc(100% - 60px);
   }
 
   .laptop-img {
-    display: none; /* Hides the image as the main purpose of this page is making a new account */
-  }
-
-  .error-box-wrapper {
-    width: 90%;
+    /* Hide the decorative image on small screens to focus on the sign-up form. */
+    display: none;
   }
 }

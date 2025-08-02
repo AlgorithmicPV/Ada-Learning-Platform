@@ -193,11 +193,19 @@ body {
   /* Keeps the logout button at the bottom of the vertical navigation bar, to prevent users from accidentally clicking on the logout button */
 }
 
-.main-wrapper {
+[data-sidebar="expanded"] .main-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: calc(100vw - 200px);
+  /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
+}
+
+[data-sidebar="collapsed"] .main-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100vw;
   /* Substracts the full width of the screen by the width of the vertical navigation bar (200px)to get the perfect width for the tool bar */
 }
 
@@ -326,7 +334,7 @@ body {
 
   /* Styles the menu screen in small screens */
   .menu-wrapper-small-screen {
-    display: flex;
+    z-index: 10000;
     position: absolute;
     flex-direction: column;
     background-color: var(--background-color);
