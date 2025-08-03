@@ -65,26 +65,26 @@
   width: 100%;
 }
 
-.nested li {
-  /* margin-left: 5em; */
-}
-
-.nested ul {
-  padding: 0;
-}
-
-ul,
-li {
+.nested-li {
   list-style: none;
 }
 
-.nested li ul {
+.nested .nested-ul {
+  padding: 0;
+}
+
+.nested .nested-ul,
+.nested .nested-ul li {
+  list-style: none;
+}
+
+.nested li .nested-ul {
   border-left: 1px solid var(--second-text-color);
   position: relative;
   margin-left: 25px;
 }
 
-.nested li ul::before {
+.nested li .nested-ul::before {
   content: "";
   border-bottom: 1px solid var(--second-text-color);
   position: absolute;

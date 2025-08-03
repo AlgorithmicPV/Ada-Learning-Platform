@@ -16,10 +16,15 @@ from routes.community import community_bp
 from routes.practice_hub import practice_hub_bp
 from routes.settings import settings_bp
 from flask.sessions import SecureCookieSessionInterface
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
+
+app.config['PREFERRED_URL_SCHEME'] = 'https'
+
 app.secret_key = os.getenv("app_secret_key")
 app.permanent_session_lifetime = timedelta(days=1)
 app.config['UPLOAD_FOLDER'] = os.path.join(
@@ -104,5 +109,5 @@ def calculate_session_size(response):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    # app.run(host='0.0.0.0', port=5000, debug=True)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

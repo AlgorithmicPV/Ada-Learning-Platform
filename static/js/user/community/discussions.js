@@ -105,9 +105,10 @@ const createAnswerCard = (
   isLiked
 ) => {
   const ulElement = document.createElement("ul");
+  ulElement.classList.add("nested-ul");
 
   const liElement = document.createElement("li");
-
+  liElement.classList.add("nested-li");
   const answerCard = document.createElement("div");
   answerCard.classList.add("answer-card");
 
@@ -223,7 +224,7 @@ const getAnswers = () => {
           );
         }
       } else if (data.length != numberOfAnswerCards) {
-        console.log(data)
+        console.log(data);
         let newAnswers = data.slice(numberOfAnswerCards);
         for (let i = 0; i < newAnswers.length; i++) {
           createAnswerCard(

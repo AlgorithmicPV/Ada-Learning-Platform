@@ -202,6 +202,7 @@ def signup():
 def login_google():
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
+        print("Redirect URI being used:", redirect_uri)
         return google.authorize_redirect(redirect_uri)
     except Exception as e:
         current_app.logger.error(f"Error during the logon: {str(e)}")
@@ -240,7 +241,7 @@ def authorize_google():
                 profile_image,
                 theme_preference,
                 join_date)
-            VALUES (?, ?, ?, ?, ?, ?, ?,?)
+            SELECT ?, ?, ?, ?, ?, ?, ?, ?
             WHERE NOT EXISTS (
                 SELECT 1 FROM User WHERE email = ?
                 )""",
