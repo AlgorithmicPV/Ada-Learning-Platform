@@ -80,8 +80,10 @@ def inject_user_info():
             profile_pic = result[0]
             if profile_pic.startswith("https"):
                 image_source = "remote"
+                session['image_source'] = image_source
             else:
                 image_source = "local"
+                session['image_source'] = image_source
             return dict(profile_pic=profile_pic, image_source=image_source)
     return dict(profile_pic="images/profile_pics/default-pic.png")
 

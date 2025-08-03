@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from utils import validate_email_address
-
+from PIL import Image
 
 settings_bp = Blueprint("settings", __name__)
 
@@ -139,30 +139,73 @@ def profile_update():
                 ext = os.path.splitext(file.filename)[1].lower()
 
                 if ext in ALLOWED_EXTENSIONS:
-                    # Doesn't use the file name of the uploaded image
-                    # because it will cause overwritting another file with the same file name
-                    # Therefore uses uuid4 generated code for the filename
-                    filename = secure_filename(str(uuid.uuid4())) + ext
 
-                    # Saves the image to the static folder
+                    base_filename = secure_filename(str(uuid.uuid4()))
+
+                    # Define upload/output folder
                     upload_folder = os.path.join(
                         current_app.root_path, 'static', 'images', 'profile_pics')
                     os.makedirs(upload_folder, exist_ok=True)
 
-                    save_path = os.path.join(upload_folder, filename)
-                    file.save(save_path)
+                    # Delete the previous image
+                    image_source = session.get("image_source")
 
-                    # Updates the database with the new profile image location
-                    profile_image = f"images/profile_pics/{filename}"
+                    if image_source == "local":
+                        cursor.execute(
+                            """
+                            SELECT profile_image
+                            FROM USER
+                            WHERE user_id = ?
+                            """, (user_id,))
+                        prev_iamge_tuple = cursor.fetchone()
+                        if prev_iamge_tuple:
+                            os.remove(f'static/{prev_iamge_tuple[0]}')
+
+                    if ext == '.webp':
+                        webp_filename = base_filename + ".webp"
+                        webp_path = os.path.join(upload_folder, webp_filename)
+                        profile_image = f"images/profile_pics/{webp_filename}"
+                        file.save(webp_path, quality=90, optimize=True)
+                    else:
+                        # Generate unique filename
+                        original_filename = base_filename + ext
+                        webp_filename = base_filename + ".webp"
+
+                        # Paths
+                        original_path = os.path.join(
+                            upload_folder, original_filename)
+                        webp_path = os.path.join(upload_folder, webp_filename)
+
+                        # Save original temporarily
+                        file.save(original_path)
+
+                        try:
+                            # Open and convert
+                            image = Image.open(original_path)
+                            if image.mode != "RGBA":
+                                image = image.convert("RGBA")
+                            image.save(
+                                webp_path, "WEBP", quality=90, optimize=True)
+
+                            # Optional: delete original image
+                            os.remove(original_path)
+                        except Exception as e:
+                            flash(
+                                "Image upload failed. Try again with a different file.",
+                                category="error")
+
+                        # Save relative webp path to DB
+                        profile_image = f"images/profile_pics/{webp_filename}"
 
                     cursor.execute("""
-                            UPDATE USER
-                            SET profile_image=?
-                            WHERE user_id=?
-                                """, (profile_image, user_id,))
+                        UPDATE USER
+                        SET profile_image = ?
+                        WHERE user_id = ?
+                    """, (profile_image, user_id))
                     flash(
                         "Looking good! Your profile picture has been updated.",
                         category="success")
+
                     conn.commit()
                 else:
                     flash("Invalid image format.", category="error")

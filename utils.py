@@ -35,5 +35,7 @@ def validate_email_address(email):
 # Still need to use cursor = conn.cursor() because some routes run multiple SQL queries
 # If I wrapped everything in one function, I'd have to call it multiple
 # times per route, which would affect performance
+
+
 def get_connection():
     return sqlite3.connect("database/app.db")

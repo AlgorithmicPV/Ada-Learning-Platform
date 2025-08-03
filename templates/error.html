@@ -15,7 +15,7 @@
         </script>
     </head>
     <body>
-        <img src="{% if error_code == 404 %} {{ url_for('static', filename='images/assets/404_error.png') }} {% elif error_code == 403 %} {{ url_for('static', filename='images/assets/403_error.png') }} {% else %} {{ url_for('static', filename='images/assets/default_error.png') }} {% endif %}"
+        <img src="{% if error_code == 404 %} {{ url_for('static', filename='images/assets/404_error.webp') }} {% elif error_code == 403 %} {{ url_for('static', filename='images/assets/403_error.webp') }} {% else %} {{ url_for('static', filename='images/assets/default_error.png') }} {% endif %}"
              alt="{{ error_code }}" />
         <div>
             <h1>{{ message }}</h1>
