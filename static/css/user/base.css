@@ -307,6 +307,15 @@ body {
 
 .menu-wrapper-small-screen {
   display: none;
+  z-index: 10000;
+  position: absolute;
+  flex-direction: column;
+  background-color: var(--background-color);
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
@@ -330,19 +339,6 @@ body {
   .small-screen {
     display: flex;
     /* Shows this button */
-  }
-
-  /* Styles the menu screen in small screens */
-  .menu-wrapper-small-screen {
-    z-index: 10000;
-    position: absolute;
-    flex-direction: column;
-    background-color: var(--background-color);
-    width: 100vw;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-    display: none;
   }
 
   .logout-btn {

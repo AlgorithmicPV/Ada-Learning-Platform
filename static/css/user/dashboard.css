@@ -30,10 +30,12 @@
 }
 
 body {
-  margin: 0; /* Removes default margin because it is easy to customize */
+  margin: 0;
+  /* Removes default margin because it is easy to customize */
   background-color: var(--background-color);
   color: var(--text-color);
   display: flex;
+  /* Use flexbox to arrange child elements in a responsive layout */
   flex-direction: row;
   height: 100vh;
   width: 100%;
@@ -41,49 +43,62 @@ body {
   overflow: hidden;
 }
 
+/* Wrapper that holds greeting texts */
 .greeting-wrapper {
-  margin-top: 20px; /* Adds some space between this div and the top bar */
+  margin-top: 20px;
+  /* Adds some space between this div and the top bar */
   display: flex;
-  justify-content: flex-start;
   align-items: flex-start;
+  justify-content: flex-end;
+  /* Aligns greeting text to the right for easier reading */
   flex-direction: column;
   width: 100%;
+  /* Full width to allow right alignment of child elements */
 }
 
+/* Styles the wrapper that contains Hello message */
 .greeting-txt-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   gap: 15px;
+  /* Adds space between items for better readability */
 }
 
+/* Styles the greeting text */
 .greeting-txt {
   font-family: "Konkhmer";
   font-size: xx-large;
-  margin: 0; /* Removes extra spaces for better appearance */
+  /* Enlarges greeting text to grab user attention */
+  margin: 0;
+  /* Removes extra spaces for better appearance */
 }
 
+/* Styles the waving hand image in greeting */
 .greeting-txt-wrapper img {
   height: 45px;
+  /* Matches greeting text height */
 }
 
+/* Styles the welcome text under the greeting */
 .welcome-txt {
-  margin: 0; /* Removes extra spaces for better appearance */
+  margin: 0;
+  /* Removes extra spaces for better appearance */
   text-wrap: wrap;
   width: 350px;
   font-size: large;
 }
 
+/* Styles the wrapper that holds all the widjets (blocks) */
 .block-wrapper {
-  width: calc(
-    100% - 30px
-  ); /* Removes 30px from the width as padding-left and padding-right are 15px, to prevent from overfloe */
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 50px;
+  width: calc(100% - 30px);
+  /* Removes 30px from the width as padding-left and padding-right are 15px, to prevent from overfloe */
+  padding: 50px 15px 0;
+  /* Adds space between greeting wrapper and widgets for clear separation */
 }
 
+/* Wrapper for two widget blocks, used to group and align them consistently */
 .blocks {
   display: flex;
   flex-direction: row;
@@ -91,6 +106,7 @@ body {
   margin-bottom: 35px;
 }
 
+/* Styles the widget block */
 .block {
   background-color: var(--blocks-color);
   display: flex;
@@ -102,6 +118,7 @@ body {
   cursor: pointer;
 }
 
+/* Styles the wrapper that contains the title text and the image */
 .block .title {
   display: flex;
   align-items: center;
@@ -112,17 +129,20 @@ body {
 
 .block .title img {
   height: 20px;
+  /* Matches height to font size */
 }
 
 .block p {
   margin: 5px;
 }
 
+/* Styles other sub texts in each blocks */
 .description,
 .progress-bar,
 .completed-amount,
 .empty {
   margin-left: 20px !important;
+  /* Aligns text with image */
 }
 
 .progress-bar {
@@ -170,18 +190,16 @@ body {
   gap: 10px;
 }
 
-.wrapper-3 {
-  padding-bottom: 35px;
-}
-
 table {
   font-size: medium;
   border-collapse: separate;
-  border-spacing: 0 1em; /* Adds some spaces between <tr>s for better visualization*/
+  border-spacing: 0 1em;
+  /* Adds some spaces between <tr>s for better visualization*/
 }
 
 tr {
-  text-align: center; /* Adds vertical spacing of 1em between table rows while keeping columns tightly aligned */
+  text-align: center;
+  /* Adds vertical spacing of 1em between table rows while keeping columns tightly aligned */
   cursor: pointer;
 }
 
@@ -211,7 +229,8 @@ tr:nth-child(n + 5) {
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  margin-top: 15px; /* Keeps some space between the achievements blocks and the title of thie block */
+  margin-top: 15px;
+  /* Keeps some space between the achievements blocks and the title of thie block */
   gap: 15px;
 }
 
@@ -224,7 +243,7 @@ tr:nth-child(n + 5) {
   background-color: var(--small-blocks-color);
   padding: 15px;
   border-radius: 15px;
-  height: 100%;
+  height: 90%;
 }
 
 .achievement-type {
@@ -266,20 +285,21 @@ tr:nth-child(n + 5) {
 
   .wrapper-2 .block,
   .wrapper-3 .block {
-    width: calc(
-      100% - 30px
-    ); /* Reduces 30px from total width of the screen as there are 15px padding in the both side, and this helps to prvent from over flowing the content */
+    width: calc(100% - 30px);
+    /* Reduces 30px from total width of the screen as there are 15px padding in the both side, and this helps to prvent from over flowing the content */
   }
 
   .wrapper-1 {
-    gap: 15px; /* Reduces the gap between first two blocks ar the screen is small */
+    gap: 15px;
+    /* Reduces the gap between first two blocks ar the screen is small */
   }
 
   .wrapper-1 .description,
   .wrapper-1 .completed-amount,
   .wrapper-1 .title {
     text-align: center;
-    font-size: small; /* Reduces the font sixe as the screen is small */
+    font-size: small;
+    /* Reduces the font sixe as the screen is small */
   }
 
   .problem-solved-wrapper,
@@ -310,66 +330,13 @@ tr:nth-child(n + 5) {
   }
 
   .achievement-block-wrapper {
-    gap: 5px; /* Reduces gab as the screen is small and if the gap is same as the large screen, contents start to move out of the <div> achievement-block-wrapper */
+    gap: 5px;
+    /* Reduces gab as the screen is small and if the gap is same as the large screen, contents start to move out of the <div> achievement-block-wrapper */
   }
 
   /* Styles menu collapsed button for smaller screens */
   .small-screen {
-    display: flex; /* Shows this button */
-  }
-
-  /* Styles the menu screen in small screens */
-  .menu-wrapper-small-screen {
     display: flex;
-    position: absolute;
-    flex-direction: column;
-    background-color: var(--background-color);
-    width: 100vw;
-    height: 100vh;
-    justify-content: center;
-    align-items: center;
-    display: none;
-  }
-
-  .logout-btn {
-    all: unset;
-  }
-
-  .menu-wrapper-small-screen button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 20px;
-    border: none;
-    background-color: transparent;
-    font-size: xx-large;
-    justify-content: center;
-    color: var(--second-text-color);
-  }
-
-  .menu-wrapper-small-screen button svg {
-    all: unset;
-    height: 50px;
-    width: 50px;
-    fill: var(--second-text-color);
-  }
-
-  .menu-wrapper-small-screen .home-btn,
-  .menu-wrapper-small-screen .home-btn svg {
-    color: var(--text-color) !important;
-    fill: var(--text-color) !important;
-    background-color: transparent !important;
-  }
-
-  /* Styles the clossing button for the menu screen for small screens */
-  .close-menu-button {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-  }
-
-  .close-menu-button svg {
-    height: 35px !important;
-    width: 35px !important;
+    /* Shows this button */
   }
 }

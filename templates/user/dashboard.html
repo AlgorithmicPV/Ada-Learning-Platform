@@ -81,7 +81,6 @@
                          alt="📊" />
                     <p>Lead Board</p>
                 </div>
-                <!--Remmebr to use Forloop-->
                 <table>
                     <tr>
                         <th>Rank</th>
@@ -136,7 +135,7 @@
         </div>
     </div>
 {% endblock %}
-<!-- Adds inline css because to show the progress bar visually to users We need to pass the Python variable to CSS, as we can't pass dit irectly into an external CSS -->
+{# Adds inline css because to show the progress bar visually to users We need to pass the Python variable to CSS, as we can't pass dit irectly into an external CSS #}
 {% block inline_css %}
     <style>
   .continue-learning-wrapper .progress-line {
@@ -147,7 +146,7 @@
     width: {{ dashboard_data[7] }}%;
   }
 
-  /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
+  {# Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices #}
   @media only screen and (max-width: 1200px) {
     {% if dashboard_data[6] is not none %}
             .continue-learning-wrapper .progress-line {
