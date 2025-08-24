@@ -41,6 +41,11 @@ google = oauth.register(
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    if request.args.get('next'):
+        next_url = request.args.get('next')
+    else:
+        next_url = url_for("dashboard.dashboard")
+    print(next_url)
     session.clear()
     if (
         request.method == "POST"
@@ -85,7 +90,7 @@ def login():
                             session["user_id"] = user_id
                             cursor.close()  # Close the database connection
                             session["auth_provider"] = "manual"
-                            return redirect(url_for("dashboard.dashboard"))
+                            return redirect(next_url)
                     except (
                         VerifyMismatchError
                     ):  # If the password does not match the stored hash

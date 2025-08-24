@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, session, redirect, url_for, request
 from datetime import timedelta
 from argon2 import PasswordHasher
 from dotenv import load_dotenv

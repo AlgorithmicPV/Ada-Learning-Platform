@@ -1,7 +1,6 @@
 from flask import Blueprint, render_template, session, redirect, url_for
-import sqlite3
 from datetime import datetime, timedelta, date
-from utils import divide_array_into_chunks
+from utils import divide_array_into_chunks, db_execute
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -9,11 +8,10 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if session.get("user_id"):
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
+
         user_id = session.get("user_id")
-        cursor.execute(
-            """
+
+        query = """
             SELECT
                 U.user_id,
                 U.full_name,
@@ -54,7 +52,8 @@ def dashboard():
                 (
                     SELECT ROUND(
                         100.0 * COUNT(UL.lesson_id) /
-                        NULLIF((SELECT COUNT(*) FROM Lesson L2 WHERE L2.course_id = C.course_id), 0)
+                        NULLIF((SELECT COUNT(*) FROM Lesson L2 
+                            WHERE L2.course_id = C.course_id), 0)
                     )
                     FROM User_lesson UL
                     JOIN Lesson L3 ON UL.lesson_id = L3.lesson_id
@@ -66,7 +65,8 @@ def dashboard():
                 -- Challenge progress: total completed vs total
                 (
                     SELECT ROUND(
-                        100.0 * COUNT(*) / NULLIF((SELECT COUNT(*) FROM Challenge), 0)
+                        100.0 * COUNT(*) / 
+                        NULLIF((SELECT COUNT(*) FROM Challenge), 0)
                     )
                     FROM Challenge_attempt
                     WHERE user_id = U.user_id AND status = 'Completed'
@@ -99,37 +99,46 @@ def dashboard():
                     LIMIT 1
                 ) AS top_question_id,
 
-                -- List of all activity dates (lessons, answers, questions, etc.)
+                -- List of all activity dates (lessons, answers, questions, etc)
                 (
                     SELECT
                         GROUP_CONCAT(DISTINCT DATE(dt) ORDER BY DATE(dt) DESC)
                     FROM (
-                        SELECT AR.generated_at AS dt FROM Ai_resource AR WHERE AR.user_id = U.user_id
+                        SELECT AR.generated_at AS dt FROM Ai_resource AR
+                            WHERE AR.user_id = U.user_id
                         UNION
-                        SELECT A.created_at FROM Answer A WHERE A.user_id = U.user_id
+                        SELECT A.created_at FROM Answer A
+                            WHERE A.user_id = U.user_id
                         UNION
-                        SELECT CA.completed_at FROM Challenge_attempt CA WHERE CA.user_id = U.user_id
+                        SELECT CA.completed_at FROM Challenge_attempt CA
+                            WHERE CA.user_id = U.user_id
                         UNION
-                        SELECT E.enrolled_at FROM Enrollment E WHERE E.user_id = U.user_id
+                        SELECT E.enrolled_at FROM Enrollment E
+                            WHERE E.user_id = U.user_id
                         UNION
-                        SELECT E.last_accessed FROM Enrollment E WHERE E.user_id = U.user_id
+                        SELECT E.last_accessed FROM Enrollment E WHERE
+                            E.user_id = U.user_id
                         UNION
-                        SELECT Q.created_at FROM Question Q WHERE Q.user_id = U.user_id
+                        SELECT Q.created_at FROM Question Q
+                            WHERE Q.user_id = U.user_id
                         UNION
-                        SELECT UL.completed_at FROM User_lesson UL WHERE UL.user_id = U.user_id
+                        SELECT UL.completed_at FROM User_lesson UL
+                            WHERE UL.user_id = U.user_id
                         UNION
-                        SELECT U2.join_date FROM User U2 WHERE U2.user_id = U.user_id
+                        SELECT U2.join_date FROM User U2 WHERE
+                            U2.user_id = U.user_id
                     ) AS combined_dates
                 ) AS all_available_dates,
 
                 -- Uses CAST to convert the result to an integer
-                -- It is nice to round the result to the nearest whole number for UI purposes
+                -- Round the result to the nearest whole number for UI purposes
 
                 -- 1 coin per 5 easy challenges completed
                 CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
-                    JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
+                    JOIN Challenge_attempt CA
+                        ON CA.challenge_id = C.challenge_id
                     WHERE CA.user_id = :uid
                     AND CA.status = 'Completed'
                     AND C.difficulty_level = 'Easy'
@@ -140,7 +149,8 @@ def dashboard():
                 CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
-                    JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
+                    JOIN Challenge_attempt CA
+                        ON CA.challenge_id = C.challenge_id
                     WHERE CA.user_id = :uid
                     AND CA.status = 'Completed'
                     AND C.difficulty_level = 'Medium'
@@ -150,7 +160,8 @@ def dashboard():
                 CAST(ROUND((
                     SELECT COUNT(*)
                     FROM Challenge C
-                    JOIN Challenge_attempt CA ON CA.challenge_id = C.challenge_id
+                    JOIN Challenge_attempt CA
+                        ON CA.challenge_id = C.challenge_id
                     WHERE CA.user_id = :uid
                     AND CA.status = 'Completed'
                     AND C.difficulty_level = 'Hard'
@@ -165,7 +176,8 @@ def dashboard():
                             U2.full_name AS name,
                             COUNT(CA.id) AS completed
                         FROM User U2
-                        JOIN Challenge_attempt CA ON CA.user_id = U2.user_id AND CA.status = 'Completed'
+                        JOIN Challenge_attempt CA ON CA.user_id = U2.user_id
+                            AND CA.status = 'Completed'
                         GROUP BY U2.user_id
                         ORDER BY completed DESC
                         LIMIT 5
@@ -189,11 +201,10 @@ def dashboard():
             WHERE U.user_id = :uid
             GROUP BY U.user_id, C.course_id;
 
-            """, {'uid': user_id})
+            """
 
-        dashboard_data_from_db = cursor.fetchall()
-
-        print(session.get('lesson_id'))
+        dashboard_data_from_db = db_execute(
+            query=query, fetch=True, fetchone=False, values={'uid': user_id})
 
         dashboard_data = dashboard_data_from_db[0]
 

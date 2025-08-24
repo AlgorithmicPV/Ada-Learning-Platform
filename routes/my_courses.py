@@ -14,7 +14,7 @@ import uuid
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-from utils import divide_array_into_chunks
+from utils import divide_array_into_chunks, db_execute, login_required
 
 load_dotenv()
 
@@ -32,12 +32,9 @@ my_courses_bp = Blueprint("my_courses", __name__)
 
 # Function to get all the courses available in the database
 # I used a function to stop the repetion in the code
-def get_all_courses():
-    conn = sqlite3.connect("database/app.db")
-    cursor = conn.cursor()
-
+def get_all_courses(search_key: str = None):
     user_id = session["user_id"]
-    cursor.execute("""
+    query = """
                     SELECT
                         C.course_id,
                         C.course_name,
@@ -57,7 +54,8 @@ def get_all_courses():
                                     100.0 * (
                                         SELECT COUNT(*)
                                         FROM user_lesson UL
-                                        JOIN Lesson L ON UL.lesson_id = L.lesson_id
+                                        JOIN Lesson L
+                                            ON UL.lesson_id = L.lesson_id
                                         WHERE
                                             UL.user_id = ? AND
                                             UL.status = 'completed' AND
@@ -74,9 +72,21 @@ def get_all_courses():
                         ) AS completion_percentage
 
                     FROM
-                        Course C;
-                    """, (user_id, ))
-    course_data = cursor.fetchall()
+                        Course C
+                    """
+    search_query = """
+                    WHERE
+                        LOWER(C.course_name) LIKE ?
+                    """
+    if search_key is not None:
+        query = query + search_query
+        values = (user_id, search_key)
+    else:
+        values = (user_id, )
+
+    course_data = db_execute(
+        query=query, fetch=True, fetchone=False, values=values)
+
     if course_data:
         return course_data
     else:
@@ -87,24 +97,20 @@ def get_all_courses():
 
 
 def get_ai_courses(user_id):
-    conn = sqlite3.connect("database/app.db")
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
+    query = """
             SELECT
                 resource_id,
                 title,
                 status,
-                SUBSTR(generated_at, 1, instr(generated_at, 'T') - 1) AS generated_date
+                SUBSTR(generated_at, 1, instr(generated_at, 'T') - 1)
+                    AS generated_date
             FROM
                 Ai_resource
             WHERE user_id  = ?
-        """,
-        (user_id,),
-    )
+        """
 
-    ai_courses_data_form_db = cursor.fetchall()
+    ai_courses_data_form_db = db_execute(
+        query=query, fetch=True, fetchone=False, values=(user_id,))
 
     if ai_courses_data_form_db:
         return ai_courses_data_form_db
@@ -115,45 +121,49 @@ def get_ai_courses(user_id):
 
 
 @my_courses_bp.route("/my-courses", methods=["GET", "POST"])
+@login_required
 def all_courses():
-    if "user_id" in session:
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
+    courses_data = get_all_courses()
 
-        courses_data = get_all_courses()
+    if request.method == "POST":
+        course_id = request.form.get("course_id")
 
-        if request.method == "POST":
-            course_id = request.form.get("course_id")
+        course_id_tuple = db_execute(
+            query="SELECT course_id FROM Course WHERE course_id = ?",
+            fetch=True,
+            fetchone=False,
+            values=(course_id,))
 
-            cursor.execute(
-                "SELECT course_id FROM Course WHERE course_id = ?", (course_id,))
+        if course_id_tuple:
+            session["course_id"] = course_id
+        else:
+            abort(404)
 
-            course_id_tuple = cursor.fetchall()
+        user_id = session.get("user_id")
+        enrollment_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat(timespec="seconds")
 
-            if course_id_tuple:
-                session["course_id"] = course_id
-            else:
-                abort(404)
+        insert_query = """
+            INSERT INTO Enrollment (
+                enrollment_id,
+                user_id,
+                course_id,
+                enrolled_at,
+                status,
+                last_accessed
+            )
+            SELECT ?, ?, ?, ?, ?, ?
+            WHERE NOT EXISTS (
+                SELECT 1 FROM Enrollment
+                WHERE user_id = ? AND course_id = ?
+            )
+        """
 
-            user_id = session.get("user_id")
-            enrollment_id = str(uuid.uuid4())
-            timestamp = datetime.now().isoformat(timespec="seconds")
-
-            cursor.execute("""
-                INSERT INTO Enrollment (
-                    enrollment_id,
-                    user_id,
-                    course_id,
-                    enrolled_at,
-                    status,
-                    last_accessed
-                )
-                SELECT ?, ?, ?, ?, ?, ?
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM Enrollment
-                    WHERE user_id = ? AND course_id = ?
-                )
-            """, (
+        db_execute(
+            query=insert_query,
+            fetch=False,
+            fetchone=False,
+            values=(
                 enrollment_id,
                 user_id,
                 course_id,
@@ -162,181 +172,143 @@ def all_courses():
                 timestamp,
                 user_id,
                 course_id
-            ))
-
-            cursor.execute("""
-                UPDATE Enrollment
-                SET last_accessed = ?
-                WHERE user_id = ? AND course_id = ? AND status = 'started'
-            """, (timestamp, user_id, course_id))
-
-            conn.commit()
-
-            session["lesson_order"] = 1
-
-            return redirect(url_for("my_courses.intermediate_route"))
-
-        conn.close()
-        return render_template(
-            "user/my_courses/all-courses.html", courses_data=courses_data
+            )
         )
-    else:
-        return redirect(url_for("auth.login"))
+
+        update_query = """
+            UPDATE Enrollment
+            SET last_accessed = ?
+            WHERE user_id = ? AND course_id = ? AND status = 'started'
+            """
+
+        db_execute(query=update_query, fetch=False, fetchone=False,
+                   values=(timestamp, user_id, course_id))
+
+        session["lesson_order"] = 1
+
+        return redirect(url_for("my_courses.intermediate_route"))
+
+    return render_template(
+        "user/my_courses/all-courses.html", courses_data=courses_data
+    )
 
 
 # This route is used to search for courses based on a keyword entered by
 # the user
 @my_courses_bp.route("/my-courses/search", methods=["GET"])
+@login_required
 def search_courses():
-    if "user_id" in session:
-        all_courses_data = get_all_courses()
-        user_id = session["user_id"]
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
-        if request.method == "GET":
-            keyword = request.args.get(
-                "search"
-                # Gets the keyword entered by the user and converts it to
-                # lowercase for case-insensitive search
-            ).lower()
-            if not keyword == "" and not keyword.isspace():
-                search_term = f"%{keyword.lower()}%"
-                cursor.execute("""
-                                SELECT
-                                    C.course_id,
-                                    C.course_name,
-                                    C.language_image,
-                                    C.course_image,
-                                    C.language,
+    if request.method == "GET":
+        keyword = request.args.get(
+            "search"
+            # Gets the keyword entered by the user and converts it to
+            # lowercase for case-insensitive search
+        ).lower()
+        if not keyword == "" and not keyword.isspace():
+            search_term = f"%{keyword.lower()}%"
 
-                                    ROUND(
-                                        CASE
-                                            WHEN (
-                                                SELECT COUNT(*)
-                                                FROM Lesson L2
-                                                WHERE L2.course_id = C.course_id
-                                            ) = 0 THEN 0
+            course_data = get_all_courses(search_term)
 
-                                            ELSE (
-                                                100.0 * (
-                                                    SELECT COUNT(*)
-                                                    FROM user_lesson UL
-                                                    JOIN Lesson L ON UL.lesson_id = L.lesson_id
-                                                    WHERE
-                                                        UL.user_id = ? AND
-                                                        UL.status = 'completed' AND
-                                                        L.course_id = C.course_id
-                                                )
-                                                /
-                                                (
-                                                    SELECT COUNT(*)
-                                                    FROM Lesson L2
-                                                    WHERE L2.course_id = C.course_id
-                                                )
-                                            )
-                                        END
-                                    ) AS completion_percentage
+            # Uses the same variable name as the original route to reduce
+            # the repetition of code in the template
+            return render_template(
+                "user/my_courses/search-result-all-courses.html",
+                courses_data=course_data,
+            )
+        else:
+            return redirect(url_for("my_courses.all_courses"))
 
-                                FROM
-                                    Course C
-                               WHERE
-                                    LOWER(C.course_name) LIKE ?;
-                                """, (user_id, search_term))
-                course_data = cursor.fetchall()
-
-                # Uses the same variable name as the original route to reduce
-                # the repetition of code in the template
-                return render_template(
-                    "user/my_courses/search-result-all-courses.html",
-                    courses_data=course_data,
-                )
-            else:
-                return redirect(url_for("my_courses.all_courses"))
-    else:
-        return redirect(url_for("auth.login"))
-
-
-# This route is to process all the lesson data and works as an intermediate route between the all_courses route and the lesson route.
+# This route is to process all the lesson data and
+# works as an intermediate route
+# between the all_courses route and the lesson route.
 # It fetches the lesson data from the database and stores it in the
 # session for later use
-@my_courses_bp.route("/my-courses/intermediate", methods=["GET", "POST"])
+
+
+@my_courses_bp.route("/my-courses/intermediate", methods=["POST", "GET"])
 def intermediate_route():
     if "user_id" in session:
-        conn = sqlite3.connect("database/app.db")
-        cursor = conn.cursor()
         course_id = session.get("course_id")
         # If the request method is POST, it means the user has selected a
         # lesson
-        if (request.method == "POST"):
+        if request.method == "POST":
             lesson_id = request.form.get("lesson_id")
-        else:  # else, it means the user has not selected a lesson yet
+            session["lesson_id"] = lesson_id
 
-            # Retrieve the lesson ID from the session.
-            # This is set in the dashboard route since users can access the lesson page directly from there.
-            # It stores the most recently completed lesson ID for context.
-            lesson_id = session.get('lesson_id')
+        #    Lesson_id              Lesson_id
+        #   (My course)           (Dashboard)
+        #      │                       │
+        #      │                       │
+        #      └──────────►    ◄───────┘
+        #             session lesson_id
+        #                   │
+        #                   │
+        #                   ▼
+        #              Validation
 
-            # Retrieve the current lesson order from the session.
-            # This value is incremented by 1 when the user clicks "Done" to
-            # move to the next lesson.
-            lesson_order = session.get('lesson_order')
-
-            # Checks if the lesson_id stored in the session matches the selected course_id.
-            # This is important because the lesson_id set earlier might not belong to the course
-            # the user is about to access from the course page.
-            cursor.execute(
-                """
-                        SELECT lesson_id
-                            FROM Lesson
-                            WHERE course_id = ?
-                            AND lesson_id = ?""",
-                (course_id,
-                    lesson_id,
-                 ),
-            )
-            lesson_id_tuple = cursor.fetchone()
-
-            # If the lesson_id doesn't exist in the selected course,
-            # fallback to getting the lesson_id that matches the current
-            # lesson_order and course_id.
-            if not lesson_id_tuple:
-                cursor.execute(
-                    """
-                        SELECT lesson_id
-                            FROM Lesson
-                            WHERE course_id = ?
-                            AND lesson_order = ?""",
-                    (course_id,
-                        lesson_order,
-                     ),
+        # If the lesson_id is null
+        # gets the lesson_id that suit to the lesson_order numner
+        lesson_id = session.get('lesson_id')
+        lesson_order = session.get('lesson_order')
+        lesson_id_query = """
+            SELECT
+                COALESCE
+                (
+                (SELECT L1.lesson_id FROM Lesson L1
+                    WHERE L1.lesson_id = :lid AND L1.course_id = :cid),
+                (SELECT L2.lesson_id FROM Lesson L2
+                    WHERE L2.lesson_order = :lnu AND L2.course_id=:cid)
                 )
+            AS lesson_id
+            """
 
-                lesson_id = cursor.fetchone()[0]
+        lesson_id = db_execute(query=lesson_id_query,
+                               fetch=True,
+                               fetchone=True,
+                               values={
+                                   "lid": lesson_id,
+                                   "cid": course_id,
+                                   "lnu": lesson_order
+                               }
+                               )
+
+        if lesson_id:
+            lesson_id = lesson_id[0]
+        else:
+            abort(404)
 
         session["lesson_id"] = lesson_id
 
-        cursor.execute(
-            """
-                SELECT language
-                FROM Course WHERE course_id = ?
-            """, (course_id,))
+        course_descriptor_query = """
+                                SELECT
+                                    language,
+                                    course_name,
+                                    (
+                                    SELECT lesson_title
+                                    FROM Lesson as L
+                                    WHERE L.lesson_id = :lid
+                                        AND L.course_id = :cid
+                                    ) as lesson_title
+                                FROM
+                                    Course as C
+                                WHERE
+                                    C.course_id = :cid
+                                """
 
-        session['language'] = cursor.fetchone()[0]
+        course_descriptor = db_execute(query=course_descriptor_query,
+                                       fetch=True,
+                                       fetchone=False,
+                                       values={
+                                           "lid": lesson_id,
+                                           "cid": course_id
+                                       }
+                                       )
 
-        cursor.execute(
-            "SELECT course_name FROM Course WHERE course_id =?", (course_id,)
-        )
-        course_name = cursor.fetchone()[0]
+        session['language'] = course_descriptor[0][0]
 
-        cursor.execute(
-            "SELECT lesson_title FROM Lesson WHERE lesson_id=?", (lesson_id,)
-        )
-        lesson_titles = cursor.fetchone()
+        course_name = course_descriptor[0][1]
 
-        if not lesson_titles:
-            abort(404)
-
-        lesson_title = lesson_titles[0]
+        lesson_title = course_descriptor[0][2]
 
         # Formats the course name by replacing spaces with hyphens for URL
         # compatibility
@@ -346,7 +318,6 @@ def intermediate_route():
         # compatibility
         formated_lesson_name = "-".join(lesson_title.split(" "))
 
-        conn.close()
         return redirect(
             url_for(
                 "my_courses.lesson",
@@ -354,14 +325,23 @@ def intermediate_route():
                 lesson_name=formated_lesson_name,
             )
         )
+    else:
+        return redirect(url_for("auth.login"))
 
 
-# This route is used to mark a lesson as completed and update the user's progress in the course
+# This route is used to mark a lesson as completed and
+# update the user's progress in the course
 # It checks if the user has already completed the lesson and updates the
 # database accordingly
-@my_courses_bp.route("/my-courses/lesson-completed", methods=["GET", "POST"])
+@my_courses_bp.route("/my-courses/lesson-completed", methods=['POST'])
 def lesson_completed():
-    if "user_id" in session:
+    if "user_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    complete_request = request.form.get("completed")
+
+    if complete_request == "completed":
+
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
 
@@ -377,58 +357,52 @@ def lesson_completed():
         # precision
         timestamp = datetime.now().isoformat(timespec="seconds")
 
-        cursor.execute(
-            """
+        insert_query = """
                 INSERT INTO
                 user_lesson (id,
                             lesson_id,
                             user_id,
                             status,
                             completed_at)
-                SELECT ?, ?, ?, ?, ?
+                SELECT :id, :lid, :uid, :status, :completed_at
                 WHERE NOT EXISTS (
                     SELECT 1 FROM user_lesson
                     WHERE status = 'completed'
-                    AND lesson_id = ?
-                    AND user_id = ?
-                )""",
-            (user_lesson_id,
-                lesson_id,
-                user_id,
-                "completed",
-                timestamp,
-                lesson_id,
-                user_id),
-        )
+                    AND lesson_id = :lid
+                    AND user_id = :uid
+                );"""
 
-        session["lesson_id"] = session.get("next_lesson_id")
-
-        cursor.execute(
-            """
+        update_query = """
                 UPDATE Enrollment
                 SET status = 'completed',
-                    completed_at = ?
-                WHERE user_id = ?
-                AND course_id = ?
+                    completed_at = :completed_at
+                WHERE user_id = :uid
+                AND course_id = :cid
                 AND status != 'completed'
                 AND (
                     SELECT COUNT(*) FROM Lesson
-                    WHERE course_id = ?
+                    WHERE course_id = :cid
                 ) = (
                     SELECT COUNT(*) FROM User_lesson
-                    WHERE user_id = ?
+                    WHERE user_id = :uid
                     AND lesson_id IN (
-                        SELECT lesson_id FROM Lesson WHERE course_id = ?
+                        SELECT lesson_id FROM Lesson WHERE course_id = :cid
                     )
                 );
-            """, (timestamp,
-                  user_id,
-                  course_id,
-                  course_id,
-                  user_id,
-                  course_id))
+            """
 
-        conn.commit()
+        db_execute(query=insert_query + update_query,
+                   fetch=False,
+                   fetchone=False,
+                   values={"id": user_lesson_id,
+                           "lid": lesson_id,
+                           "uid": user_id,
+                           "status": "completed",
+                           "completed_at": timestamp,
+                           "cid": course_id
+                           })
+
+        session["lesson_id"] = session.get("next_lesson_id")
 
         cursor.execute(
             "SELECT lesson_order FROM Lesson WHERE lesson_id = ? AND course_id =?",
@@ -456,9 +430,6 @@ def lesson_completed():
         cursor.close()
 
         return redirect(url_for("my_courses.intermediate_route"))
-
-    else:
-        return redirect(url_for("auth.login"))
 
 
 # This route shows the lesson content for a specific course and lesson
