@@ -48,7 +48,7 @@ def db_execute(
         *,
         query: str,
         fetch: bool,
-        fetchone: bool,
+        fetchone: bool = None,
         values: tuple | list | dict | None = None,
 ):
     try:

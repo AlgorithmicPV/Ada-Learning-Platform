@@ -9,14 +9,13 @@ from flask import (
     current_app,
 )
 import os
-import sqlite3
 from datetime import datetime, timedelta
 import uuid
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from dotenv import load_dotenv
 from extensions import oauth
-from utils import validate_email_address, get_connection
+from utils import validate_email_address, db_execute
 
 load_dotenv()
 
@@ -45,7 +44,6 @@ def login():
         next_url = request.args.get('next')
     else:
         next_url = url_for("dashboard.dashboard")
-    print(next_url)
     session.clear()
     if (
         request.method == "POST"
@@ -57,55 +55,57 @@ def login():
         # If they contain only empty spaces it will return a flash message
         # saying that "Email and password required"
         if email != "" and not email.isspace() and password != "" and not password.isspace():
-            with get_connection() as conn:
-                cursor = conn.cursor()
-                cursor.execute(
-                    "SELECT password FROM User WHERE email = ?", (email,)
-                )  # Fetch the stored password hash for the given email
-                # stored_hash_password is a tuple, so we need to access the first
-                # element
-                stored_hash_password = cursor.fetchone()
+            password_query = "SELECT password FROM User WHERE email = ?"
+            # Fetch the stored password hash for the given email
+            # stored_hash_password is a tuple, so we need to access the first
+            # element
+            stored_hash_password = db_execute(
+                query=password_query,
+                fetch=True,
+                fetchone=True,
+                values=(email,)
+            )
 
-                if stored_hash_password:
-                    try:
-                        if ph.verify(
-                                stored_hash_password[0],
-                                password):  # Verify the password
-                            session["email"] = email
-                            cursor.execute(
-                                "SELECT full_name FROM User Where email = ?", (email,)
-                            )  # Fetch the username associated with the email
-                            # stored_username is a tuple, so we need to access the
-                            # first element
-                            stored_username = (cursor.fetchone())
-                            username = stored_username[0]
-                            # Store the username in the session
-                            session["username"] = username
-                            cursor.execute(
-                                "SELECT user_id FROM User Where email = ?", (email,)
-                            )  # Fetch the user_id associated with the email
-                            stored_user_id = cursor.fetchone()
-                            user_id = stored_user_id[0]
-                            # Store the user_id in the session
-                            session["user_id"] = user_id
-                            cursor.close()  # Close the database connection
-                            session["auth_provider"] = "manual"
-                            return redirect(next_url)
-                    except (
-                        VerifyMismatchError
-                    ):  # If the password does not match the stored hash
-                        flash("Password is not correct", category="error")
-                        return redirect(url_for("auth.login"))
-                    except InvalidHash:  # If the password hash is invalid
-                        flash(
-                            "Invalid hash format. The hash may be corrupted",
-                            category="error")
-                        return redirect(url_for("auth.login"))
-                    except Exception as e:  # Catch any other exceptions
-                        flash(f"An error occured: {e}", category="error")
-                        return redirect(url_for("auth.login"))
-                else:  # If the email does not exist in the database
-                    flash("User does not exist", category="error")
+            if stored_hash_password:
+                try:
+                    if ph.verify(
+                            stored_hash_password[0],
+                            password):  # Verify the password
+                        session["email"] = email
+                        user_info_query = """
+                                        SELECT
+                                            full_name,
+                                            user_id
+                                        FROM User
+                                        Where email = ?"""
+                        user_info = db_execute(
+                            query=user_info_query,
+                            fetch=True,
+                            fetchone=True,
+                            values=(email,))
+                        username = user_info[0][0]
+                        # Store the username in the session
+                        session["username"] = username
+                        user_id = user_info[0][1]
+                        # Store the user_id in the session
+                        session["user_id"] = user_id
+                        session["auth_provider"] = "manual"
+                        return redirect(next_url)
+                except (
+                    VerifyMismatchError
+                ):  # If the password does not match the stored hash
+                    flash("Password is not correct", category="error")
+                    return redirect(url_for("auth.login"))
+                except InvalidHash:  # If the password hash is invalid
+                    flash(
+                        "Invalid hash format. The hash may be corrupted",
+                        category="error")
+                    return redirect(url_for("auth.login"))
+                except Exception as e:  # Catch any other exceptions
+                    flash(f"An error occured: {e}", category="error")
+                    return redirect(url_for("auth.login"))
+            else:  # If the email does not exist in the database
+                flash("User does not exist", category="error")
         else:
             flash("Email and password required", category="error")
 
@@ -123,81 +123,71 @@ def signup():
         password = request.form.get("password")
         confirm_password = request.form.get("confirm-password")
 
-        with get_connection() as conn:
-            cursor = conn.cursor()
+        email_query = "SELECT email FROM User WHERE email = ?"
+        existing_email = db_execute(query=email_query,
+                                    fetch=True,
+                                    fetchone=True,
+                                    values=(email, )
+                                    )
 
-            cursor.execute("SELECT email FROM User")
-            email_list = cursor.fetchall()
+        if not email or not name or not password or not confirm_password:
+            flash("All fields are required!", category="error")
 
-            saved_emails = []  # An array to collect all the emails from the database
+        elif existing_email:
+            flash("Email is already in use.", category="error")
 
-            # Converts the email list into a flat array to easily check if the
-            # entered email is valid or not. email_list is a list of 1-element
-            # tuples
-            for email_tuple in email_list:
-                for email_from_db in email_tuple:
-                    saved_emails.append(email_from_db)
+        elif password != confirm_password:
+            flash("Passwords don't match!", category="error")
 
-            if not email or not name or not password or not confirm_password:
-                flash("All fields are required!", category="error")
+        elif len(name) < 2:
+            flash("Username is too short.", category="error")
 
-            elif email in saved_emails:
-                flash("Email is already in use.", category="error")
+        elif len(password) < 6:
+            flash("Password is too short.", category="error")
 
-            elif password != confirm_password:
-                flash("Passwords don't match!", category="error")
+        elif validate_email_address(email) == "invalid":
+            flash("Invalid email!", category="error")
 
-            elif len(name) < 2:
-                flash("Username is too short.", category="error")
+        else:
 
-            elif len(password) < 6:
-                flash("Password is too short.", category="error")
+            user_id = str(uuid.uuid4())  # Creates a new primary key
 
-            elif validate_email_address(email) == "invalid":
-                flash("Invalid email!", category="error")
+            # Creates a random image ID for DiceBear to generate an avatar
+            # for the user
+            image_id = str(uuid.uuid4())
 
-            else:
+            timestamp = datetime.now().isoformat(
+                timespec="seconds"
+            )  # Gets the current time
 
-                user_id = str(uuid.uuid4())  # Creates a new primary key
-
-                # Creates a random image ID for DiceBear to generate an avatar
-                # for the user
-                image_id = str(uuid.uuid4())
-
-                timestamp = datetime.now().isoformat(
-                    timespec="seconds"
-                )  # Gets the current time
-
-                conn = sqlite3.connect("database/app.db")
-                cursor = conn.cursor()
-
-                cursor.execute(
-                    """
-                    INSERT
-                    INTO User
-                        (user_id,
-                        email,
-                        full_name,
-                        password,
-                        auth_provider,
-                        theme_preference,
-                        join_date,
-                        profile_image)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+            insert_query = """
+                INSERT
+                INTO User
                     (user_id,
-                     email,
-                     name,
-                     ph.hash(password),
-                        "manual",
-                        "dark",
-                        datetime.fromisoformat(timestamp),
-                     f"https://api.dicebear.com/9.x/identicon/svg?seed={image_id}",
-                     ),
-                )
+                    email,
+                    full_name,
+                    password,
+                    auth_provider,
+                    theme_preference,
+                    join_date,
+                    profile_image)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
 
-                conn.commit()
+            db_execute(query=insert_query,
+                       fetch=False,
+                       values=(user_id,
+                               email,
+                               name,
+                               ph.hash(password),
+                               "manual",
+                               "dark",
+                               datetime.fromisoformat(timestamp),
+                               f"https://api.dicebear.com/9.x/identicon/svg?seed={
+                                   image_id}",
+                               )
+                       )
 
-                return redirect(url_for("auth.login"))
+            return redirect(url_for("auth.login"))
 
     return render_template("auth/signup.html")
 
@@ -207,7 +197,6 @@ def signup():
 def login_google():
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
-        print("Redirect URI being used:", redirect_uri)
         return google.authorize_redirect(redirect_uri)
     except Exception as e:
         current_app.logger.error(f"Error during the logon: {str(e)}")
@@ -232,44 +221,43 @@ def authorize_google():
         timespec="seconds")  # Gets the current time
     print("Session state (login):", session.get('oauth_state'))
 
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            """
-            INSERT
-            INTO User
-                (user_id,
-                email,
-                full_name,
-                google_id,
-                auth_provider,
-                profile_image,
-                theme_preference,
-                join_date)
-            SELECT ?, ?, ?, ?, ?, ?, ?, ?
-            WHERE NOT EXISTS (
-                SELECT 1 FROM User WHERE email = ?
-                )""",
+    insert_query = """
+        INSERT
+        INTO User
             (user_id,
-             email,
-             username,
-             google_id,
-             "google",
-             profile_pic,
-             "dark",
-             timestamp,
-             email),
-        )
+            email,
+            full_name,
+            google_id,
+            auth_provider,
+            profile_image,
+            theme_preference,
+            join_date)
+        SELECT ?, ?, ?, ?, ?, ?, ?, ?
+        WHERE NOT EXISTS (
+            SELECT 1 FROM User WHERE email = ?
+            )"""
 
-        conn.commit()
+    db_execute(query=insert_query,
+               fetch=False,
+               values=(user_id,
+                       email,
+                       username,
+                       google_id,
+                       "google",
+                       profile_pic,
+                       "dark",
+                       timestamp,
+                       email))
 
-        session["username"] = username
-        cursor.execute(
-            "SELECT user_id FROM User Where email = ?", (email,)
-        )  # Fetch the user_id associated with the email
-        stored_user_id = cursor.fetchone()
-        user_id = stored_user_id[0]
-        session["user_id"] = user_id  # Store the user_id in the session
-        session["auth_provider"] = "google"
+    session["username"] = username
+    email_query = "SELECT user_id FROM User Where email = ?"
+    # Fetch the user_id associated with the email
+    stored_user_id = db_execute(query=email_query,
+                                fetch=True,
+                                fetchone=True,
+                                values=(email,))
+    user_id = stored_user_id[0]
+    session["user_id"] = user_id  # Store the user_id in the session
+    session["auth_provider"] = "google"
 
     return redirect(url_for("dashboard.dashboard"))
