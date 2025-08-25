@@ -73,6 +73,7 @@
     </div>
 {% endblock %}
 {% block floatingItems %}
+    {{ super() }}
     <!--Button to add a new AI-generated course-->
     <button class="add-ai-generated-courses-btn">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +113,8 @@
     </div>
     <!--End of input wrapper for creating a new AI-generated course-->
 {% endblock %}
+
 {% block extra_js %}
     <script>let ai_course_url = "{{ url_for('my_courses.generarting_course') }}";</script>
-    <script src="{{  url_for('static', filename='js/user/my_courses/ai-generated-courses.js') }}"></script>
+    <script type='module' src="{{  url_for('static', filename='js/user/my_courses/ai-generated-courses.js') }}"></script>
 {% endblock %}

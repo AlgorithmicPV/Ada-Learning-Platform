@@ -81,7 +81,7 @@ def login():
                         user_info = db_execute(
                             query=user_info_query,
                             fetch=True,
-                            fetchone=True,
+                            fetchone=False,
                             values=(email,))
                         username = user_info[0][0]
                         # Store the username in the session

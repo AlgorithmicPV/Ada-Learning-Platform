@@ -1,4 +1,5 @@
 // JavaScript code for the AI generated courses page (Page that allows users to generate new courses using AI and shows the generated courses)
+import { showAlertMessages } from "./../../../js/message-handler.js";
 
 const BtnAddnewAi = document.querySelector(".add-ai-generated-courses-btn");
 const newCourseInputWrapper = document.querySelector(
@@ -60,7 +61,7 @@ const generatingCourse = async () => {
     newAiCoursesForm.style.visibility = "hidden";
 
     // Hide the add new AI button, to prevent multiple clicks
-    BtnAddnewAi.style.opacity = 1;
+    BtnAddnewAi.style.opacity = 0;
     BtnAddnewAi.style.visibility = "hidden";
 
     const sendUserInput = {
@@ -78,6 +79,16 @@ const generatingCourse = async () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
+      if (result.error) {
+        hideCourseInputWrapper()
+        BtnAddnewAi.style.opacity = 1;
+        BtnAddnewAi.style.visibility = "visible";
+        newAiCoursesForm.style.opacity = 1;
+        newAiCoursesForm.style.visibility = "visible";
+        loader.style.opacity = 0;
+        loader.style.visibility = "hidden";
+        showAlertMessages("error", result.error)
+      }
       if (result.redirect_url) {
         window.location.href = result.redirect_url;
       }
