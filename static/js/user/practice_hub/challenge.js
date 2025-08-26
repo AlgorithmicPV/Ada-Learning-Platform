@@ -124,7 +124,7 @@ const solutionCode = document.querySelector(".solution .code");
 const solution = document.querySelector(".solution");
 
 toggleSolution.addEventListener("click", () => {
-  fetch(get_solution_url, {
+  fetch(getSolutionSecondCallUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

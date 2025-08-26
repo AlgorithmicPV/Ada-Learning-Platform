@@ -53,4 +53,9 @@ block extra_css %}
 {% endblock %}
 {% block extra_js %}
     <script src="{{ url_for('static', filename = 'js/user/practice_hub/practice-hub-base.js')}}"></script>
+        <script>
+      let getSolutionFirstCallUrl = `{{ url_for("practice_hub.solution_first_call") }}`;
+      let getSolutionSecondCallUrl = `{{ url_for("practice_hub.solution_second_call") }}`;   
+    </script>
+ 
 {% endblock %}

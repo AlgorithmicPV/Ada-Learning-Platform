@@ -118,11 +118,7 @@
 {% endblock %}
 {% block extra_js %}
     {{ super() }}
-    <script>let get_solutions_url = `{{ url_for("practice_hub.solutions") }}`;
-  let get_solution_url = `{{ url_for("practice_hub.solution") }}`;
-
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
     <script>hljs.highlightAll();</script>
     <script src="{{ url_for('static', filename = 'js/user/practice_hub/challenges.js')}}"></script>

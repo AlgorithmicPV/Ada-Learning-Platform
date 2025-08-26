@@ -29,7 +29,7 @@ options.forEach((option) => {
     language = lang;
     const selectedContent = option.innerHTML;
     selectedLanguage.innerHTML = selectedContent;
-    fetch(get_solution_url, {
+    fetch(getSolutionSecondCallUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const challengeTitle = document.querySelector(".challenge-title");
 
 solutionShowButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    fetch(get_solutions_url, {
+    fetch(getSolutionFirstCallUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
