@@ -3,10 +3,9 @@ import sqlite3
 from flask import redirect, session, url_for, request
 from functools import wraps
 
+
 # Function to divide an array into chunks of a specified size
 # This is used to display the courses in a grid format on the frontend
-
-
 def divide_array_into_chunks(
     dividing_array, chunk_size
 ):  # Divides an array into chunks of a specified size
@@ -47,8 +46,8 @@ def get_connection():
 def db_execute(
         *,
         query: str,
-        fetch: bool,
-        fetchone: bool = None,
+        fetch: bool = False,
+        fetchone: bool = False,
         values: tuple | list | dict | None = None,
 ):
     try:
