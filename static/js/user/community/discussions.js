@@ -191,18 +191,18 @@ const createAnswerCard = (
 // This function has connected with the server and fetch data in every 2.5 seconds
 // to keep the page updated, to stop reloading the page for users to see the new answers
 
-// Initiially, set numberOfAnswerCards to 0, and
-// After the first fetch, it will be the lenght of data array (which comes from the server)
-// then this repeats in every 2.5 seconds
-
-// If numberOfAnswerCards is 0, and creates all the answer cards
-// then save the fetched data length to numberOfAnswerCards
-// use that value to slice the data array to find the new answers and create new answer cards
-
-let numberOfAnswerCards = 0;
+let since_id = ""
 
 const getAnswers = () => {
-  fetch(getAnswersUrl)
+  fetch(getAnswersUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      since_id: since_id
+    })
+  })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -210,36 +210,23 @@ const getAnswers = () => {
       return response.json();
     })
     .then((data) => {
-      if (numberOfAnswerCards == 0) {
-        for (let i = 0; i < data.length; i++) {
-          createAnswerCard(
-            data[i][0],
-            data[i][1],
-            data[i][2],
-            data[i][3],
-            data[i][4],
-            data[i][5],
-            data[i][6],
-            data[i][7]
-          );
-        }
-      } else if (data.length != numberOfAnswerCards) {
-        console.log(data);
-        let newAnswers = data.slice(numberOfAnswerCards);
-        for (let i = 0; i < newAnswers.length; i++) {
-          createAnswerCard(
-            newAnswers[i][0],
-            newAnswers[i][1],
-            newAnswers[i][2],
-            newAnswers[i][3],
-            newAnswers[i][4],
-            newAnswers[i][5],
-            newAnswers[i][6],
-            newAnswers[i][7]
-          );
-        }
+      if (data.length == 0) {
+        return;
+      } else {
+        since_id = data[data.length - 1][0]
       }
-      numberOfAnswerCards = data.length;
+      for (let i = 0; i < data.length; i++) {
+        createAnswerCard(
+          data[i][0],
+          data[i][1],
+          data[i][2],
+          data[i][3],
+          data[i][4],
+          data[i][5],
+          data[i][6],
+          data[i][7]
+        );
+      }
     });
 };
 

@@ -80,7 +80,8 @@ const createQuestionCard = (
   writerName,
   profilePicOfWriter,
   nuOfAnswers,
-  isSaved
+  isSaved,
+  isFirstCall
 ) => {
   const questionCard = document.createElement("div");
   questionCard.classList.add("question-card");
@@ -156,104 +157,16 @@ const createQuestionCard = (
   questionCardCont.appendChild(numberOfAnswersWrapper);
 
   questionCard.appendChild(questionCardCont);
-
-  discussionsContainer.appendChild(questionCard);
-};
-
-// Function to create a new question card in the community page
-// The reason to can't use the above function to create a new question card is
-// new question cards created at the end of all other question cards
-// therefore I have to create a new function to create a new question card only difference is discussionsContainer.prepend(questionCard);
-// same html structure as above
-const createNewQuestionCard = (
-  questionId,
-  questionData,
-  postedTimeData,
-  writerName,
-  profilePicOfWriter,
-  nuOfAnswers,
-  isSaved
-) => {
-  const questionCard = document.createElement("div");
-  questionCard.classList.add("question-card");
-
-  const img = document.createElement("img");
-  img.src = `${profilePicOfWriter}`;
-
-  questionCard.appendChild(img);
-
-  const questionCardCont = document.createElement("div");
-  questionCardCont.classList.add("question-card-cont");
-
-  const questionCardTopBar = document.createElement("div");
-  questionCardTopBar.classList.add("question-card-top-bar");
-
-  const writerAndTimeWrapper = document.createElement("div");
-
-  const writer = document.createElement("p");
-  writer.classList.add("writer");
-
-  writer.innerText = writerName;
-
-  writerAndTimeWrapper.appendChild(writer);
-
-  const postedTime = document.createElement("p");
-  postedTime.classList.add("time");
-
-  postedTime.innerText = postedTimeData;
-
-  writerAndTimeWrapper.appendChild(postedTime);
-
-  questionCardTopBar.appendChild(writerAndTimeWrapper);
-
-  const saveButton = document.createElement("button");
-  saveButton.classList.add("save-btn");
-
-  if (isSaved == "saved") {
-    saveButton.innerHTML = hasSavedIcon;
-  } else if (isSaved == "unsaved") {
-    saveButton.innerHTML = canSaveIcon;
+  if (isFirstCall) {
+    discussionsContainer.appendChild(questionCard);
+  } else {
+    discussionsContainer.prepend(questionCard);
   }
-
-  saveButton.setAttribute("data-question-id", questionId);
-
-  saveButton.addEventListener("click", () => {
-    toggleSave(questionId, saveButton);
-  });
-
-  questionCardTopBar.appendChild(saveButton);
-
-  questionCardCont.appendChild(questionCardTopBar);
-
-  const question = document.createElement("p");
-  question.classList.add("question");
-
-  question.innerText = questionData;
-
-  questionCardCont.appendChild(question);
-
-  const numberOfAnswersWrapper = document.createElement("div");
-  numberOfAnswersWrapper.classList.add("number-of-answers-wrapper");
-
-  const numberOfAnswers = document.createElement("button");
-  numberOfAnswers.classList.add("number-of-answers");
-  numberOfAnswers.innerText = nuOfAnswers;
-  numberOfAnswers.innerHTML += questionIcon;
-  numberOfAnswers.addEventListener("click", () => {
-    openTheDiscussion(questionId);
-  });
-
-  numberOfAnswersWrapper.appendChild(numberOfAnswers);
-
-  questionCardCont.appendChild(numberOfAnswersWrapper);
-
-  questionCard.appendChild(questionCardCont);
-
-  discussionsContainer.prepend(questionCard);
 };
+
 
 // Export the functions to use in other files
-export { createQuestionCard, createNewQuestionCard };
+export { createQuestionCard };
 
 const adjustWidhtOfQuestion = () => {
   if (window.innerWidth < 1280) {
