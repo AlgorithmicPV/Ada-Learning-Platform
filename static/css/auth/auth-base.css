@@ -49,9 +49,11 @@ body {
 
 /* Styles input field */
 input {
-  position: absolute; /* Needed for placeholder shrink animation */
+  position: absolute;
+  /* Needed for placeholder shrink animation */
   width: 100%;
-  outline: none; /* To give a modern web look */
+  outline: none;
+  /* To give a modern web look */
   background-color: transparent;
   transition: 0.3s ease all;
   height: 40px;
@@ -61,23 +63,27 @@ input {
   color: #ebe9fc;
   padding-left: 25px;
   font-size: medium;
-  z-index: 10; /* z-index 10 is needed, or the placeholder blocks user typing */
+  z-index: 10;
+  /* z-index 10 is needed, or the placeholder blocks user typing */
 }
 
 /* Styles labels in inputs */
 label {
-  position: absolute; /* Needed for the shrinking animation on the placeholder */
+  position: absolute;
+  /* Needed for the shrinking animation on the placeholder */
   transition: 0.2s ease;
   padding-left: 25px;
   font-size: medium;
   color: #ebe9fc71;
-  z-index: 5; /* z-index set to 5 so it's under the input and doesn't block clicking */
+  z-index: 5;
+  /* z-index set to 5 so it's under the input and doesn't block clicking */
+  font-family: 'Inter';
 }
 
 /* Styles the label when input is focused or has valid text */
 /* Shrinks label to match modern web UI style */
-input:focus + label,
-input:valid + label {
+input:focus+label,
+input:valid+label {
   height: 5px;
   line-height: 20px;
   transform: translate(-15px, -20px);
@@ -125,6 +131,7 @@ button:hover {
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
 @media only screen and (max-width: 1200px) {
+
   .name-entry-wrapper,
   .email-entry-wrapper,
   .password-entry-wrapper,
