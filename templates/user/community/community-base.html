@@ -1,4 +1,5 @@
 {% set form_action = url_for('community.search_questions') %}
+{% import 'components/search-bar.html' as search_bar %}
 {% extends 'user/base.html' %}
 {% block title %}Community{% endblock %}
 {%block
@@ -9,7 +10,7 @@
           href="{{ url_for('static', filename = 'css/user/community/question-card.css') }}" />
 {% endblock %}
 {% block content %}
-    <!--Navigation Menu for Community Discussions-->
+    {# Navigation Menu for Community Discussions #}
     <div class="community-navigation-menu">
         <button class="{% if request.path == '/community' %}sub-active{% endif %}"
                 onclick="window.location.href='{{ url_for("community.all_community_questions") }}'">All</button>
@@ -24,41 +25,17 @@
         <button class="{% if request.path == '/community/saved' %}sub-active{% endif %}"
                 onclick="window.location.href='{{ url_for("community.saved_community_questions") }}'">Saved</button>
     </div>
-    <!--End of Navigation Menu-->
-    <!--Community Discussions Wrapper-->
+    {# End of Navigation Menu #}
+    {# Community Discussions Wrapper #}
     <div class="community-wrapper">
         <div class="discs-cont">
             {% block discussions_cont %}{% endblock %}
         </div>
-        <!--Search bar-->
-        <form class="search-bar"
-              action="{{ form_action }}"
-              method="get"
-              autocomplete="off">
-            <!--Below button only apears in the small screen to show the input box-->
-            <button class="show-the-input-box" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     id="Outline"
-                     viewBox="0 0 24 24"
-                     width="512"
-                     height="512">
-                    <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
-                </svg>
-            </button>
-            <button type="submit" class="search-btn">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                     id="Outline"
-                     viewBox="0 0 24 24"
-                     width="512"
-                     height="512">
-                    <path d="M23.707,22.293l-5.969-5.969a10.016,10.016,0,1,0-1.414,1.414l5.969,5.969a1,1,0,0,0,1.414-1.414ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z" />
-                </svg>
-            </button>
-            <input type="text" name="search" id="search" placeholder="Search" />
-        </form>
-        <!--End Search bar-->
+        {# Search bar #}
+        {{ search_bar.search_bar('Search', form_action) }}
+       {# End Search bar #}
     </div>
-    <!--End of Community Discussions Wrapper-->
+    {# End of Community Discussions Wrapper #}
 {% endblock %}
 {% block extra_js %}
     <script type="module"
@@ -72,7 +49,6 @@
         window.questionGateUrl = "{{ url_for("community.check_qid") }}";
         window.toggleSaveUrl = "{{ url_for("community.toggle_save") }}";
         window.STATIC_BASE = "{{ url_for('static', filename='') }}";
-
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
@@ -80,14 +56,14 @@
 {% endblock %}
 {% block floatingItems %}
     {{ super() }}
-    <!-- Floating button to add a new question -->
-    <!-- Keeps this as a floating button to keep it when the user scrolls -->
+    {# Floating button to add a new question #}
+    {# Keeps this as a floating button to keep it when the user scrolls #}
     <button class="add-a-question-btn">Add a Question</button>
-    <!--End of add a question button-->
-    <!-- Posting question form -->
-    <!-- This form will be shown when the user clicks on the add a question button -->
+    {# End of add a question button #}
+    {# Posting question form #}
+    {# This form will be shown when the user clicks on the add a question button #}
     <div class="posting-question-wrapper" method="post">
-        <!--Top bar of the posting question wrapper which includes closing button-->
+        {# Top bar of the posting question wrapper which includes closing button #}
         <div class="posting-question-wrapper-top-bar">
             <button type="button" class="close-btn-posting-question-wrapper">
                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -99,9 +75,9 @@
                 </svg>
             </button>
         </div>
-        <!--End of Top bar-->
-        <!--Body of the posting question wrapper-->
-        <!--User can type their question here-->
+        {# End of Top bar #}
+        {# Body of the posting question wrapper #}
+        {# User can type their question here #}
         <div class="posting-question-wrapper-body">
             {% if image_source == "local" %}
                 <img class="profile-pic"
@@ -114,8 +90,8 @@
                       class="user-question-input"
                       placeholder="Ask your question to the community!&#10;&#10;You can use Markdown to format your message and make it more readable.&#10;&#10;If you're unfamiliar with Markdown, click the Download button to get a handy cheat sheet. 🚀"></textarea>
         </div>
-        <!--End of Body-->
-        <!--Bottom bar of the posting question wrapper which includes Post button and download button for markdown cheat sheet-->
+        {# End of Body #}
+        {# Bottom bar of the posting question wrapper which includes Post button and download button for markdown cheat sheet #}
         <div class="posting-question-bottom-bar">
             <button class="posting-btn">Post</button>
             <a href="{{ url_for('static', filename='downloads/Markdown Cheat Sheet.pdf') }}"
@@ -131,7 +107,7 @@
                 </svg>
             </a>
         </div>
-        <!--End of Bottom bar-->
+        {# End of Bottom bar #}
     </div>
-    <!--End of Posting question form-->
+    {# End of Posting question form #}
 {% endblock %}

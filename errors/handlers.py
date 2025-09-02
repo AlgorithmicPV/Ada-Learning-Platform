@@ -13,3 +13,9 @@ def not_found(error):
 def forbidden(error):
     return render_template(
         "error.html", message="Access denied.", error_code=403), 403
+
+
+@errors.app_errorhandler(405)
+def methods_not_allowed(error):
+    return render_template(
+        "error.html", message="Methods are not allowed.", error_code=405), 405

@@ -655,7 +655,7 @@ def search_questions():
     keyword = request.args.get("search")
     search_result = []
     if not keyword == "" and not keyword.isspace():
-        question_cards_detail = get_community_questions_from_db("")
+        question_cards_detail = get_community_questions_from_db("", "")
         for question_card_detail in question_cards_detail:
 
             # Converts the question from the database to plain text
