@@ -1,22 +1,64 @@
-from flask import Blueprint, session, url_for, request, jsonify
 import os
-from openai import OpenAI
-from dotenv import load_dotenv
 from datetime import datetime
+from flask import Blueprint, session, url_for, request, jsonify
+from openai import (OpenAI,
+                    RateLimitError,
+                    OpenAIError,
+                    APIError,
+                    AuthenticationError)
+from dotenv import load_dotenv
 from utils import login_required, db_execute
 
 load_dotenv()
 
 token = os.getenv("GITHUB_TOKEN")
-endpoint = "https://models.github.ai/inference"
-model = "openai/gpt-4.1"
+ENDPOINT = "https://models.github.ai/inference"
+MODEL = "openai/gpt-4.1"
 
 client = OpenAI(
-    base_url=endpoint,
+    base_url=ENDPOINT,
     api_key=token,
 )
 
 ai_chat_bp = Blueprint("ai_chat", __name__)
+
+
+def ai_response(system_content,
+                user_input):
+    result_or_error = {"error": "", "result": ""}
+    error = ""
+    result = ""
+    try:
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_content
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ],
+            temperature=1,
+            top_p=1,
+            model=MODEL,
+        )
+        result = response.choices[0].message.content
+    except RateLimitError:
+        error = "Rate limit exceed"
+    except AuthenticationError:
+        error = "Invalid or expired API key"
+    except OpenAIError as e:
+        error = f"generic openai api error: {e}"
+    except APIError as e:
+        error = f"OpenAI API error: {e}"
+    except Exception as e:
+        error = f"An unexpected error occurred: {e}"
+
+    result_or_error['error'] = error
+    result_or_error['result'] = result
+    return result_or_error
 
 
 # AI Chat Route
@@ -28,30 +70,20 @@ def chat():
     data = request.get_json()
     user_input = data.get("user_input")
     code_output = session.get("output_of_code")
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": f"""You are an AI assistant built
-                into the Ada Learning Platform,
-                created by G. A. Pasindu Vidunitha. Your role is to help users
-                learn and understand {language} by providing clear and concise
-                explanations. If they ask questions about
-                their written program—such as {user_code} and the output
-                they received {code_output}—respond
-                with simple, direct answers without unnecessary detail."""
-            },
-            {
-                "role": "user",
-                "content": user_input,
-            },
-        ],
-        temperature=1,
-        top_p=1,
-        model=model,
-    )
-    return jsonify(
-        {"response": response.choices[0].message.content}), 200
+
+    system_content = f"""You are an AI assistant built
+                        into the Ada Learning Platform,
+                        created by G. A. Pasindu Vidunitha.
+                        Your role is to help users
+                        learn and understand {language} by
+                        providing clear and concise
+                        explanations. If they ask questions about
+                        their written program—such
+                        as {user_code} and the output
+                        they received {code_output}—respond
+                        with simple, direct answers
+                        without unnecessary detail."""
+    return jsonify(ai_response(system_content, user_input)), 200
 
 
 @ai_chat_bp.route("/ai-course-chat", methods=["POST"])
@@ -60,29 +92,15 @@ def ai_course_chat():
     data = request.get_json()
     user_input = data.get("user_input")
     ai_course_topic = session.get("ai_course_topic")
-    response = client.chat.completions.create(
-        messages=[
-            {
-                "role": "system",
-                "content": f"""You are an AI assistant built into
-                the Ada Learning Platform, created
-                by G. A. Pasindu Vidunitha.This platform helps users
-                learn new programming languages. Your role is to
-                assist learners by providing clear,
-                concise, and accurate explanations related
-                to {ai_course_topic}."""
-            },
-            {
-                "role": "user",
-                "content": user_input,
-            },
-        ],
-        temperature=1,
-        top_p=1,
-        model=model,
-    )
-    return jsonify(
-        {"response": response.choices[0].message.content}), 200
+    system_content = f"""You are an AI assistant built into
+                        the Ada Learning Platform, created
+                        by G. A. Pasindu Vidunitha.This platform helps users
+                        learn new programming languages. Your role is to
+                        assist learners by providing clear,
+                        concise, and accurate explanations related
+                        to {ai_course_topic}."""
+    ai_response(system_content, user_input)
+    return jsonify(ai_response(system_content, user_input)), 200
 
 
 # Route that checks users's answers for the challenges
@@ -121,33 +139,24 @@ def check_answers():
                                        values=(challenge_id,))[0]
 
                 language = session.get("language")
-                response = client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": f"""Given the code {user_code}
-                            and the challenge {challenge} from this
-                            programming language {language},
-                            determine if the solution is correct.
-                            Reply only with Correct or Incorrect."""
-                        },
-                        {
-                            "role": "user",
-                            "content": f"""code: {user_code},
-                            challenge : {challenge}
-                            and programing language: {language}"""
-                        },
-                    ],
-                    temperature=1,
-                    top_p=1,
-                    model=model,
-                )
 
-                is_solution_correct = response.choices[0].message.content
+                system_content = f"""Given the code {user_code}
+                                    and the challenge {challenge} from this
+                                    programming language {language},
+                                    determine if the solution is correct.
+                                    Reply only with Correct or Incorrect."""
 
-                print(is_solution_correct)
+                user_content = f"""code: {user_code},
+                                    challenge : {challenge}
+                                    and programing language: {language}"""
 
-                if is_solution_correct == "Correct":
+                is_solution_correct = ai_response(
+                    system_content, user_content)
+
+                if is_solution_correct['error']:
+                    return jsonify({"error": is_solution_correct["error"]})
+
+                if is_solution_correct["result"] == "Correct":
                     completed_at = datetime.now().isoformat(timespec="seconds")
 
                     update_query = """

@@ -1,3 +1,6 @@
+import os
+from datetime import datetime, timedelta
+import uuid
 from flask import (
     Blueprint,
     render_template,
@@ -8,9 +11,6 @@ from flask import (
     session,
     current_app,
 )
-import os
-from datetime import datetime, timedelta
-import uuid
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from dotenv import load_dotenv
@@ -30,7 +30,8 @@ google = oauth.register(
     "Ada",
     client_id=os.getenv("Client_ID"),
     client_secret=os.getenv("Client_secret"),
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    server_metadata_url=(
+        "https://accounts.google.com/.well-known/openid-configuration"),
     client_kwargs={
         "scope": "openid email profile",
         "prompt": "select_account"})
@@ -54,7 +55,8 @@ def login():
         # Validates the email and password fields are not empty
         # If they contain only empty spaces it will return a flash message
         # saying that "Email and password required"
-        if email != "" and not email.isspace() and password != "" and not password.isspace():
+        if (email.strip() != "" and
+                password.strip() != ""):
             password_query = "SELECT password FROM User WHERE email = ?"
             # Fetch the stored password hash for the given email
             # stored_hash_password is a tuple, so we need to access the first
@@ -175,16 +177,17 @@ def signup():
 
             db_execute(query=insert_query,
                        fetch=False,
-                       values=(user_id,
-                               email,
-                               name,
-                               ph.hash(password),
-                               "manual",
-                               "dark",
-                               datetime.fromisoformat(timestamp),
-                               f"https://api.dicebear.com/9.x/identicon/svg?seed={
-                                   image_id}",
-                               )
+                       values=(
+                        user_id,
+                        email,
+                        name,
+                        ph.hash(password),
+                        "manual",
+                        "dark",
+                        datetime.fromisoformat(timestamp),
+                        f"https://api.dicebear.com/9.x/identicon/svg?seed={
+                            image_id}",
+                        )
                        )
 
             return redirect(url_for("auth.login"))
@@ -208,12 +211,12 @@ def authorize_google():
     token = google.authorize_access_token()
     session["user"] = token
 
-    userToken = session.get("user")
-    userInfo = userToken["userinfo"]
-    username = userInfo["given_name"]
-    email = userInfo["email"]
-    profile_pic = userInfo["picture"]
-    google_id = userInfo["sub"]
+    user_token = session.get("user")
+    user_info = user_token["userinfo"]
+    username = user_info["given_name"]
+    email = user_info["email"]
+    profile_pic = user_info["picture"]
+    google_id = user_info["sub"]
 
     user_id = str(uuid.uuid4())  # Creates a new primary key
 

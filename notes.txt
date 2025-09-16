@@ -1,0 +1,36 @@
+------Programming----
+
+What, how, why, because - code comments 
+
+What function, what input, what outputs, code flow - docstring  
+
+write the comment before the code or inline
+
+boundry testing - url, and text bar 
+
+e - no repeted code
+
+--- database ------
+
+What u got on ur screen macthes with what u have in database
+* Dont do in the testing table, do as a work through
+
+what is relevant implectation for the Archieve
+
+
+first iteration - planing, and so on
+
+----web--------
+
+data intergity covers both UI and database
+
+TODO
+
+[] Complete the ai_chat
+[] testing
+[] break into sprints
+[] docstring
+[] change the name of the DB
+[] add the footer saying icon from that guy
+[] complete the whole doc
+[] Make the code perfect

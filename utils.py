@@ -1,7 +1,7 @@
-from email_validator import validate_email, EmailNotValidError
 import sqlite3
-from flask import redirect, session, url_for, request
 from functools import wraps
+from email_validator import validate_email, EmailNotValidError
+from flask import redirect, session, url_for, request
 
 
 # Function to divide an array into chunks of a specified size
@@ -32,15 +32,13 @@ def divide_array_into_chunks(
 
 def validate_email_address(email):
     try:
-        emailinfo = validate_email(email, check_deliverability=False)
-        return "valid"
-    except EmailNotValidError as e:
+        email_info = validate_email(email, check_deliverability=False)
+        if email_info:
+            return "valid"
+        else:
+            return "invalid"
+    except EmailNotValidError:
         return "invalid"
-
-
-# Uses a function to reduce repetition when connecting to the database
-def get_connection():
-    return sqlite3.connect("database/app.db")
 
 
 def db_execute(

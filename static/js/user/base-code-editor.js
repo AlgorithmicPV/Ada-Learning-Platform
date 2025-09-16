@@ -1,6 +1,8 @@
+import { showAlertMessages } from "../message-handler.js";
+
 // This JavaScript file is the base foundation for the code editors used in this platform
 // This code is responsible for setting up the Monaco Editor and handling theme toggling
-require(["vs/editor/editor.main"], function () {
+require(["vs/editor/editor.main"], function() {
   let activatedLanguage = window.language;
   // Create the editor instance
   window.editor = monaco.editor.create(document.querySelector(".code-editor"), {
@@ -226,6 +228,10 @@ const ai_chat = async () => {
 
     const result = await response.json();
 
+    if (result["error"]) {
+      showAlertMessages("error", result["error"])
+      return
+    }
     // Create a conversation wrapper to display the user input and AI response
     const conversation = document.createElement("div");
     conversation.classList.add("conversation");
@@ -254,7 +260,7 @@ const ai_chat = async () => {
     // This will display the AI's response in a formatted way
     const ai_response = document.createElement("div");
     ai_response.classList.add("ai-response");
-    ai_response.innerHTML = marked.parse(result["response"]);
+    ai_response.innerHTML = marked.parse(result["result"]);
 
     // Append the AI response paragraph to the response wrapper
     // and then append the response wrapper to the conversation

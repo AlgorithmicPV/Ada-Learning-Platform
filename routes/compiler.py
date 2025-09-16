@@ -23,12 +23,12 @@ def compiler():
     if request.is_json and request.method == "POST":
         language = session.get("language").lower()
         data = request.get_json()
-        user_Code = data.get("user_code")
-        session["user_code"] = user_Code
+        user_code = data.get("user_code")
+        session["user_code"] = user_code
         user_input = data.get("user_input")
         output = piston.run(
             language=language,
-            code=user_Code,
+            code=user_code,
             input=user_input,
         )
         session["output_of_code"] = {"output": output["run"]["output"]}

@@ -1,3 +1,4 @@
+import uuid
 from flask import (Blueprint,
                    render_template,
                    session,
@@ -5,7 +6,6 @@ from flask import (Blueprint,
                    url_for,
                    request,
                    jsonify)
-import uuid
 import markdown
 from utils import db_execute, login_required
 

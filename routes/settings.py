@@ -1,3 +1,5 @@
+import os
+import uuid
 from flask import (Blueprint,
                    render_template,
                    session,
@@ -7,15 +9,11 @@ from flask import (Blueprint,
                    jsonify,
                    flash,
                    current_app)
-import sqlite3
-import uuid
-import os
 from werkzeug.utils import secure_filename
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
-from utils import validate_email_address
 from PIL import Image
-from utils import db_execute, login_required
+from utils import db_execute, login_required, validate_email_address
 
 settings_bp = Blueprint("settings", __name__)
 
@@ -229,7 +227,7 @@ def update_profile_image(file, user_id):
 
             # Optional: delete original image
             os.remove(original_path)
-        except Exception as e:
+        except Exception:
             flash(
                 "Image upload failed. Try again with a different file.",
                 category="error")

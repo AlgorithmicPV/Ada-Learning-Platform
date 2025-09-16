@@ -51,7 +51,7 @@ def dashboard():
             (
                 SELECT ROUND(
                     100.0 * COUNT(UL.lesson_id) /
-                    NULLIF((SELECT COUNT(*) FROM Lesson L2 
+                    NULLIF((SELECT COUNT(*) FROM Lesson L2
                         WHERE L2.course_id = C.course_id), 0)
                 )
                 FROM User_lesson UL
@@ -64,7 +64,7 @@ def dashboard():
             -- Challenge progress: total completed vs total
             (
                 SELECT ROUND(
-                    100.0 * COUNT(*) / 
+                    100.0 * COUNT(*) /
                     NULLIF((SELECT COUNT(*) FROM Challenge), 0)
                 )
                 FROM Challenge_attempt
@@ -166,7 +166,8 @@ def dashboard():
                 AND C.difficulty_level = 'Hard'
             ) / 5) AS INTEGER) AS gold_coins,
 
-            -- Leaderboard formatted like a JSON array (top 5 users by challenge completion)
+            -- Leaderboard formatted like a JSON array
+            -- (top 5 users by challenge completion)
             (
                 SELECT
                     GROUP_CONCAT(name || ', ' || completed, ', ')

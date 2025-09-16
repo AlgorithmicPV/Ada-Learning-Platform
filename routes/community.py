@@ -1,3 +1,6 @@
+from datetime import datetime, date
+import uuid
+import string
 from flask import (
     Blueprint,
     session,
@@ -7,13 +10,10 @@ from flask import (
     jsonify,
     render_template,
 )
-import uuid
-from datetime import datetime, date
 import strip_markdown
 from dateutil.parser import parse
 import markdown
 import emoji
-import string
 from utils import db_execute, login_required
 
 community_bp = Blueprint("community", __name__)
@@ -56,7 +56,7 @@ def get_community_questions_from_db(filter_query, since_id):
     if not since_ts:
         since_ts = [""]
 
-    base_query = f"""
+    base_query = """
             SELECT
                 Q.question_id,
                 Q.question,
@@ -288,12 +288,13 @@ def toggle_save():
                              fetch=True,
                              fetchone=True,
                              values=(client_question_id,))
+    is_save = "no"
 
     if question_id:
         user_id = session.get("user_id")
 
         # Ckeck has user saved that discussion
-        # NOTE: Can't combine this with SQl query,
+        # NOTE: Couldn't combine this with SQl query,
         # Because I have to pass that 'is_save' to frontend
         save_question_id_query = """
                 SELECT

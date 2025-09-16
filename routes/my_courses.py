@@ -1,3 +1,6 @@
+import os
+from datetime import datetime
+import uuid
 from flask import (
     Blueprint,
     render_template,
@@ -8,21 +11,18 @@ from flask import (
     abort,
     jsonify,
 )
-from datetime import datetime
-import uuid
 from openai import OpenAI
 from dotenv import load_dotenv
-import os
 from utils import divide_array_into_chunks, db_execute, login_required
 
 load_dotenv()
 
 token = os.getenv("GITHUB_TOKEN")
-endpoint = "https://models.github.ai/inference"
-model = "openai/gpt-4.1"
+ENDPOINT = "https://models.github.ai/inference"
+MODEL = "openai/gpt-4.1"
 
 client = OpenAI(
-    base_url=endpoint,
+    base_url=ENDPOINT,
     api_key=token,
 )
 
@@ -428,7 +428,10 @@ def lesson_completed():
                     WHERE course_id = :cid AND lesson_id = :lid
                     )
                     SELECT CASE
-                            WHEN (SELECT COUNT(*) FROM Lesson WHERE course_id = :cid) > cur.lesson_order
+                            WHEN (
+                                    SELECT COUNT(*)
+                                    FROM Lesson
+                                    WHERE course_id = :cid) > cur.lesson_order
                             THEN cur.lesson_order + 1
                             ELSE cur.lesson_order
                         END AS next_lesson_order
@@ -516,7 +519,8 @@ def lesson(course_name, lesson_name):
                 LIMIT 1
             ) AS next_lesson_id,
 
-            -- Get the "prev" lesson's ID (or the first if already at the first)
+            -- Get the "prev" lesson's ID
+            -- (or the first if already at the first)
             (
                 SELECT l6.lesson_id
                 FROM lesson AS l6
@@ -534,7 +538,8 @@ def lesson(course_name, lesson_name):
             -- Get all the lesson titles with relevant ids in the course
             (
                 SELECT
-                    GROUP_CONCAT("[" || l7.lesson_id || "," || l7.lesson_title || "]", ", ")
+                    GROUP_CONCAT(
+                    "[" || l7.lesson_id || "," || l7.lesson_title || "]", ", ")
                 FROM
                 lesson AS l7
                 WHERE
@@ -668,14 +673,16 @@ def generarting_course():
             ],
             temperature=1,
             top_p=1,
-            model=model,
+            model=MODEL,
         )
 
         course_name = response.choices[0].message.content
 
         if course_name == "invalid":
             print("Invalid topic. Enter a programming-related subject.")
-            return jsonify({"error": "Invalid topic. Enter a programming-related subject."})
+            return jsonify(
+                {"error": "Invalid topic. Enter a programming-related subject."
+                 })
 
         response = client.chat.completions.create(
             messages=[
@@ -709,7 +716,7 @@ def generarting_course():
             ],
             temperature=1,
             top_p=1,
-            model=model,
+            model=MODEL,
         )
 
         course_content = response.choices[0].message.content

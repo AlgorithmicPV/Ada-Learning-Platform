@@ -1,14 +1,7 @@
-from email_validator import validate_email, EmailNotValidError
-
-email = "my+address@examplm"
-
-
-def validate_email_address(email):
-    try:
-        emailinfo = validate_email(email, check_deliverability=False)
-        print("valid")
-    except EmailNotValidError as e:
-        print("invalid")
+def test(message):
+    print(message)
 
 
-validate_email_address(email)
+a = "pasindu"
+b = "testing"
+test(f"{a} is testing an again {b}")
