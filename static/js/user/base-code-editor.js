@@ -147,12 +147,22 @@ input_wrapper.style.display = "none";
 const send_the_code = async () => {
   let user_code = window.editor.getValue();
   let user_input = document.querySelector(".input-wrapper textarea").value;
+
+  // Checks whether the user code is empty
+  // TODO: Have to do input number of texts and spaces thing 
+  // TODO Make JS function to check the input number
+  if (!user_code.trim()) {
+    showAlertMessages("warning", "No code detected. Type something first")
+    return
+  }
+
   const send_user_code = {
     user_code: user_code, // The code written by the user in the editor
     user_input: user_input, // The input provided by the user for the code execution (works with python)
   };
   showLoader();
   output_wrapper.style.display = "none";
+
 
   try {
     const response = await fetch(fetch_url, {
@@ -206,6 +216,11 @@ const ai_chat = async () => {
   let user_input = document.getElementById("user-input").value;
   document.getElementById("user-input").value = ""; // Clear the input field after sending
 
+  if (!user_input) {
+    showAlertMessages("warning", "Oops! Looks like you forgot to type your message.")
+    return
+  }
+
   const send_user_input = {
     user_input: user_input,
   };
@@ -227,6 +242,11 @@ const ai_chat = async () => {
     ai_assistance_wrapper.style.display = "flex";
 
     const result = await response.json();
+
+    if (result["warning"]) {
+      showAlertMessages("warning", result["warning"])
+      return
+    }
 
     if (result["error"]) {
       showAlertMessages("error", result["error"])

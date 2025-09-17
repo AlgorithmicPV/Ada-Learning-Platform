@@ -26,7 +26,7 @@ data intergity covers both UI and database
 
 TODO
 
-[] Complete the ai_chat
+[*] Complete the ai_chat
 [] testing
 [] break into sprints
 [] docstring
@@ -34,3 +34,5 @@ TODO
 [] add the footer saying icon from that guy
 [] complete the whole doc
 [] Make the code perfect
+[] Change the namee into camelCase in JS
+[] Add a loading screen to practice hub

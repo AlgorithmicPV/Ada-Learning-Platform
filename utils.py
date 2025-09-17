@@ -81,3 +81,31 @@ def login_required(endpoint_func):
         else:
             return redirect(url_for("auth.login", next=request.full_path))
     return wrapper
+
+
+def check_characters_limit(max_length: int, user_input: str):
+    """
+    Check the number of characters in an input fit to the maximum length
+
+    To protect from getting characters more than the limit
+    that cannot be handled by the backend.
+    Count the user input and check whether it is less than the maximum length.
+    If it is more than the maximum length it will return 'reject';
+    otherwise, it will return a bare return (plain return)
+
+    Args:
+        max_length (int): maximum characters that the user can provide
+        user_input (str): Input that is given by the user
+
+    Returns:
+        A string: If the max_length is less than the input length,
+        it will return 'reject' or
+        a bare return
+    """
+    cleaned_user_input = user_input.strip()
+
+    input_length = len(cleaned_user_input)
+
+    if max_length < input_length:
+        return "reject"
+    return

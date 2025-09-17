@@ -7,7 +7,7 @@ from openai import (OpenAI,
                     APIError,
                     AuthenticationError)
 from dotenv import load_dotenv
-from utils import login_required, db_execute
+from utils import login_required, db_execute, check_characters_limit
 
 load_dotenv()
 
@@ -23,11 +23,31 @@ client = OpenAI(
 ai_chat_bp = Blueprint("ai_chat", __name__)
 
 
-def ai_response(system_content,
-                user_input):
-    result_or_error = {"error": "", "result": ""}
+def ai_response(system_content: str,
+                user_input: str):
+    """
+    This is a function to generate the AI responses while handling errors
+
+    made this function to reduce code repetition.
+
+    Args:
+        system_content (string): stores the role of the AI system
+        user_input (string): stores the user input
+
+    Returns:
+        function returns a dictionary that has the error and the result.
+
+    Raises:
+        RateLimitError: If the request exceeds the allowed usage limits.
+        AuthenticationError: If the provided API key is invalid or expired.
+        APIError: If a generic OpenAI API error occurs.
+        Exception: For any other unexpected errors.
+    """
     error = ""
     result = ""
+
+    result_or_error = {"error": error, "result": result}
+
     try:
         response = client.chat.completions.create(
             messages=[
@@ -65,11 +85,45 @@ def ai_response(system_content,
 @ai_chat_bp.route("/ai-chat", methods=["POST"])
 @login_required
 def chat():
+    """
+    This route gives the AI responses depending on the user's code,
+    and the output that they got from their code
+
+    This route has connected with the code_editor.html
+    This route gets the user's typed code,
+    the output they got after running the code,
+    and the programming lnaguage that they are currently working on from
+    the session variables,
+    and the user's question from the frontend  (user_input).
+    Then, call the ai_response function to retrieve the result,
+    if the number of characters in user_input less than 1500.
+
+    Returns:
+        jsonified ai_response function's output with 200 code
+    """
     language = session.get("language")
     user_code = session.get("user_code")
+    code_output = session.get("output_of_code")
+
     data = request.get_json()
     user_input = data.get("user_input")
-    code_output = session.get("output_of_code")
+
+    # Limit to 1500 characters,
+    # check the user input that is under 1500 characters,
+    # before proceeding with the rest of the application.
+    # This is due to the prevention of the crashing
+    # Open API key and the backend
+    if check_characters_limit(1500, user_input) == "reject":
+        return jsonify({
+            "warning":
+            "Message too long. Please keep it under 1,500 characters."
+        })
+
+    # Checks whether the user input is empty
+    if not user_input.strip():
+        return jsonify({
+            "warning": "Oops! Looks like you forgot to type your message."
+        })
 
     system_content = f"""You are an AI assistant built
                         into the Ada Learning Platform,
@@ -89,9 +143,45 @@ def chat():
 @ai_chat_bp.route("/ai-course-chat", methods=["POST"])
 @login_required
 def ai_course_chat():
+    """
+    Handle AI course chat requests from the frontend.
+
+    This route is connected to `ai-course.html`
+    via `ai-course.js` (function: `ai_chat`).
+    It receives `user_input` from the frontend, validates its length, and calls
+    the `ai_response` function if the input is within the allowed limit.
+
+    Args:
+        None (input is received from the request JSON).
+
+    Returns:
+        Response (JSON):
+            - If the input has fewer than 1500 characters,
+              returns the JSONified
+              output of `ai_response(user_input)`.
+            - If the input exceeds 1500 characters, returns a JSONified error
+              message:
+              {
+                  "error":
+                  "Message too long. Please keep it under 1,500 characters."
+              }
+
+    """
     data = request.get_json()
     user_input = data.get("user_input")
+
+    # Limit to 1500 characters,
+    # check the user input that is under 1500 characters,
+    # before proceeding with the rest of the application.
+    # This is due to the prevention of the crashing
+    # Open API key and the backend
+    if check_characters_limit(1500, user_input) == "reject":
+        return jsonify({
+            "warning":
+            "Message too long. Please keep it under 1,500 characters."})
+
     ai_course_topic = session.get("ai_course_topic")
+
     system_content = f"""You are an AI assistant built into
                         the Ada Learning Platform, created
                         by G. A. Pasindu Vidunitha.This platform helps users
@@ -99,7 +189,7 @@ def ai_course_chat():
                         assist learners by providing clear,
                         concise, and accurate explanations related
                         to {ai_course_topic}."""
-    ai_response(system_content, user_input)
+
     return jsonify(ai_response(system_content, user_input)), 200
 
 
@@ -107,8 +197,32 @@ def ai_course_chat():
 @ai_chat_bp.route("/check-answers", methods=["POST"])
 @login_required
 def check_answers():
+    """
+    This route checks the user's answers for
+    the challenges in the practice hub.
+    This uses an OpenAI API key to check the answer.
+    This route is connected to the challenge.html through the challenge.js.
+    It gets the user's code (the user's answer) from the frontend.
+    Checks that the user's code is less than 15,000 characters.
+    First, it takes the `status` from the database,
+    if the answer is correct, it changes to `Completed`.
+    If the answer is wrong, it sends the message  "solution_wrong".
+
+    Returns:
+        - If the process is successful or if the status is completed,
+        it sends the redirect_url to uncompleted challenges
+        - If the answer is not correct, it sends solution_wrong
+        - If the user has not typed anything, it sends the warning message
+        - If the characters more than 15000, it sends a warning message
+    """
     data = request.get_json()
     user_code = data.get("user_code")
+
+    if check_characters_limit(15000, user_code) == "reject":
+        return jsonify({
+            "message": "Input too large (max 15,000 chars).",
+            "message_type": "warning"
+        })
 
     if user_code:
         challenge_id = session.get("challenge_id")
@@ -124,14 +238,17 @@ def check_answers():
                             fetch=True,
                             fetchone=True,
                             values=(challenge_id, user_id,))
+
+        # Check if the status is not empty
+        # Empty means user has not started
         if status:
             redirect_url = url_for(
                 "practice_hub.uncomplete_practice_challenges")
             if status[0] == "Started":
                 question_query = """
                                 SELECT question
-                            FROM Challenge WHERE challenge_id=?
-                        """
+                                FROM Challenge WHERE challenge_id=?
+                                """
 
                 challenge = db_execute(query=question_query,
                                        fetch=True,
@@ -154,16 +271,19 @@ def check_answers():
                     system_content, user_content)
 
                 if is_solution_correct['error']:
-                    return jsonify({"error": is_solution_correct["error"]})
+                    return jsonify({
+                        "message": is_solution_correct["error"],
+                        "message_type": "error"
+                    })
 
                 if is_solution_correct["result"] == "Correct":
                     completed_at = datetime.now().isoformat(timespec="seconds")
 
                     update_query = """
-                    UPDATE Challenge_attempt
-                    SET completed_at = ?, status = ?
-                    WHERE user_id = ? AND challenge_id = ?
-                    """
+                                    UPDATE Challenge_attempt
+                                    SET completed_at = ?, status = ?
+                                    WHERE user_id = ? AND challenge_id = ?
+                                    """
 
                     db_execute(query=update_query,
                                values=(completed_at,

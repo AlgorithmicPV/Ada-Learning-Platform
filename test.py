@@ -1,7 +1,12 @@
-def test(message):
-    print(message)
+
+def check_characters_limit(max_length: int, input: str):
+    cleaned_input = input.strip()
+
+    input_length = len(cleaned_input)
+
+    if max_length < input_length:
+        return "reject"
+    return "accept"
 
 
-a = "pasindu"
-b = "testing"
-test(f"{a} is testing an again {b}")
+print(check_characters_limit(2, "  HI  "))
