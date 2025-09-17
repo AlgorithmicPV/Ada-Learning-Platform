@@ -21,7 +21,7 @@ load_dotenv()
 
 auth_bp = Blueprint("auth", __name__)  # Blueprint for authentication routes
 auth_bp.permanent_session_lifetime = timedelta(
-    days=1)  # Set session lifetime to 1 day
+    days=1)  # Set session lifetime to 1 day, for the users' security
 
 ph = PasswordHasher()  # Password hasher for secure password storage
 
@@ -36,15 +36,33 @@ google = oauth.register(
         "scope": "openid email profile",
         "prompt": "select_account"})
 
+
 # Route for the Normal Login
-
-
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    if request.args.get('next'):
-        next_url = request.args.get('next')
-    else:
-        next_url = url_for("dashboard.dashboard")
+    """
+    This route does the normal login (not for Google logins),
+    and also render login.html.
+
+    This route clears all the previous session data.
+    Gets the hashed password from the database
+    according to the typed user email,
+    and checks that with the typed hashed password. If the login is successful,
+    It gets the full name, user ID, and auth provider from the database,
+    and saves that information in session storage for future usage.
+    Then redirect to the dashboard.
+
+    Returns:
+        - Initially, it renders the login.html
+        - If the login is successful, it redirects to the dashboard
+        - If the passwords do not match,
+          it sends a flash message called "Password is not correct".
+        - If the password hash is invalid,
+          it sends a flash message called "Invalid hash format.
+          The hash may be corrupted".
+        - For the exception,
+          It sends the flash message with the relevant error.
+    """
     session.clear()
     if (
         request.method == "POST"
@@ -92,7 +110,7 @@ def login():
                         # Store the user_id in the session
                         session["user_id"] = user_id
                         session["auth_provider"] = "manual"
-                        return redirect(next_url)
+                        return redirect(url_for("dashboard.dashboard"))
                 except (
                     VerifyMismatchError
                 ):  # If the password does not match the stored hash
@@ -117,11 +135,45 @@ def login():
 # Create an account page
 @auth_bp.route("/signup", methods=["GET", "POST"])
 def signup():
+    """
+    This route does the sign-up. It clears previous session data for security.
+    It renders the signup.html.
+
+    Gets the email, name, and passwords
+    (including both passwords and confirmation passwords).
+    Before the signup process,
+        check that the typed email exists in the database.
+    If the signing is successful, it redirects to the login route.
+    Use the' validate_email_address' function
+        to validate the user's email address.
+    Use the uuid4 to generate a unique ID.
+    Use the dicebear API to generate a custom profile image,
+    and for that, also use a UUID4 code.
+    (Not using the userID, as other users can see that ID,
+    through the profile image link,
+    when they open another user's image on the web separately)
+
+    Return:
+        - Initially, it renders "signup.html".
+        - If the email is already in the database,
+          it says "Email is already in use.".
+        - If the inputs are empty, it says "All fields are required!"
+        - If the passwords do not match, it says "Passwords don't match!"
+        - If the display name is less than 3, it says "Username is too short."
+        - If the password is less than 6, it says "Password is too short."
+        - If the display name is more than 50 characters,
+          it says "Display name is too long. Maximum allowed is 50 characters."
+        - If the password is more than 1024 characters,
+          it says "Password is too long. Maximum allowed is 1,024 characters."
+        - If the user typed email is not valid, it says "Invalid email!"
+
+    *All the messages are done by flash messages
+    """
     session.clear()
 
     if request.method == "POST":
         email = request.form.get("email")
-        name = request.form.get("name")
+        display_name = request.form.get("name")
         password = request.form.get("password")
         confirm_password = request.form.get("confirm-password")
 
@@ -132,8 +184,11 @@ def signup():
                                     values=(email, )
                                     )
 
-        if not email or not name or not password or not confirm_password:
-            flash("All fields are required!", category="error")
+        if (not email
+            or not display_name
+            or not password
+                or not confirm_password):
+            flash("All fields are required!", category="warning")
 
         elif existing_email:
             flash("Email is already in use.", category="error")
@@ -141,21 +196,32 @@ def signup():
         elif password != confirm_password:
             flash("Passwords don't match!", category="error")
 
-        elif len(name) < 2:
-            flash("Username is too short.", category="error")
+        elif len(display_name) < 3:
+            flash("Username is too short.", category="warning")
+
+        elif len(display_name) > 50:
+            flash(("Display name is too long. "
+                   "Maximum allowed is 50 characters."),
+                  category="warning")
 
         elif len(password) < 6:
-            flash("Password is too short.", category="error")
+            flash("Password is too short.", category="warning")
+
+        elif len(password) > 1024:
+            flash("Password is too long. Maximum allowed is 1,024 characters.",
+                  category="warning")
 
         elif validate_email_address(email) == "invalid":
             flash("Invalid email!", category="error")
 
         else:
-
             user_id = str(uuid.uuid4())  # Creates a new primary key
 
             # Creates a random image ID for DiceBear to generate an avatar
             # for the user
+            # The reason to not use the user_id,
+            #   for this, other users can see
+            #   others user_id through their profile image id
             image_id = str(uuid.uuid4())
 
             timestamp = datetime.now().isoformat(
@@ -178,18 +244,17 @@ def signup():
             db_execute(query=insert_query,
                        fetch=False,
                        values=(
-                        user_id,
-                        email,
-                        name,
-                        ph.hash(password),
-                        "manual",
-                        "dark",
-                        datetime.fromisoformat(timestamp),
-                        f"https://api.dicebear.com/9.x/identicon/svg?seed={
-                            image_id}",
-                        )
+                           user_id,
+                           email,
+                           display_name,
+                           ph.hash(password),
+                           "manual",
+                           "dark",
+                           datetime.fromisoformat(timestamp),
+                           f"https://api.dicebear.com/9.x/identicon/svg?seed={
+                               image_id}",
                        )
-
+                       )
             return redirect(url_for("auth.login"))
 
     return render_template("auth/signup.html")
@@ -198,6 +263,17 @@ def signup():
 # login for google
 @auth_bp.route("/login/google")
 def login_google():
+    """
+    Initiate the Google OAuth login flow.
+
+    This route generates a redirect URI and sends the user to Google's
+    authorization page for authentication. If an error occurs while
+    generating the redirect, it logs the error and returns a 500 response.
+
+    Returns:
+        Response: A redirect to Google's OAuth authorization page if
+        successful, or a 500 error response if an exception occurs.
+    """
     try:
         redirect_uri = url_for("auth.authorize_google", _external=True)
         return google.authorize_redirect(redirect_uri)
@@ -208,6 +284,17 @@ def login_google():
 
 @auth_bp.route("/authorize/google")
 def authorize_google():
+    """
+    Handle the Google OAuth callback and log the user into the application.
+
+    This route is called after Google redirects back with an authorization
+    code. It exchanges the code for an access token, retrieves user
+    information, stores it in the database if the user does not already
+    exist, and saves relevant details in the session.
+
+    Returns:
+        Response: A redirect to the dashboard after successful login.
+    """
     token = google.authorize_access_token()
     session["user"] = token
 

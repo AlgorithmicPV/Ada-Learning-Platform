@@ -36,3 +36,5 @@ TODO
 [] Make the code perfect
 [] Change the namee into camelCase in JS
 [] Add a loading screen to practice hub
+[] CSS comments, JS comments
+[] Chnage the DB, display_name
