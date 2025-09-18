@@ -2,7 +2,7 @@ import { showAlertMessages } from "../message-handler.js";
 
 // This JavaScript file is the base foundation for the code editors used in this platform
 // This code is responsible for setting up the Monaco Editor and handling theme toggling
-require(["vs/editor/editor.main"], function() {
+require(["vs/editor/editor.main"], function () {
   let activatedLanguage = window.language;
   // Create the editor instance
   window.editor = monaco.editor.create(document.querySelector(".code-editor"), {
@@ -149,11 +149,11 @@ const send_the_code = async () => {
   let user_input = document.querySelector(".input-wrapper textarea").value;
 
   // Checks whether the user code is empty
-  // TODO: Have to do input number of texts and spaces thing 
+  // TODO: Have to do input number of texts and spaces thing
   // TODO Make JS function to check the input number
   if (!user_code.trim()) {
-    showAlertMessages("warning", "No code detected. Type something first")
-    return
+    showAlertMessages("warning", "No code detected. Type something first");
+    return;
   }
 
   const send_user_code = {
@@ -162,7 +162,6 @@ const send_the_code = async () => {
   };
   showLoader();
   output_wrapper.style.display = "none";
-
 
   try {
     const response = await fetch(fetch_url, {
@@ -177,6 +176,8 @@ const send_the_code = async () => {
     }
     hideLoader();
     output_wrapper.style.display = "flex";
+    ai_assistance_wrapper.style.display = "none";
+    input_wrapper.style.display = "none";
 
     const result = await response.json();
 
@@ -217,8 +218,11 @@ const ai_chat = async () => {
   document.getElementById("user-input").value = ""; // Clear the input field after sending
 
   if (!user_input) {
-    showAlertMessages("warning", "Oops! Looks like you forgot to type your message.")
-    return
+    showAlertMessages(
+      "warning",
+      "Oops! Looks like you forgot to type your message."
+    );
+    return;
   }
 
   const send_user_input = {
@@ -244,13 +248,13 @@ const ai_chat = async () => {
     const result = await response.json();
 
     if (result["warning"]) {
-      showAlertMessages("warning", result["warning"])
-      return
+      showAlertMessages("warning", result["warning"]);
+      return;
     }
 
     if (result["error"]) {
-      showAlertMessages("error", result["error"])
-      return
+      showAlertMessages("error", result["error"]);
+      return;
     }
     // Create a conversation wrapper to display the user input and AI response
     const conversation = document.createElement("div");

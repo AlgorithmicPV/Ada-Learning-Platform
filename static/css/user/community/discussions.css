@@ -13,6 +13,10 @@
   border-radius: 25px; /* Rounded corners for the input box for the modern look */
 }
 
+.add-a-question-btn {
+  display: none;
+}
+
 .user-answer-input-box {
   flex: 1;
   background-color: transparent;

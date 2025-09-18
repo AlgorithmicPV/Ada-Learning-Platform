@@ -218,7 +218,7 @@ def validate_challenge_id():
 # This Route shows the Challenge and the code editor etc..
 @practice_hub_bp.route("/practice-hub/<challenge_title>")
 @login_required
-def show_challenge(_challenge_title):
+def show_challenge(challenge_title):
     """
     This route shows the selected challenge and the code editor.
 

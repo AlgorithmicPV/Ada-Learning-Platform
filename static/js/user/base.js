@@ -9,13 +9,9 @@ const menuCloppasedButtonSmallScreen = document.querySelector(
   ".menu-cloppased-button.small-screen"
 );
 const themeToggleButton = document.querySelector(".theme-toggle-btn");
-const buttons = document.querySelectorAll(".navigation-bar-wrapper button");
-const textsInButtons = document.querySelectorAll(
-  ".navigation-bar-wrapper button p"
-);
-const buttonSvgs = document.querySelectorAll(
-  ".navigation-bar-wrapper button svg"
-);
+const buttons = document.querySelectorAll(".navigation-bar-wrapper a");
+const textsInButtons = document.querySelectorAll(".navigation-bar-wrapper a p");
+const buttonSvgs = document.querySelectorAll(".navigation-bar-wrapper a svg");
 
 let collapsedMenu = false;
 let smallMenuShowing = false;

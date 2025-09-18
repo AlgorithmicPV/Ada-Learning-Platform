@@ -17,8 +17,9 @@ from flask import (
 )
 from openai import OpenAI
 from dotenv import load_dotenv
-from ai_chat import ai_response
-from utils import divide_array_into_chunks, db_execute, login_required
+from utils import (divide_array_into_chunks,
+                   db_execute, login_required,
+                   check_characters_limit)
 
 load_dotenv()
 
@@ -561,7 +562,7 @@ def lesson_completed():
 # lesson page
 @my_courses_bp.route("/my-courses/<course_name>/<lesson_name>")
 @login_required
-def lesson(_course_name, _lesson_name):
+def lesson(course_name, lesson_name):
     """
     This route shows the lesson content for a specific course and lesson.
 
@@ -824,41 +825,71 @@ def generarting_course():
     user_input = data.get("userInput")
 
     if user_input.strip():
-        system_content = f"""
-                            You are an AI assistant integrated into
-                            the Ada Learning Platform, developed by
-                            G. A. Pasindu Vidunitha.
-                            Your role is to generate a simple, clear,
-                            and suitable course name based on the
-                            following user input: {user_input}.
-                            Return only the course name as plain text.
-                            Do not include any labels, prefixes,
-                            or extra text
-                            (e.g., avoid phrases like "Course name:",
-                            "Here is your course:", etc.).
-                            Output only the name itself.
-                            If the user input is random, unclear, or
-                            not related to programming or related
-                            fields (e.g., software, data, AI/ML, IT,
-                            cybersecurity), output exactly "invalid"
-                            and nothing else.
-                            """
+        check_characters_limit_result = check_characters_limit(user_input,
+                                                               max_length=1500,
+                                                               min_length=20)
 
-        ai_response_result = ai_response(system_content=system_content,
-                                         user_input=user_input)
-
-        if ai_response_result["error"]:
+        if check_characters_limit_result == "max_reject":
             return jsonify(
-                {"error": ai_response_result['error']})
+                {"warning": "Too big..."
+                 })
+        
+        elif check_characters_limit_result == "min_reject":
+            return jsonify(
+                {"warning": "Too small..."
+                 })
+        
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"""
+                    You are an AI assistant integrated into
+                    the Ada Learning Platform, developed by
+                    G. A. Pasindu Vidunitha.
+                    Your role is to generate a simple, clear,
+                    and suitable course name based on the
+                    following user input: {user_input}.
+                    Return only the course name as plain text.
+                    Do not include any labels, prefixes,
+                    or extra text
+                    (e.g., avoid phrases like "Course name:",
+                    "Here is your course:", etc.).
+                    Output only the name itself.
+                    If the user input is random, unclear, or
+                    not related to programming or related
+                    fields (e.g., software, data, AI/ML, IT,
+                    cybersecurity), output exactly "invalid"
+                    and nothing else.
+                    """,
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ],
+            temperature=1,
+            top_p=1,
+            model=MODEL,
+        )
 
-        course_name = ai_response_result['result']
+        course_name = response.choices[0].message.content
 
         if course_name == "invalid":
+            print("Invalid topic. Enter a programming-related subject.")
             return jsonify(
                 {"error": "Invalid topic. Enter a programming-related subject."
                  })
 
-        system_content_for_course_generating = f"""
+        response = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": "",
+                },
+                {
+                    "role": "user",
+                    "content": f"""
                     You are an AI assistant integrated into
                     the Ada Learning Platform, developed by
                     G. A. Pasindu Vidunitha. Ada is a platform
@@ -877,17 +908,15 @@ def generarting_course():
                     If the user input is random, unclear,
                     or does not make sense,generate a
                     meaningful beginner-friendly course
-                    topic on your own and proceed accordingly."""
+                    topic on your own and proceed accordingly.""",
+                },
+            ],
+            temperature=1,
+            top_p=1,
+            model=MODEL,
+        )
 
-        course_ai_response = ai_response(
-            system_content=system_content_for_course_generating,
-            user_input=course_name)
-
-        if course_ai_response["error"]:
-            return jsonify(
-                {"error": course_ai_response["error"]})
-
-        course_content = course_ai_response["result"]
+        course_content = response.choices[0].message.content
 
         user_id = session.get("user_id")
 

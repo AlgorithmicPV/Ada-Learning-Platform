@@ -87,7 +87,7 @@ body {
   transition: 0.2s ease-in-out all;
 }
 
-[data-sidebar="expanded"] .navigation-bar-wrapper button {
+[data-sidebar="expanded"] .navigation-bar-wrapper a {
   border: none;
   /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
   background-color: transparent;
@@ -105,9 +105,10 @@ body {
   cursor: pointer;
   font-family: "Inter";
   font-size: medium;
+  text-decoration: none;
 }
 
-[data-sidebar="collapsed"] .navigation-bar-wrapper button {
+[data-sidebar="collapsed"] .navigation-bar-wrapper a {
   border: none;
   /* Removes Borders because most of  modern web design has removed borders from buttons and represents this as  a navigation menu, not a button to the user */
   background-color: transparent;
@@ -125,16 +126,18 @@ body {
   cursor: pointer;
   font-family: "Inter";
   font-size: medium;
+  text-decoration: none;
 }
 
-[data-sidebar="expanded"] .navigation-bar-wrapper button p {
+[data-sidebar="expanded"] .navigation-bar-wrapper a p {
   margin: 0;
   /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
   transition: 0.2s ease-in-out all;
   display: block;
+  text-decoration: none;
 }
 
-[data-sidebar="collapsed"] .navigation-bar-wrapper button p {
+[data-sidebar="collapsed"] .navigation-bar-wrapper a p {
   margin: 0;
   /* Removes the default space around the texts in the button; otherwise, the buttons' height is so high */
   transition: 0.2s ease-in-out all;
@@ -315,7 +318,6 @@ body {
   height: 100vh;
   justify-content: center;
   align-items: center;
-
 }
 
 /* Responsive styles for screens narrower than 1200px to improve layout on tablets and smaller devices */
@@ -345,7 +347,7 @@ body {
     all: unset;
   }
 
-  .menu-wrapper-small-screen button {
+  .menu-wrapper-small-screen a {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -355,9 +357,10 @@ body {
     font-size: xx-large;
     justify-content: center;
     color: var(--second-text-color);
+    text-decoration: none;
   }
 
-  .menu-wrapper-small-screen button svg {
+  .menu-wrapper-small-screen a svg {
     all: unset;
     height: 50px;
     width: 50px;

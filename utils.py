@@ -1,7 +1,11 @@
+"""
+Contains all the common functions
+"""
+
 import sqlite3
 from functools import wraps
 from email_validator import validate_email, EmailNotValidError
-from flask import redirect, session, url_for, request, jsonify
+from flask import redirect, session, url_for, request
 
 
 # Function to divide an array into chunks of a specified size
@@ -9,6 +13,22 @@ from flask import redirect, session, url_for, request, jsonify
 def divide_array_into_chunks(
     dividing_array, chunk_size
 ):  # Divides an array into chunks of a specified size
+    """
+    This function divides an array into smaller chunks of a given size.
+
+    The function calculates how many chunks are needed by dividing the
+    array length by the chunk size. It then slices the array into those
+    chunks and adds them to a new list. The new list of chunks is then
+    returned. This is used to display courses in a grid format on the
+    frontend.
+
+    Args:
+        dividing_array (list): The array to be divided.
+        chunk_size (int): The number of items in each chunk.
+
+    Returns:
+        list: A list of sub-arrays, each of length equal to chunk_size.
+    """
     new_array = []
     for i in range(
         int(
@@ -31,6 +51,20 @@ def divide_array_into_chunks(
 
 
 def validate_email_address(email):
+    """
+    This function checks if an email address is valid.
+
+    The function uses the validate_email library to check the format of
+    the email without testing deliverability. If the email passes the
+    validation, it returns "valid". If the email is not valid or an
+    exception is raised, it returns "invalid".
+
+    Args:
+        email (str): The email address to validate.
+
+    Returns:
+        str: "valid" if the email is valid, otherwise "invalid".
+    """
     try:
         email_info = validate_email(email, check_deliverability=False)
         if email_info:
@@ -48,6 +82,25 @@ def db_execute(
         fetchone: bool = False,
         values: tuple | list | dict | None = None,
 ):
+    """
+    This function runs a SQL query on the application database.
+
+    The function connects to the SQLite database, executes the query with
+    the given values, and either fetches the results or commits changes.
+    If fetch is True, it returns one row when fetchone is True or all rows
+    otherwise. If fetch is False, it commits the transaction. Any database
+    errors are printed.
+
+    Args:
+        query (str): The SQL query to execute.
+        fetch (bool): If True, fetches data from the query. Default False.
+        fetchone (bool): If True, fetches one row. Default False.
+        values (tuple | list | dict | None): The values to bind in the
+            query. Default None.
+
+    Returns:
+        list | tuple | None: The result set when fetching, otherwise None.
+    """
     try:
         conn = sqlite3.connect("database/app.db")
         cursor = conn.cursor()
@@ -61,8 +114,7 @@ def db_execute(
             conn.commit()
         conn.close()
     except sqlite3.Error as e:
-        print(e)
-#        return jsonify({"message_type":})
+        return {"error": e}
 
 
 # Why @wraps matters:
@@ -74,6 +126,21 @@ def db_execute(
 #       The wrapper keeps the original function’s identity
 #       (name/module/doc), so the endpoint stays "test" and url_for(...) works.
 def login_required(endpoint_func):
+    """
+    This decorator ensures that only logged-in users can access a route.
+
+    The function checks if "user_id" exists in the session. If it does,
+    the original route function runs. If not, the user is redirected to
+    the login page, with the "next" parameter set to the current request
+    path. The @wraps decorator is used so the wrapped function keeps its
+    original identity (important for Flask's url_for).
+
+    Args:
+        endpoint_func (function): The view function to protect.
+
+    Returns:
+        function: The wrapped function that enforces login.
+    """
     @wraps(endpoint_func)
     def wrapper(*args, **kwargs):
         if session.get("user_id"):

@@ -19,7 +19,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from dotenv import load_dotenv
 from extensions import oauth
-from utils import validate_email_address, db_execute
+from utils import validate_email_address, db_execute, check_characters_limit
 
 load_dotenv()
 
@@ -90,6 +90,32 @@ def login():
                 values=(email,)
             )
 
+            # Validate the email
+            if validate_email_address(email) == "invalid":
+                flash("Invalid email!", category="error")
+                return render_template("auth/login.html")
+
+            # Validate the number of characters
+            email_characters_limit_result = check_characters_limit(
+                email,
+                max_length=50,
+                min_length=3)
+
+            if (email_characters_limit_result == "max_reject"):
+                flash("Email must be between 3 and 150 characters.",
+                      category="error")
+                return render_template("auth/login.html")
+
+            password_characters_limit_result = check_characters_limit(
+                password,
+                max_length=1024,
+                min_length=6)
+
+            if (password_characters_limit_result == "max_reject"):
+                flash("Password must be between 6 and 1024 characters.",
+                      category="error")
+                return render_template("auth/login.html")
+
             if stored_hash_password:
                 try:
                     if ph.verify(
@@ -118,7 +144,7 @@ def login():
                 except (
                     VerifyMismatchError
                 ):  # If the password does not match the stored hash
-                    flash("Password is not correct", category="error")
+                    flash("Authentication failed.", category="error")
                     return redirect(url_for("auth.login"))
                 except InvalidHash:  # If the password hash is invalid
                     flash(
@@ -128,8 +154,8 @@ def login():
                 except Exception as e:  # Catch any other exceptions
                     flash(f"An error occured: {e}", category="error")
                     return redirect(url_for("auth.login"))
-            else:  # If the email does not exist in the database
-                flash("User does not exist", category="error")
+            else:  # If the email and passwords do not match
+                flash("Authentication failed", category="error")
         else:
             flash("Email and password required", category="error")
 
@@ -194,17 +220,25 @@ def signup():
                 or not confirm_password):
             flash("All fields are required!", category="warning")
 
+        elif validate_email_address(email) == "invalid":
+            flash("Invalid email!", category="error")
+
         elif existing_email:
             flash("Email is already in use.", category="error")
 
+        elif len(email) > 50:
+            flash(("Display email is too long. "
+                   "Maximum allowed is 50 characters."),
+                  category="warning")
+
         elif password != confirm_password:
-            flash("Passwords don't match!", category="error")
+            flash("Passwords do not match!", category="error")
 
         elif len(display_name) < 3:
-            flash("Username is too short.", category="warning")
+            flash("Name is too short.", category="warning")
 
         elif len(display_name) > 50:
-            flash(("Display name is too long. "
+            flash(("Name is too long. "
                    "Maximum allowed is 50 characters."),
                   category="warning")
 
@@ -214,9 +248,6 @@ def signup():
         elif len(password) > 1024:
             flash("Password is too long. Maximum allowed is 1,024 characters.",
                   category="warning")
-
-        elif validate_email_address(email) == "invalid":
-            flash("Invalid email!", category="error")
 
         else:
             user_id = str(uuid.uuid4())  # Creates a new primary key
