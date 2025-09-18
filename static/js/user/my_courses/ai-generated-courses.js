@@ -79,15 +79,27 @@ const generatingCourse = async () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const result = await response.json();
-      if (result.error) {
-        hideCourseInputWrapper()
+
+      function resetUI() {
+        hideCourseInputWrapper();
         BtnAddnewAi.style.opacity = 1;
         BtnAddnewAi.style.visibility = "visible";
         newAiCoursesForm.style.opacity = 1;
         newAiCoursesForm.style.visibility = "visible";
         loader.style.opacity = 0;
         loader.style.visibility = "hidden";
-        showAlertMessages("error", result.error)
+      }
+
+      if (result.error) {
+        resetUI();
+        showAlertMessages("error", result.error);
+        return;
+      }
+
+      if (result.warning) {
+        resetUI();
+        showAlertMessages("warning", result.warning);
+        return;
       }
       if (result.redirect_url) {
         window.location.href = result.redirect_url;

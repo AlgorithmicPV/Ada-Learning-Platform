@@ -261,15 +261,30 @@ def check_answers():
 
                 language = session.get("language")
 
-                system_content = f"""Given the code {user_code}
-                                    and the challenge {challenge} from this
-                                    programming language {language},
-                                    determine if the solution is correct.
-                                    Reply only with Correct or Incorrect."""
+                solutions_query = """
+                    SELECT Answer
+                    FROM Solution
+                    WHERE challenge_id = ? AND language = ?"""
+
+                solutions = db_execute(query=solutions_query,
+                                       fetch=True,
+                                       fetchone=True,
+                                       values=(session["challenge_id"],
+                                               language))
+
+                system_content = f"""Given {user_code} and {challenge}
+                                    in {language}, decide if solution
+                                    is correct. Reply only:
+                                    Correct or Incorrect.
+                                    Give priority to DB {solutions[0]}.
+                                    If user code is similar and both solve it,
+                                    reply Correct, else Incorrect.  """
 
                 user_content = f"""code: {user_code},
                                     challenge : {challenge}
                                     and programing language: {language}"""
+                
+                print(system_content)
 
                 is_solution_correct = ai_response(
                     system_content, user_content)
@@ -278,7 +293,7 @@ def check_answers():
                     return jsonify({
                         "message": is_solution_correct["error"],
                         "message_type": "error"
-                    })
+                    })      
 
                 if is_solution_correct["result"] == "Correct":
                     completed_at = datetime.now().isoformat(timespec="seconds")

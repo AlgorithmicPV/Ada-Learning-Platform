@@ -88,7 +88,10 @@ def get_practice_challenges(search_key: str = None):
     challenges = db_execute(query=query,
                             fetch=True,
                             values=values)
-    return challenges
+    if challenges:
+        return challenges
+    else:
+        return "completed"
 
 
 # This Route shows the all the unsolved Challenges

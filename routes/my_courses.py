@@ -828,6 +828,7 @@ def generarting_course():
         check_characters_limit_result = check_characters_limit(user_input,
                                                                max_length=1500,
                                                                min_length=20)
+        print(check_characters_limit_result)
 
         if check_characters_limit_result == "max_reject":
             return jsonify(

@@ -607,16 +607,14 @@ def feedback():
                                                          min_length=10)
 
         if characters_limit_result == "min_reject":
-            flash(("Feedback is too short. "
-                   "Please provide at least 10 characters."),
-                  category="warning")
-            return
+            return jsonify({'message':
+                            ("Feedback is too short. "
+                             "Please provide at least 10 characters.")})
 
         elif characters_limit_result == "max_reject":
-            flash(("Feedback is too long. "
-                   "Please keep it under 300 characters."),
-                  category="warning")
-            return
+            return jsonify({'meesage':
+                            ("Feedback is too long. "
+                             "Please keep it under 300 characters.")})
 
         if star <= 5 and star >= 0:
             feedback_id = str(uuid.uuid4())

@@ -13,7 +13,7 @@
 {% endblock %}
 {% block content %}
     {{ super() }}
-    {% if challenges %}
+    {% if challenges != "completed" %}
         <div class="unsolved-challenges-wrapper">
             <table>
                 <tr>
@@ -53,6 +53,7 @@
                 {% endfor %}
             </table>
         </div>
+    {% elif challenges =="completed"  %}
     {% else %}
         <div class="no-result-wrapper"
              style="height: 100%;
