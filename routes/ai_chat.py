@@ -1,3 +1,7 @@
+"""
+This module handles most of the AI parts in the application.
+"""
+
 import os
 from datetime import datetime
 from flask import Blueprint, session, url_for, request, jsonify
@@ -69,10 +73,10 @@ def ai_response(system_content: str,
         error = "Rate limit exceed"
     except AuthenticationError:
         error = "Invalid or expired API key"
-    except OpenAIError as e:
-        error = f"generic openai api error: {e}"
     except APIError as e:
         error = f"OpenAI API error: {e}"
+    except OpenAIError as e:
+        error = f"generic openai api error: {e}"
     except Exception as e:
         error = f"An unexpected error occurred: {e}"
 
@@ -113,7 +117,7 @@ def chat():
     # before proceeding with the rest of the application.
     # This is due to the prevention of the crashing
     # Open API key and the backend
-    if check_characters_limit(1500, user_input) == "reject":
+    if check_characters_limit(user_input, max_length=1500) == "max_reject":
         return jsonify({
             "warning":
             "Message too long. Please keep it under 1,500 characters."
@@ -175,7 +179,7 @@ def ai_course_chat():
     # before proceeding with the rest of the application.
     # This is due to the prevention of the crashing
     # Open API key and the backend
-    if check_characters_limit(1500, user_input) == "reject":
+    if check_characters_limit(user_input, max_length=1500) == "max_reject":
         return jsonify({
             "warning":
             "Message too long. Please keep it under 1,500 characters."})
@@ -218,7 +222,7 @@ def check_answers():
     data = request.get_json()
     user_code = data.get("user_code")
 
-    if check_characters_limit(15000, user_code) == "reject":
+    if check_characters_limit(user_code, max_length=15000) == "max_reject":
         return jsonify({
             "message": "Input too large (max 15,000 chars).",
             "message_type": "warning"

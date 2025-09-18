@@ -122,6 +122,10 @@ const postTheQuestion = () => {
       postingQuestionWrapper.style.display = "none";
       isPostingQuestionShowing = false;
       document.querySelector(".user-question-input").value = "";
+      return response.json();
+    })
+    .then(data => {
+      showAlertMessages(data["message_type"], data["message"])
     })
     .catch((error) => {
       showAlertMessages("error", error);

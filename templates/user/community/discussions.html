@@ -72,6 +72,7 @@ discussions {% endblock %} {% block extra_css %}
   </li>
 </ul>
 {% endblock %} {% block floatingItems %}
+{{ super() }}
 <div class="user-answer-input-wrapper">
   <textarea
     class="user-answer-input-box"
@@ -100,11 +101,15 @@ discussions {% endblock %} {% block extra_css %}
   const toggleLikeUrl = "{{ url_for("community.toggle_like") }}";
   const numberOfAnswersUrl = "{{ url_for("community.get_number_of_answers")  }}";
   const urlForQuestions =  "{{ url_for("community.toggle_like") }}";
+  window.toggleSaveUrl = "{{ url_for("community.toggle_save") }}";
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
 <script>
   hljs.highlightAll();
 </script>
-<script src="{{ url_for('static', filename='js/user/community/discussions.js') }}"></script>
+<script
+  type="module"
+  src="{{ url_for('static', filename='js/user/community/discussions.js') }}"
+></script>
 {% endblock %}

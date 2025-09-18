@@ -38,3 +38,13 @@ TODO
 [] Add a loading screen to practice hub
 [] CSS comments, JS comments
 [] Chnage the DB, display_name
+
+# NOTE:
+# Start from here think about
+# how the hell you gonna keep the both thing in the same function,
+# and complete this thing before the school ends today :|
+# Do the CSS, JS and HTML
+# change the name, simply check the note.txt
+# Try to complete the coding part in the school time, any
+# after school, do the testing first, then rest of the
+

@@ -1,3 +1,7 @@
+"""
+Handles all the routes in My course section
+"""
+
 import os
 from datetime import datetime
 import uuid
@@ -13,6 +17,7 @@ from flask import (
 )
 from openai import OpenAI
 from dotenv import load_dotenv
+from ai_chat import ai_response
 from utils import divide_array_into_chunks, db_execute, login_required
 
 load_dotenv()
@@ -32,6 +37,26 @@ my_courses_bp = Blueprint("my_courses", __name__)
 # Function to get all the courses available in the database
 # I used a function to stop the repetion in the code
 def get_all_courses(search_key: str = None):
+    """
+    This function gets all courses and each course's completion percentage
+    for the logged-in user.
+
+    The function reads the user_id from the session and runs a SQL query
+    that returns the course id, name, images, language, and
+    a rounded completion percentage based on how many lessons the user
+    has completed in each course. If a search key is provided,
+    it filters courses by name (case-insensitive).
+    It returns the full list of matching courses with their details;
+    if none are found, it returns an empty string.
+
+    Args:
+        search_key (str, optional): Text to filter courses by name.
+        Defaults to None.
+
+    Returns:
+        list | str: A list of course rows with details and
+        completion percentage, or an empty string if no data.
+    """
     user_id = session["user_id"]
     query = """
                     SELECT
@@ -91,11 +116,28 @@ def get_all_courses(search_key: str = None):
     else:
         return ""
 
+
 # Function to get all AI generated Courses
 # I used a function to stop the repetion in the code
-
-
 def get_ai_courses(search_key: str = None):
+    """
+    This function gets all the AI generated courses for the logged-in user.
+
+    The function reads the user_id from the session and
+    queries the Ai_resource table for the course id, title, status,
+    and the generated date. If a search key is provided,
+    it filters the results by title in a case-insensitive way.
+    It returns all matching AI generated courses from the database,
+    or "null" if no data is found.
+
+    Args:
+        search_key (str, optional): Text to filter courses by title.
+        Defaults to None.
+
+    Returns:
+        list | str: A list of AI generated courses with details,
+        or "null" if no data.
+    """
     user_id = session["user_id"]
     query = """
             SELECT
@@ -127,12 +169,28 @@ def get_ai_courses(search_key: str = None):
     else:
         return "null"
 
+
 # This route is used to display all the courses available in the application
-
-
 @my_courses_bp.route("/my-courses", methods=["GET", "POST"])
 @login_required
 def all_courses():
+    """
+    This route shows all available courses and handles enrolling into a course.
+
+    The function loads all courses using get_all_courses() and, on GET,
+    renders the courses page. On POST, it reads the selected course_id,
+    checks that it exists, and saves it to the session. It then creates
+    an enrollment record if one does not already exist for this user and
+    course (using a UUID and an ISO timestamp), updates last_accessed for
+    the started course, sets the initial lesson_order in
+    the session, and redirects to the intermediate route.
+    If the course_id is invalid, it returns a 404 error.
+
+
+    Returns:
+        - Rendered HTML with all courses (GET) or a redirect to the
+        intermediate route after enrollment (POST).
+    """
     courses_data = get_all_courses()
 
     if request.method == "POST":
@@ -208,6 +266,21 @@ def all_courses():
 @my_courses_bp.route("/my-courses/search", methods=["GET"])
 @login_required
 def search_courses():
+    """
+    This route searches for courses based on the keyword entered by the user.
+
+    The function gets the search keyword from the request arguments
+    and converts it to lowercase for case-insensitive matching.
+    If the keyword is valid, it creates a search term,
+    calls get_all_courses() with it, and renders the search-result
+    template with the results. If the keyword is empty or only spaces,
+    it redirects the user back to the all courses page.
+
+
+    Returns:
+        Response: Rendered HTML template with the search results, or a redirect
+        to the all courses page if the keyword is invalid.
+    """
     keyword = request.args.get(
         "search"
         # Gets the keyword entered by the user and converts it to
@@ -236,6 +309,23 @@ def search_courses():
 @my_courses_bp.route("/my-courses/intermediate", methods=["POST", "GET"])
 @login_required
 def intermediate_route():
+    """
+    This route processes lesson data and works as an intermediate step
+    between the all_courses route and the lesson route.
+
+    The function gets the course_id and lesson_id from the session or the
+    form (if POST). If lesson_id is missing, it validates and sets it
+    using the lesson_order number. It then queries the database for the
+    course language, course name, and lesson title. These values are saved
+    in the session and formatted with hyphens for URL compatibility.
+    Finally, it redirects the user to the lesson route with the formatted
+    course and lesson names.
+
+
+    Returns:
+        - Redirect to the lesson route with formatted course and
+        lesson names.
+    """
     course_id = session.get("course_id")
     # If the request method is POST, it means the user has selected a
     # lesson
@@ -342,6 +432,23 @@ def intermediate_route():
 @my_courses_bp.route("/my-courses/lesson-completed", methods=['POST'])
 @login_required
 def lesson_completed():
+    """
+    This route marks a lesson as completed and updates the user's course
+    progress.
+
+    The function checks the form input for "completed". If valid, it gets
+    the lesson_id, course_id, and user_id from the session. It inserts a
+    record into the user_lesson table if the lesson is not already marked
+    as completed, and updates the Enrollment table to completed if all
+    lessons in the course are done. It then updates the session with the
+    next lesson_id and lesson order so the user can continue smoothly.
+    Finally, it redirects to the intermediate route.
+
+
+    Returns:
+        Response: Redirect to the intermediate route after progress is
+        updated.
+    """
     complete_request = request.form.get("completed")
     if complete_request == "completed":
         lesson_id = session.get("lesson_id")
@@ -454,8 +561,28 @@ def lesson_completed():
 # lesson page
 @my_courses_bp.route("/my-courses/<course_name>/<lesson_name>")
 @login_required
-def lesson(course_name, lesson_name):
+def lesson(_course_name, _lesson_name):
+    """
+    This route shows the lesson content for a specific course and lesson.
 
+    The function gets the course_id, lesson_id, and user_id from the
+    session. It runs a query to load the lesson title, content,
+    completion percentage, navigation ids for next and previous lessons,
+    and a list of all lessons in the course. The data is processed to
+    create a clean 2D array of lesson ids and titles. Finally, the
+    lesson.html template is rendered with the lesson data. If no data is
+    found, it returns a 404 error.
+
+    Args:
+        course_name (str): The course name from the URL (not used in the
+        function logic).
+        lesson_name (str): The lesson name from the URL (not used in the
+        function logic).
+
+    Returns:
+        - Rendered HTML template with the lesson data, or a 404
+        error if no lesson is found.
+    """
     course_id = session.get("course_id")
     lesson_id = session.get("lesson_id")
     user_id = session.get("user_id")
@@ -583,6 +710,21 @@ def lesson(course_name, lesson_name):
 @my_courses_bp.route("/my-courses/completed-courses")
 @login_required
 def completed_courses():
+    """
+    This route shows all courses that the logged-in user has completed.
+
+    The function gets the user_id from the session and queries the
+    database for all courses marked as completed in the Enrollment
+    table. Each completed course is returned with a 100% completion
+    rate. If data is found, it renders the completed-courses.html
+    template with the courses; otherwise, it renders the same
+    template with no data.
+
+
+    Returns:
+        - Rendered HTML template with the completed courses or
+        an empty template if no completed courses exist.
+    """
     user_id = session.get("user_id")
     query = """
             SELECT
@@ -615,6 +757,17 @@ def completed_courses():
 @my_courses_bp.route("/my-courses/code-editor")
 @login_required
 def code_editor():
+    """
+    This route shows the code editor for the logged-in user.
+
+    The function gets the programming language from the session and uses
+    it to set the editor's language. It then renders the code-editor.html
+    template with the selected language.
+
+
+    Returns:
+        - Rendered HTML template with the code editor.
+    """
     language = session.get("language")
     return render_template(
         "user/my_courses/code-editor.html", language=language)
@@ -625,6 +778,18 @@ def code_editor():
 @my_courses_bp.route("/my-courses/ai_generated")
 @login_required
 def ai_courses():
+    """
+    This route shows all AI-generated courses created by the logged-in
+    user.
+
+    The function calls get_ai_courses() to fetch the list of AI-generated
+    courses for the current user. It then renders the ai-generated-courses.html
+    template with the course data.
+
+
+    Returns:
+        Response: Rendered HTML template with the AI-generated courses.
+    """
     ai_courses_data = get_ai_courses()
 
     return render_template(
@@ -638,61 +803,62 @@ def ai_courses():
 @my_courses_bp.route("/my-courses/ai_generated/generating", methods=["POST"])
 @login_required
 def generarting_course():
+    """
+    This route generates an AI course based on the user's input.
+
+    The function reads JSON data from the POST request and gets the
+    userInput field. It sends the input to the AI model to generate a
+    simple and clear course name. If the name is invalid, it returns
+    an error message. If valid, it sends another request to the AI model
+    to generate the full beginner-friendly course content in HTML format.
+    The course name and content are saved in the Ai_resource table with
+    a timestamp and default status. Finally, it returns a JSON response
+    with a redirect URL to the AI courses page and a status of "created".
+
+
+    Returns:
+        Response: JSON object with either an error or the redirect URL
+        after the course is generated and saved.
+    """
     data = request.get_json()
     user_input = data.get("userInput")
 
     if user_input.strip():
-        response = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": f"""
-                    You are an AI assistant integrated into
-                    the Ada Learning Platform, developed by
-                    G. A. Pasindu Vidunitha.
-                    Your role is to generate a simple, clear,
-                    and suitable course name based on the
-                    following user input: {user_input}.
-                    Return only the course name as plain text.
-                    Do not include any labels, prefixes,
-                    or extra text
-                    (e.g., avoid phrases like "Course name:",
-                    "Here is your course:", etc.).
-                    Output only the name itself.
-                    If the user input is random, unclear, or
-                    not related to programming or related
-                    fields (e.g., software, data, AI/ML, IT,
-                    cybersecurity), output exactly "invalid"
-                    and nothing else.
-                    """,
-                },
-                {
-                    "role": "user",
-                    "content": user_input,
-                },
-            ],
-            temperature=1,
-            top_p=1,
-            model=MODEL,
-        )
+        system_content = f"""
+                            You are an AI assistant integrated into
+                            the Ada Learning Platform, developed by
+                            G. A. Pasindu Vidunitha.
+                            Your role is to generate a simple, clear,
+                            and suitable course name based on the
+                            following user input: {user_input}.
+                            Return only the course name as plain text.
+                            Do not include any labels, prefixes,
+                            or extra text
+                            (e.g., avoid phrases like "Course name:",
+                            "Here is your course:", etc.).
+                            Output only the name itself.
+                            If the user input is random, unclear, or
+                            not related to programming or related
+                            fields (e.g., software, data, AI/ML, IT,
+                            cybersecurity), output exactly "invalid"
+                            and nothing else.
+                            """
 
-        course_name = response.choices[0].message.content
+        ai_response_result = ai_response(system_content=system_content,
+                                         user_input=user_input)
+
+        if ai_response_result["error"]:
+            return jsonify(
+                {"error": ai_response_result['error']})
+
+        course_name = ai_response_result['result']
 
         if course_name == "invalid":
-            print("Invalid topic. Enter a programming-related subject.")
             return jsonify(
                 {"error": "Invalid topic. Enter a programming-related subject."
                  })
 
-        response = client.chat.completions.create(
-            messages=[
-                {
-                    "role": "system",
-                    "content": "",
-                },
-                {
-                    "role": "user",
-                    "content": f"""
+        system_content_for_course_generating = f"""
                     You are an AI assistant integrated into
                     the Ada Learning Platform, developed by
                     G. A. Pasindu Vidunitha. Ada is a platform
@@ -711,15 +877,17 @@ def generarting_course():
                     If the user input is random, unclear,
                     or does not make sense,generate a
                     meaningful beginner-friendly course
-                    topic on your own and proceed accordingly.""",
-                },
-            ],
-            temperature=1,
-            top_p=1,
-            model=MODEL,
-        )
+                    topic on your own and proceed accordingly."""
 
-        course_content = response.choices[0].message.content
+        course_ai_response = ai_response(
+            system_content=system_content_for_course_generating,
+            user_input=course_name)
+
+        if course_ai_response["error"]:
+            return jsonify(
+                {"error": course_ai_response["error"]})
+
+        course_content = course_ai_response["result"]
 
         user_id = session.get("user_id")
 
@@ -767,6 +935,20 @@ def generarting_course():
                      methods=["GET"])
 @login_required
 def search_ai_courses():
+    """
+    This route searches for AI-generated courses by a keyword entered by
+    the user.
+
+    The function gets the search keyword from the request arguments and
+    checks that it is not empty or only spaces. If valid, it builds a
+    search term, calls get_ai_courses() with it, and renders the
+    search-ai-courses.html template with the results.
+
+
+    Returns:
+        - Rendered HTML template with the search results for AI
+        courses.
+    """
     keyword = request.args.get("search")
     if not keyword == "" and not keyword.isspace():
         search_term = f"%{keyword.lower()}%"
@@ -787,6 +969,21 @@ def search_ai_courses():
                      methods=["POST"])
 @login_required
 def intermediate_route_ai():
+    """
+    This route handles the intermediate step when opening an AI-generated
+    course.
+
+    The function gets the ai-course-id from the form and checks if it exists
+    in the Ai_resource table for the logged-in user. If the id is valid, it
+    saves it to the session, formats the course name with hyphens, and then
+    redirects to the ai_course route. If the id does not exist, it returns a
+    404 error.
+
+
+    Returns:
+        Response: Redirect to the ai_course page if valid, otherwise a 404
+        error.
+    """
     user_id = session.get("user_id")
 
     ai_resource_id = request.form.get("ai-course-id")
@@ -825,7 +1022,24 @@ def intermediate_route_ai():
 # This route is used to display the AI-generated course content
 @my_courses_bp.route("/my-courses/ai_generated/<course_name>")
 @login_required
-def ai_course(course_name):
+def ai_course(_course_name):
+    """
+    This route shows the content of an AI-generated course.
+
+    The function gets the user_id and ai_resource_id from the session and
+    queries the ai_resource table to load the course title and content.
+    It saves the title in the session as the current topic and
+    then renders the ai-course.html template
+    with the course content and name.
+
+    Args:
+        course_name (str): The name of the course from the URL
+        (used only for routing).
+
+    Returns:
+        - Rendered HTML template showing the AI-generated
+        course content.
+    """
     user_id = session.get("user_id")
     ai_resource_id = session.get("ai_courses_id")
 
@@ -859,6 +1073,20 @@ def ai_course(course_name):
 @my_courses_bp.route("/my-courses/ai_generated/completed", methods=["POST"])
 @login_required
 def ai_course_complete():
+    """
+    This route marks an AI-generated course as completed.
+
+    The function checks the form input for the word "completed". If it matches,
+    it gets the course id from the session and the user_id from the session,
+    then updates the Ai_resource table to set the status as 'Completed'
+    for that course if it is not already marked. Finally,
+    it redirects the user back to the AI courses page.
+
+
+    Returns:
+        - Redirect to the AI courses page after
+        marking the course as completed.
+    """
     completed = request.form.get("completed")
     if completed == "completed":
         ai_resource_id = session.get("ai_courses_id")

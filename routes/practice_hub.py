@@ -1,3 +1,7 @@
+"""
+Handles all the routes and fucntions related to Practice Hub section
+"""
+
 import uuid
 from flask import (Blueprint,
                    render_template,
@@ -15,6 +19,24 @@ practice_hub_bp = Blueprint("practice_hub", __name__)
 # This function works only for the searching
 # and uncomplete challenges
 def get_practice_challenges(search_key: str = None):
+    """
+    This function gets practice challenges for the logged-in user.
+
+    If a search key is given, it finds challenges that match the
+    search by title or difficulty level. If no search key is provided,
+    it returns the challenges that are not yet completed by the user.
+    It runs a database query to fetch the challenge id,
+    number, title, difficulty level, and the user's status for each challenge,
+    then sends the results back.
+
+    Args:
+        search_key (str): A word or phrase to search by challenge title or
+        difficulty level. Defaults to None. * Optional
+
+    Returns:
+        - list: A list of challenges with their details and status for
+              the current user.
+    """
     user_id = session.get("user_id")
 
     common_query = """
@@ -68,12 +90,24 @@ def get_practice_challenges(search_key: str = None):
                             values=values)
     return challenges
 
+
 # This Route shows the all the unsolved Challenges
-
-
 @practice_hub_bp.route("/practice-hub")
 @login_required
 def uncomplete_practice_challenges():
+    """
+    This route shows all the unsolved challenges for the logged-in user.
+
+    The function calls get_practice_challenges() without a search key
+    to collect the challenges that are not yet completed. It then sets
+    the page title as "Unsolved" and renders the template
+    unsolved-challenges.html with the list of challenges
+    and the page title.
+
+
+    Returns:
+        - Rendered HTML template with the unsolved challenges.
+    """
     unsolved_challenges = get_practice_challenges()
 
     # I assigned the page title in here
@@ -96,6 +130,23 @@ def uncomplete_practice_challenges():
 @practice_hub_bp.route("/practice-hub/validate-challenge-id", methods=["POST"])
 @login_required
 def validate_challenge_id():
+    """
+    This route checks the challenge id from the client and sets up the session.
+
+    The function takes the challenge_id from the form and validates
+    it with the database. If the id exists, it saves the challenge_id in
+    the session and checks if the user already has an attempt. If not,
+    it creates a new attempt with status "Started". It then gets
+    the challenge title, formats it by replacing spaces with "-", and
+    redirects the user to the challenge page with the code editor.
+    If the id is not valid, the user is redirected back to
+    the unsolved challenges page.
+
+
+    Returns:
+        - Redirect to the challenge page if valid,
+                otherwise to the unsolved challenges page.
+    """
     client_challenge_id = request.form.get("challenge_id")
 
     # Validates the challenge id comes from client side
@@ -167,7 +218,23 @@ def validate_challenge_id():
 # This Route shows the Challenge and the code editor etc..
 @practice_hub_bp.route("/practice-hub/<challenge_title>")
 @login_required
-def show_challenge(challenge_title):
+def show_challenge(_challenge_title):
+    """
+    This route shows the selected challenge and the code editor.
+
+    The function sets the default coding language as Python,
+    gets the challenge_id from the session, and queries the
+    database for the challenge details and the user's status.
+    It then converts the question text into HTML using markdown
+    and prepares the data as a list. Finally, it renders the challenge.html
+    template with the challenge information.
+
+    Args:
+        challenge_title (str): The formatted challenge title from the URL.
+
+    Returns:
+        -  Rendered HTML template showing the challenge and code editor.
+    """
     session["language"] = "python"
 
     challenge_id = session.get("challenge_id")
@@ -202,6 +269,22 @@ def show_challenge(challenge_title):
 @practice_hub_bp.route("/practice-hub/solution", methods=["POST"])
 @login_required
 def solution_second_call():
+    """
+    This route sends the solution for the selected challenge
+    in the chosen language.
+
+    The function reads the request data in JSON format and
+    checks the programming language, with Python set as the default.
+    If the language is valid, it gets the challenge_id from
+    the session and queries the Solution table for the saved answer.
+    The answer is converted from markdown to HTML with code formatting
+    and then returned as a JSON response. This route has connected
+    to options.forEach() in challenges.js
+
+
+    Returns:
+        - Response: JSON object containing the solution in HTML format.
+    """
     data = request.get_json()
     language = data.get("language", "python")
     languages = ["python", "c++", "java", "javascript", "typescript"]
@@ -230,6 +313,24 @@ def solution_second_call():
 @practice_hub_bp.route("/practice-hub/solution-challenges", methods=["POST"])
 @login_required
 def solution_first_call():
+    """
+    This route sends the solution to the challenges page
+    when the user clicks the solution button.
+
+    The function reads the challenge_id from the request,
+    validates it with the database, and if it exists, sets it in the session.
+    By default, the language is set to Python. It then queries
+    the Solution table to get the answer and challenge title, converts the
+    answer from markdown to HTML, and
+    returns both the answer and title as a JSON response.
+    This route has connected to solutionShowButtons.forEach() in
+    discussions.js
+
+
+    Returns:
+        - Response: JSON object containing the solution
+                    and the challenge title.
+    """
     data = request.get_json()
     client_challenge_id = data.get("value")
 
@@ -282,6 +383,20 @@ def solution_first_call():
 @practice_hub_bp.route("/practice-hub/completed")
 @login_required
 def completed_practice_challenges():
+    """
+    This route shows all the challenges completed by the logged-in user.
+
+    The function gets the user_id from the session and queries
+    the database for all challenges that the user has completed.
+    It also formats the completed_at date to show only the time if finished
+    today, or the full date and time otherwise.
+    Finally, it renders the completed-challenges.html template with the list of
+    completed challenges.
+
+
+    Returns:
+        - Rendered HTML template with the completed challenges.
+    """
     user_id = session.get("user_id")
     completed_challenges = []
 
@@ -314,6 +429,22 @@ def completed_practice_challenges():
 @practice_hub_bp.route("/practice-hub/search", methods=["GET"])
 @login_required
 def search():
+    """
+    This route filters challenges by the keyword entered by the user.
+
+    The function gets the keyword from the request arguments and converts it to
+    lowercase for case-insensitive searching. If the keyword is not empty or
+    whitespace, it calls get_practice_challenges() to fetch matching challenges
+    and shows them on the search-result.html page with the
+    title "Search Result".
+    If the keyword is invalid, it redirects the user back to the unsolved
+    challenges page.
+
+
+    Returns:
+        - Rendered HTML template with the search results or a redirect
+        to the unsolved challenges page.
+    """
     keyword = request.args.get(
         "search"
         # Gets the keyword entered by the user and converts it to

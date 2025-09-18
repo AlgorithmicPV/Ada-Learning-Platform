@@ -1,5 +1,9 @@
-from flask import Blueprint, render_template, session
+"""
+Dashboard of the Application
+"""
+
 from datetime import datetime, timedelta, date
+from flask import Blueprint, render_template, session
 from utils import divide_array_into_chunks, db_execute, login_required
 
 dashboard_bp = Blueprint("dashboard", __name__)
@@ -8,6 +12,21 @@ dashboard_bp = Blueprint("dashboard", __name__)
 @dashboard_bp.route("/dashboard", methods=["GET", "POST"])
 @login_required
 def dashboard():
+    """
+    This route shows the user's dashboard with progress and stats.
+
+    The function queries the database for the user's details, active
+    course, next lesson, progress in courses and challenges, coins,
+    leaderboard, and all activity dates. It stores some values like
+    course_id, lesson_id, and question_id in the session. The activity
+    dates are processed into date objects to calculate a streak count.
+    Finally, the function renders the dashboard.html template with all
+    the collected data, streak, and leaderboard.
+
+
+    Returns:
+        Response: Rendered HTML template with the dashboard data.
+    """
     user_id = session.get("user_id")
 
     query = """

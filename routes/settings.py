@@ -1,3 +1,7 @@
+"""
+Handles all the user setting page
+"""
+
 import os
 import uuid
 from flask import (Blueprint,
@@ -13,7 +17,10 @@ from werkzeug.utils import secure_filename
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from PIL import Image
-from utils import db_execute, login_required, validate_email_address
+from utils import (db_execute,
+                   login_required,
+                   validate_email_address,
+                   check_characters_limit)
 
 settings_bp = Blueprint("settings", __name__)
 
@@ -23,14 +30,47 @@ ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.svg'}
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit(
-        '.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    """
+    This function checks whether a given filename has an allowed extension.
+
+    Process:
+        - Verifies the presence of a "." in the filename.
+        - Splits the filename at the last "." to extract the extension.
+        - Compares the extracted extension (in lowercase) against the set
+          of ALLOWED_EXTENSIONS.
+
+    Args:
+        filename (str): The name of the file to validate.
+
+    Returns:
+        - bool: True if the file extension is in ALLOWED_EXTENSIONS,
+        otherwise False.
+    """
+    return (
+        '.' in filename
+        and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 # This route shows the setting page
 @settings_bp.route("/settings")
 @login_required
 def settings():
+    """
+    This route displays the settings page for the logged-in user.
+
+    The function gets the authentication provider and user_id
+    from the session, executes a SQL query to fetch the
+    user's full name, email, and profile image, and prepares the data
+    if available. It then renders the "user/settings.html"
+    template, passing both the user data
+    and the authentication provider for display.
+
+
+    Returns:
+         - Rendered HTML template "user/settings.html"
+         containing user settings data.
+    """
     auth_provider = session.get("auth_provider")
 
     user_id = session.get("user_id")
@@ -55,13 +95,44 @@ def settings():
         auth_provider=auth_provider)
 
 
-# to avoid cyclomatic complexity
+# To avoid cyclomatic complexity
+# created update_username(), update_email(),
+#   update_profile_image()
 # divided into three functions
 def update_username(new_username, user_id):
+    """
+    This function updates the username of a user in the database.
+
+    It first checks that the new username is not empty and has a valid length.
+    The function then queries the database to confirm whether the
+    existing username is different from the provided one.
+    If the username is unchanged, the update is skipped.
+    Otherwise, it executes an update query to modify the user's full name
+    and flashes a success message to indicate the update was completed.
+
+    Args:
+        new_username (str): The new username provided by the user.
+        user_id (int): The unique identifier of the user whose username
+                       is being updated.
+
+    Returns:
+        - flashes messages to indicate the result.
+    """
     if new_username.strip() == "":
+        flash("Username is empty", category="warning")
         return
 
-    if len(new_username) < 2:
+    # validates the number of characters
+    character_limit_result = check_characters_limit(new_username,
+                                                    max_length=50,
+                                                    min_length=3)
+    if character_limit_result == "max_result":
+        flash(("Display name is too long. "
+               "Maximum allowed is 50 characters."),
+              category="warning")
+        return
+
+    elif character_limit_result == "min_result":
         flash("Username is too short.", category="error")
         return
 
@@ -77,6 +148,10 @@ def update_username(new_username, user_id):
                           fetchone=True,
                           values=(user_id, ))
 
+    # if the prev username is equal to types username,
+    # nothing happens
+    # otheriwse, user gets a message that username was updated
+    # which can cause confusion for users
     if username:
         if username[0] == new_username:
             return
@@ -96,6 +171,26 @@ def update_username(new_username, user_id):
 
 
 def update_email(new_email, user_id):
+    """
+    This function updates the email address of a user in the database.
+
+    It first checks the authentication provider from the session to ensure
+    the user is logged in with a manual account before allowing changes.
+    The function then validates the new email, checking that it is not empty
+    and has a valid format. It queries the database to confirm that the new
+    email is not the same as the current one and is not already used
+    by another user.If these checks pass, the user's email is updated
+    in the database, and a success message is flashed. Otherwise,
+    appropriate error messages are shown.
+
+    Args:
+        new_email (str): The new email address provided by the user.
+        user_id (int): The unique identifier of the user whose email
+                       is being updated.
+
+    Returns:
+        - flashes messages to indicate the result.
+    """
     # Checks whether user is logged by a gmail account or
     # by a normal account
     # If it is a normal account give access to change the email
@@ -105,7 +200,7 @@ def update_email(new_email, user_id):
         return
 
     if new_email.strip() == "":
-        flash("Email is already in use.", category="error")
+        flash("Email cannot be empty", category="warning")
         return
 
     if validate_email_address(new_email) == "invalid":
@@ -130,11 +225,17 @@ def update_email(new_email, user_id):
                                      "email": new_email})
 
     if email_in_db:
-        print(email_in_db)
+        # if the typed email == new email,
+        # returning from the route
+        # otherwise, user is getting a message
+        # that email is updated
+        # which can cause confusion for users
+        # email_in_db[0][0] mean user's prev email
         if email_in_db[0]:
             if email_in_db[0][0] == new_email:
                 return
-
+            # email_in_db[0][1] means other emails that equals
+            # to the typed email
             if email_in_db[0][1]:
                 flash("Email is already in use.", category="error")
                 return
@@ -162,6 +263,27 @@ def update_email(new_email, user_id):
 
 
 def update_profile_image(file, user_id):
+    """
+    This function updates the profile image of a user in the database.
+
+    It first checks that a file has been uploaded and validates that
+    the file type is a supported image format. A secure,
+    unique filename is generated, and the image is saved into the
+    designated profile pictures folder. If the user already has a
+    locally stored profile image, the previous file is deleted to keep the
+    project clean. The new image is then converted and stored in
+    WebP format for optimization, and the relative image path is updated
+    in the database. Finally, a success message is flashed,
+    or an error message is shown if the upload fails.
+
+    Args:
+        file (FileStorage): The uploaded image file provided by the user.
+        user_id (int): The unique identifier of the user whose profile
+                       image is being updated.
+
+    Returns:
+        - flashes messages to indicate the result.
+    """
     if not file:
         return
 
@@ -255,6 +377,15 @@ def update_profile_image(file, user_id):
 @settings_bp.route("/settings/profile-update", methods=["POST"])
 @login_required
 def profile_update():
+    """
+    This route updates the username, email, and profile image
+    of the logged-in user.
+
+    It calls above functions
+
+    Returns:
+        Response: A redirect response to the settings page.
+    """
     new_username = request.form.get("username")
     new_email = request.form.get("email")
     file = request.files.get('image')
@@ -268,14 +399,31 @@ def profile_update():
     return redirect(url_for("settings.settings"))
 
 
-def update_password():
-    pass
-
-
 # This route change the Password
 @settings_bp.route("/settings/change-password", methods=["POST"])
 @login_required
 def change_password():
+    """
+    This route lets a logged-in user change their account password.
+
+    The function reads the current password, new password,
+    and confirm password from the form, and gets the user_id
+    and auth provider from the session. If the user signed in with Google,
+    it stops and shows an error because Google users cannot
+    change passwords here. It then loads the stored password hash
+    from the database and verifies it against the current password.
+    If the current password is correct, it checks that the
+    new password matches the confirm field and is longer than 6 characters.
+    When all checks pass, it updates the password in the database
+    and shows a success message. Any failed check shows a clear error message.
+    In all cases, the user is redirected back to the settings page.
+    Passwords should be in limits
+
+
+    Returns:
+        - A redirect back to the settings page,
+          with flashed messages indicating the result.
+    """
     user_id = session.get("user_id")
 
     # Gets the data from the clienst side and
@@ -332,21 +480,31 @@ def change_password():
                       category="error")
                 return redirect(url_for("settings.settings"))
 
-            if len(new_password) > 6:
-                update_query = """
-                            UPDATE User
-                            SET password =?
-                            WHERE user_id=?
-                                """
+            check_characters_result = check_characters_limit(new_password,
+                                                             max_length=1024,
+                                                             min_length=6)
 
-                db_execute(query=update_query,
-                           values=(ph.hash(new_password), user_id))
-                flash(
-                    "Password changed successfully. You are all set!",
-                    category="success")
-            else:
-                flash(
-                    "Password is too short.", category="error")
+            if check_characters_result == "max_reject":
+                flash("Password is too small", category="warning")
+                return
+
+            elif check_characters_result == "min_reject":
+                flash(("Password is too long. "
+                       "Maximum allowed is 1,024 characters."),
+                      category="warning")
+                return
+
+            update_query = """
+                        UPDATE User
+                        SET password =?
+                        WHERE user_id=?
+                            """
+
+            db_execute(query=update_query,
+                       values=(ph.hash(new_password), user_id))
+            flash(
+                "Password changed successfully. You are all set!",
+                category="success")
 
     # If the password does not match the stored hash
     except (VerifyMismatchError):
@@ -367,6 +525,22 @@ def change_password():
 @settings_bp.route("/settings/delete-account", methods=["POST"])
 @login_required
 def delete_account():
+    """
+    This route deletes the user account permanently from all related tables.
+
+    The function gets the user_id from the session and checks the form
+    input to confirm the delete action. If the confirmation is correct,
+    it loops through all tables linked to the user and removes every record
+    that matches the user_id. After deleting the data, the session is cleared
+    to log the user out, and the function redirects back to the
+    settings page, As there is no user_id in the session,
+    it automatically redirects again to the login page
+
+
+    Returns:
+        - A redirect back to the settings page
+          after the account is deleted.
+    """
     user_id = session.get("user_id")
 
     delete = request.form.get("delete")
@@ -398,19 +572,54 @@ def delete_account():
 @settings_bp.route("/settings/get-feedback", methods=["POST"])
 @login_required
 def feedback():
+    """
+    This route saves user feedback and a star rating.
+
+    The function reads the comment and star value from the form,
+    gets the user_id from the session, and ignores empty or
+    whitespace-only comments. It then validates the comment length
+    (10-300 chars) using check_characters_limit and shows a warning if it
+    is too short or too long. If the star rating is within the allowed range,
+    it creates a new feedback record with a UUID and stores
+    it in the User_feedback table. On success, it returns a
+    JSON thank-you message; otherwise
+    it returns a JSON message explaining the issue.
+
+
+    Returns:
+        - Response: JSON message indicating success or the validation error.
+    """
     user_id = session.get("user_id")
 
     # Gets the user feedback and star rating
-    userfeedback = request.form['comment']
+    user_feedback = request.form['comment']
     star = int(request.form['star'])
 
     # Check whether the user feedback is empty or not
     # This it check the number of stars are in between 0 and 5
     # If all above conditions are satisfied then it will store the
     # feedback in the database
-    if not userfeedback == "" and not userfeedback.isspace():
+    if not user_feedback == "" and not user_feedback.isspace():
+
+        # validates the limmits
+        characters_limit_result = check_characters_limit(user_feedback,
+                                                         max_length=300,
+                                                         min_length=10)
+
+        if characters_limit_result == "min_reject":
+            flash(("Feedback is too short. "
+                   "Please provide at least 10 characters."),
+                  category="warning")
+            return
+
+        elif characters_limit_result == "max_reject":
+            flash(("Feedback is too long. "
+                   "Please keep it under 300 characters."),
+                  category="warning")
+            return
+
         if star <= 5 and star >= 0:
-            id = str(uuid.uuid4())
+            feedback_id = str(uuid.uuid4())
 
             insert_query = """
                 INSERT INTO User_feedback
@@ -419,7 +628,7 @@ def feedback():
                 """
 
             db_execute(query=insert_query,
-                       values=(id, user_id, userfeedback, star))
+                       values=(feedback_id, user_id, user_feedback, star))
 
             return jsonify(
                 {'message': (
@@ -429,7 +638,7 @@ def feedback():
         else:
             return jsonify(
                 {'message':
-                 'Oops! Ratings can only be between 1 and 5 stars.'})
+                 'Oops! Ratings can only be between 0 and 5 stars.'})
     else:
         return jsonify(
             {'message': 'Please write some feedback before submitting'})

@@ -1,4 +1,8 @@
-from datetime import datetime, date
+"""
+Handles all the routes and fucntions related to Community section
+"""
+
+from datetime import datetime
 import uuid
 import string
 from flask import (
@@ -11,37 +15,54 @@ from flask import (
     render_template,
 )
 import strip_markdown
-from dateutil.parser import parse
 import markdown
 import emoji
-from utils import db_execute, login_required
+from utils import db_execute, login_required, check_characters_limit
 
 community_bp = Blueprint("community", __name__)
 
 
 # All routes check if the user logged in or not
 # If the user is not logged in, it redirects to the login page
-def to_iso_datetime(input_str, fallback_date=None):
-    if fallback_date is None:
-        fallback_date = date.today()
-
-    try:
-        dt = parse(
-            input_str,
-            default=datetime.combine(
-                fallback_date,
-                datetime.min.time()))
-    except Exception as e:
-        raise ValueError(f"Invalid time format: {input_str}") from e
-
-    return dt.strftime("%Y-%m-%dT%H:%M:%S")
 
 
 # I Use a function because I can use this function to get all community
 # questions and filter them according to the below routes
-def get_community_questions_from_db(filter_query, since_id):
+def get_community_questions_from_db(filter_query: str, since_id: str):
+    """
+    Function to get all the questions that are asked by users.
+
+    It takes the user_id from the session variables,
+        and creates a static base
+        (This is for the images that are not starting from "https").
+        This function gets the last ID through the parameter called 'since_id'.
+        This is due to the current system using the polling method
+        to keep updating the page; therefore,
+        the program wants the last ID (since_id) to get the last time
+        that fetch happened. It can be empty.
+    Questions that are done by the login user will change to
+        “You” instead of the full own name
+    Questions that happen during the current date show only the time
+
+    Args:
+        - filter_query (string): for searching and other filtering purposes
+        - since_id (string): last ID of the previous fetch
+
+    Returns:
+        - An array: Includes question_id, question with no markdown codes,
+                    created time, person who asked the question,
+                    profile image url, number of answers, and save status
+        - or a string: "" (if there are no questions)
+    """
     user_id = session.get("user_id")
+
+    # Creates a URL for this static base for profile images
+    # In the SQL query,
+    #   if the image location does not start from
+    #   'https', it will use this + image file name
     static_base = url_for('static', filename='')
+
+    # ts: time stamp
     since_ts_query = """
                 SELECT
                     created_at
@@ -53,6 +74,9 @@ def get_community_questions_from_db(filter_query, since_id):
                           fetchone=True,
                           values=(since_id, ))
 
+    # The above fetch's result is a tuple,
+    # and to run the SQL query without crashing
+    # make it an empty array
     if not since_ts:
         since_ts = [""]
 
@@ -126,6 +150,7 @@ def get_community_questions_from_db(filter_query, since_id):
                                                    "since_ts": since_ts[0]})
     if question_cards_detail_from_db:
         question_cards_detail = []
+        # Removes all the markdown format for better user readability
         for question_card in question_cards_detail_from_db:
             temp_list = list(question_card)
             temp_list[1] = strip_markdown.strip_markdown(question_card[1])
@@ -135,7 +160,35 @@ def get_community_questions_from_db(filter_query, since_id):
         return "", 200
 
 
-def get_community_questions_from_db_with_since(query):
+# An intermediate function between the relevant routes
+#   and get_community_questions_from_db()
+# to reduce the code repetition
+def get_community_questions_from_db_with_since(query: str):
+    """
+    This function calls the get_community_questions_from_db(),
+        with the since_id from the frontend
+
+    Args:
+        - query (string): stores the query that is used to filter,
+          in different routes.
+
+    Flow:
+    Route Function
+        │   ▲
+        │   │return
+        ▼   │
+    get_community_questions_from_db_with_since
+        │   ▲
+        │   │return
+        ▼   │
+    get_community_questions_from_db
+
+    Return:
+        - An array: Includes question_id, question with no markdown codes,
+                    created time, person who asked the question,
+                    profile image URL, number of answers, and save status
+        - or a string: "" (if there are no questions)
+    """
     data = request.get_json()
     since_id = data.get("since_id")
     question_cards_detail = get_community_questions_from_db(query, since_id)
@@ -146,6 +199,9 @@ def get_community_questions_from_db_with_since(query):
 @community_bp.route("/community")
 @login_required
 def all_community_questions():
+    """
+    Render the community questions page.
+    """
     return render_template(
         "user/community/community-all.html",
     )
@@ -156,6 +212,13 @@ def all_community_questions():
 @community_bp.route("/community/get-all-questions", methods=["POST"])
 @login_required
 def get_all_community_questions():
+    """
+    Retrieve all community questions.
+
+    Returns:
+        Response: A JSON response containing the list of all community
+        questions retrieved from the database.
+    """
     return jsonify(get_community_questions_from_db_with_since(""))
 
 
@@ -163,6 +226,9 @@ def get_all_community_questions():
 @community_bp.route("/community/newest")
 @login_required
 def newest_community_questions():
+    """
+    Render the new community questions page.
+    """
     return render_template("user/community/community-new.html")
 
 
@@ -172,6 +238,14 @@ def newest_community_questions():
 @community_bp.route("/community/get-new-questions", methods=["POST"])
 @login_required
 def get_new_community_questions():
+    """
+    Retrieve new community questions.
+
+    Returns:
+        Response: A JSON response containing the list of new community
+        questions retrieved from the database.
+    """
+
     query = "WHERE  DATE(Q.created_at) = DATE('now', 'localtime')"
     return jsonify(
         get_community_questions_from_db_with_since(query))
@@ -181,6 +255,9 @@ def get_new_community_questions():
 @community_bp.route("/community/you")
 @login_required
 def user_community_questions():
+    """
+    Render the community questions page that are done by the user.
+    """
     return render_template("user/community/community-user.html")
 
 
@@ -190,6 +267,13 @@ def user_community_questions():
 @community_bp.route("/community/get-user-posted-questions", methods=["POST"])
 @login_required
 def get_user_posted_questions():
+    """
+    Retrieve users' community questions.
+
+    Returns:
+        Response: A JSON response containing the list of users' community
+        questions retrieved from the database.
+    """
     query = "WHERE Q.user_id = :uid"
     return jsonify(
         get_community_questions_from_db_with_since(query))
@@ -199,6 +283,9 @@ def get_user_posted_questions():
 @community_bp.route("/community/unanswered")
 @login_required
 def unanswered_community_questions():
+    """
+    Render the unanswered community questions page.
+    """
     return render_template("user/community/community-unanswered.html")
 
 
@@ -207,6 +294,14 @@ def unanswered_community_questions():
 @community_bp.route("/community/get-unanswered-questions", methods=["POST"])
 @login_required
 def get_unanswered_questions():
+    """
+    Retrieve all unanswered community questions.
+
+    Returns:
+        Response: A JSON response containing the list of
+        all unanswered community
+        questions retrieved from the database.
+    """
     query = "WHERE A.answer_id IS NULL"
     return jsonify(
         get_community_questions_from_db_with_since(query))
@@ -216,6 +311,9 @@ def get_unanswered_questions():
 @community_bp.route("/community/saved")
 @login_required
 def saved_community_questions():
+    """
+    Render the saved community questions page.
+    """
     return render_template("user/community/community-saved.html")
 
 
@@ -225,6 +323,13 @@ def saved_community_questions():
 @community_bp.route("/community/get-saved-questions", methods=["POST"])
 @login_required
 def get_saved_questions():
+    """
+    Retrieve saved community questions.
+
+    Returns:
+        Response: A JSON response containing the list of saved community
+        questions retrieved from the database.
+    """
     query = """
             WHERE EXISTS (
             SELECT 1
@@ -239,6 +344,30 @@ def get_saved_questions():
 @community_bp.route("/community/add-new-post", methods=["POST"])
 @login_required
 def add_new_post():
+    """
+    Adds new questions that are created by users.
+    Before adding to the database, it checks whether the question is not empty,
+    and within the limit
+    (minimum is 30 characters and maximum is 30000 characters).
+    It creates a unique question ID and saves it to the database,
+    with the question ID, user ID, question, and created date.
+    The function uses the datetime library to generate
+    the current date and time. This route has connected "postTheQuestion""
+    function in the community-base.js file.
+
+    Returns:
+        - If the question is empty,
+          it sends a “You need to enter something before posting your question”
+          warning message to the frontend.
+        - If the question is more than 30000 characters,
+          it sends a “Limit exceeded: 30,000 characters” warning message
+        - If the question is less than 30 characters,
+          it sends a “Question is too short.
+          Please provide more details (at least 30 characters)” warning message
+        - If the question is successfully created, it saves to the database,
+          and sends “🎉 Success! Your question is now live.” success message,
+          with 200 HTTP code
+    """
     data = request.json
 
     user_input = data.get("userQuestionInput")
@@ -246,33 +375,72 @@ def add_new_post():
     # Check the validity of the user input,
     # if it is not empty save to the database
     # If it is empty, do not save to the database
-    if user_input.strip() != "":
-        question_id = str(uuid.uuid4())
-        user_id = session.get("user_id")
-        question = user_input
-        created_at = datetime.now().isoformat(timespec="seconds")
+    if not user_input.strip():
+        return jsonify({"message_type": "warning",
+                        "message": ("You need to enter something"
+                                    " before posting your question")})
 
-        insert_query = """
-                INSERT
-                INTO Question (question_id,
-                                user_id,
-                                question,
-                                created_at)
-                VALUES (?, ?, ?, ?)"""
+    characters_limit_result = check_characters_limit(user_input,
+                                                     max_length=30000,
+                                                     min_length=30)
+    if characters_limit_result == 'max_reject':
+        return jsonify({"message_type": "warning",
+                        "message": "Limit exceeded: 30,000 characters."})
 
-        db_execute(query=insert_query,
-                   values=(question_id,
-                           user_id,
-                           question,
-                           created_at,
-                           ))
-        return "", 200
+    elif characters_limit_result == "min_reject":
+        return jsonify({"message_type": "warning",
+                        "message": (
+                            "Question is too short."
+                            " Please provide more details"
+                            " (at least 30 characters).")})
+
+    question_id = str(uuid.uuid4())
+    user_id = session.get("user_id")
+    question = user_input
+    created_at = datetime.now().isoformat(timespec="seconds")
+
+    insert_query = """
+            INSERT
+            INTO Question (question_id,
+                            user_id,
+                            question,
+                            created_at)
+            VALUES (?, ?, ?, ?)"""
+
+    db_execute(query=insert_query,
+               values=(question_id,
+                       user_id,
+                       question,
+                       created_at,
+                       ))
+    return jsonify({"message_type": "success",
+                    "message": "🎉 Success! Your question is now live."}), 200
 
 
 # Route the handles the save and unsave functionality of a discussion
 @community_bp.route("/community/toggle-save", methods=["POST"])
 @login_required
 def toggle_save():
+    """
+    Controls the saving questions.
+    If the user has saved a question,
+    and if the user clicks on the save toggle icon again,
+    it unsaves that question, and vice versa.
+
+    It gets the question ID from the frontend and checks
+    with the backend before the saving and unsaving process.
+    If the validation is successful, it checks, there is any ID
+    (saved_question_id) in the Saved_question table in the Database
+    (uses user_id from the session variable).
+    If there is an ID, it deletes that row from the table;
+    If there is no ID, it inserts a new row.
+    It has connected to the toggleSave() function in the
+    community-utils.js
+
+    Returns:
+        - Response: A flask JSON response containing the save status
+          (yes or no), with 200 HTTP code
+    """
     data = request.get_json()
     client_question_id = data["questionId"]
 
@@ -320,7 +488,7 @@ def toggle_save():
                 WHERE saved_question_id=?"""
 
             db_execute(query=delete_query,
-                       values=(saved_question_id_from_db))
+                       values=saved_question_id_from_db)
 
             is_save = "no"
         else:
@@ -341,7 +509,26 @@ def toggle_save():
 # This route shows the all the answers relevant to clicked question
 @community_bp.route("/community/<question_id>/discussions")
 @login_required
-def discussions(question_id):
+def discussions(question_id: str):
+    """
+    Gets the question, and
+        if there is markdown code in that question,
+        it converts it to the html code.
+    It compares the question_id in the session with the question_id
+        from the frontend. If they are not equal, it redirects to
+        the 'community.all_community_questions'.
+        Otherwise, it gets the question ID, question, created date,
+        posted user, profile image URL, and save status from the database.
+
+    Args:
+        - question_id (string): Used to check the question ID
+                                that comes from the frontend
+
+    Returns:
+        - If the program gets all the data successfully,
+          it renders the discussion.html; otherwise,
+          it redirects to the “community.all_community_question”.
+    """
     if question_id != session.get("question_id"):
         return redirect(url_for("community.all_community_questions"))
 
@@ -428,6 +615,23 @@ def discussions(question_id):
 @community_bp.route("/community/check-qid", methods=["POST"])
 @login_required
 def check_qid():
+    """
+    This route is used to validate the question ID
+        that comes from the frontend, and if the validation is successful,
+        it saves that ID into session variables (session[“question_id”]).
+
+    This function has connected with the openTheDiscussion() function
+        in the question-card.js file. This function is called before
+        the user goes to the discussion page.
+
+
+    Returns:
+        - Response: If both IDs (client side and backend) are equal,
+          it sends a JSON response containing the redirect URL
+          for the discussion page
+        - If the IDs do not match, it redirects to the
+          "community.all_community_questions"
+    """
     data = request.get_json()
     client_question_id = data["questionId"]
 
@@ -457,34 +661,72 @@ def check_qid():
 @community_bp.route("/community/add-answers", methods=["POST"])
 @login_required
 def add_answers():
+    """
+    This route is used to add answers for relevant questions
+        that are asked by other users.
+    First, it checks whether, input is empty or within the relevant
+        character limits. If all is fine, it inserts that into the database.
+        This route has connected with the addAnswers() function
+        in the discussions.js
+
+    Returns:
+        - Response: If the process is successful, it sends a JSON response
+          containing a successful message, called "🎉 Added!”"
+        - Response: If there is an issue with the number of characters,
+          it sends the suitable warning message,
+          either "Answer is too long.. Maximum allowed is 20,000 characters,"
+          or "Answer is too short.
+          Please provide more details (minimum 30 characters)."
+        - Response: If the input is empty,
+          it sends "Answer cannot be empty. Please type your answer."
+    """
     data = request.get_json()
     user_answer = data["userAnswer"]
 
     # Before adding to the database, check userinput is not a blank or
     # empty string
-    if not user_answer == "" and not user_answer.isspace():
-        created_at = datetime.now().isoformat(timespec="seconds")
-        answer_id = str(uuid.uuid4())
-        question_id = session.get("question_id")
-        user_id = session.get("user_id")
-        insert_query = """
-                               INSERT
-                               INTO Answer
-                                    (answer_id,
-                                    question_id,
-                                    user_id,
-                                    content,
-                                    created_at)
-                               VALUES (?, ?, ?, ?, ?)"""
+    if not user_answer.strip():
+        return jsonify({"message_type": "warning",
+                        "message": ("Answer cannot be empty. "
+                                    "Please type your answer")})
 
-        db_execute(query=insert_query,
-                   values=(answer_id,
-                           question_id,
-                           user_id,
-                           user_answer,
-                           created_at))
+    # Validate the number of characters
+    characters_limit_result = check_characters_limit(user_answer,
+                                                     max_length=20000,
+                                                     min_length=30)
+    if characters_limit_result == "min_reject":
+        return jsonify({"message_type": "warning",
+                        "message": ("Answer is too short. "
+                                    "Please provide more details "
+                                    "(minimum 30 characters).")})
 
-    return "", 200
+    if characters_limit_result == "max_reject":
+        return jsonify({"message_type": "warning",
+                        "message": ("Answer is too long. "
+                                    "Maximum allowed is 20,000 characters.")})
+
+    created_at = datetime.now().isoformat(timespec="seconds")
+    answer_id = str(uuid.uuid4())
+    question_id = session.get("question_id")
+    user_id = session.get("user_id")
+    insert_query = """
+                    INSERT
+                    INTO Answer
+                        (answer_id,
+                        question_id,
+                        user_id,
+                        content,
+                        created_at)
+                    VALUES (?, ?, ?, ?, ?)"""
+
+    db_execute(query=insert_query,
+               values=(answer_id,
+                       question_id,
+                       user_id,
+                       user_answer,
+                       created_at))
+
+    return jsonify({"message_type": "success", "message": "🎉 Added!"}), 200
 
 
 # This route gets all the answers that are relevant
@@ -494,6 +736,28 @@ def add_answers():
 @community_bp.route("/community/get-answers", methods=['POST'])
 @login_required
 def get_answers():
+    """
+    This route sends all the answers related to a specific question.
+    It takes the user_id from the session variables,
+            and creates a static base
+            (This is for the images that are not starting from "https").
+            This function gets the last ID through the parameter
+            called 'since_id'.
+            This is due to the current system using the polling method
+            to keep updating the page; therefore,
+            the program wants the last ID (since_id) to get the last time
+            that fetch happened. It can be empty.
+        Answers that are done by the login user will change to
+            “You” instead of the full own name
+        Answers that happen during the current date show only the time
+    This route has been connected with the getAnswers() function
+    in the discussions.js
+
+    Returns:
+        - An array: Includes answer_id, answer,
+                    created time, person who gave the answer,
+                    profile image url, number of likes, and like status
+    """
     data = request.get_json()
     since_id = data.get("since_id")
 
@@ -513,6 +777,7 @@ def get_answers():
                           fetchone=True,
                           values=(since_id, ))
 
+    # ts: time stamp
     if since_ts:
         since_ts = since_ts[0]
     else:
@@ -576,7 +841,21 @@ def get_answers():
 @community_bp.route("/community/toggle-like", methods=["POST"])
 @login_required
 def toggle_like():
+    """
+    This route controls the like toggle for answers.
+    It gets the answer ID from the client side,
+        uses that value to check if there is any row in the AnswerLike table.
+        If there is any row, it deletes that row from the table; otherwise,
+        it inserts a new row. This route has connected with the toggleLike()
+        function in the discussions.js
+
+    Returns:
+        - Response: A JSON with a like status and the number of likes
+    """
     data = request.get_json()
+
+    # No validation required, as the system doesn't crash
+    # if the user changes the answerId
     client_answer_id = data["answerId"]
     user_id = session.get("user_id")
 
@@ -633,6 +912,15 @@ def toggle_like():
 @community_bp.route("/community/get-number-of-answers")
 @login_required
 def get_number_of_answers():
+    """
+    This route sends the number of answers
+        every 2.5 seconds when the frontend calls.
+    This route has connected with the updateNumberofAnswers()
+        function in the discussions.js
+
+    Returns:
+        - Response: A JSON with the number of likes
+    """
     question_id = session.get("question_id")
 
     query = "SELECT COUNT(*) FROM Answer WHERE question_id = ?"
@@ -645,6 +933,7 @@ def get_number_of_answers():
 
 
 # Removes the punctuations of a text
+# This is used in below
 translator = str.maketrans('', '', string.punctuation)
 
 
@@ -653,8 +942,37 @@ translator = str.maketrans('', '', string.punctuation)
 @community_bp.route("/community/search/", methods=["GET"])
 @login_required
 def search_questions():
+    """
+    This route uses a simple algorithm for searching questions.
+    (The reason not to use the SQL query is that the user
+        does not type the exact keywords.)
+
+    Process of Algorithm:
+        1. Convert all the questions into plain text without emojis,
+            punctuation
+        2. Then, convert that to a set (to remove all the duplicates)
+        3. Then compare the keywords' length and the question's length
+        4. Save the smaller value in the denominator
+        5. Removes all the duplicates of both keywords and the question
+        6. And count the similar words in both sets
+        7. And gets a percentage (similar words/denominator) * 100
+        8. If the percentage is higher than 50, it appends to the
+            search_result array
+        9. Repeat for every Question
+
+    Note: There are some limitations for the algorithm.
+          Through testing, 90% accuracy is there
+
+    Returns:
+        - Renders the community-search-result.html with the search_result
+          array,  otherwise it redirects to the
+          "community.all_community_questions"
+    """
     keyword = request.args.get("search")
     search_result = []
+    # Uses this algorithm, because
+    # because the user doens not type the exact
+    #   key words
     if not keyword == "" and not keyword.isspace():
         question_cards_detail = get_community_questions_from_db("", "")
         for question_card_detail in question_cards_detail:

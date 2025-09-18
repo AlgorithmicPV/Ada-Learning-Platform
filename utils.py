@@ -1,7 +1,7 @@
 import sqlite3
 from functools import wraps
 from email_validator import validate_email, EmailNotValidError
-from flask import redirect, session, url_for, request
+from flask import redirect, session, url_for, request, jsonify
 
 
 # Function to divide an array into chunks of a specified size
@@ -62,7 +62,7 @@ def db_execute(
         conn.close()
     except sqlite3.Error as e:
         print(e)
-        return None
+#        return jsonify({"message_type":})
 
 
 # Why @wraps matters:
@@ -83,7 +83,9 @@ def login_required(endpoint_func):
     return wrapper
 
 
-def check_characters_limit(max_length: int, user_input: str):
+def check_characters_limit(user_input: str,
+                           max_length: int = float("inf"),
+                           min_length: int = float("-inf")) -> None:
     """
     Check the number of characters in an input fit to the maximum length
 
@@ -91,21 +93,36 @@ def check_characters_limit(max_length: int, user_input: str):
     that cannot be handled by the backend.
     Count the user input and check whether it is less than the maximum length.
     If it is more than the maximum length it will return 'reject';
-    otherwise, it will return a bare return (plain return)
+    otherwise, it will return a bare return (plain return).
+    Same for the Minimum length
+
+    Initially, max_length and min_length are set to infinity (max is +,
+    min is -),
+    because if the function had only one value, the other one would be none,
+    and the function would crash. It could be 0,
+    but we could not get the right output.
+    Therefore, max_length is set to positive infinite,
+    min_length is set to negative infinity.
 
     Args:
-        max_length (int): maximum characters that the user can provide
+        max_length (int): maximum characters that the user can provide,
+                          initially sets into + infinity
+        min_length (int): Minimum characters that the user can provide,
+                          initially sets into - infinity
         user_input (str): Input that is given by the user
 
     Returns:
         A string: If the max_length is less than the input length,
-        it will return 'reject' or
+        it will return 'max_reject' / 'min_reject' or
         a bare return
     """
     cleaned_user_input = user_input.strip()
 
     input_length = len(cleaned_user_input)
 
-    if max_length < input_length:
-        return "reject"
+    if max_length < input_length or min_length > input_length:
+        if max_length < input_length:
+            return "max_reject"
+        if min_length > input_length:
+            return "min_reject"
     return

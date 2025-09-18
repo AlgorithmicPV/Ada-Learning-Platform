@@ -1,3 +1,7 @@
+"""
+Handles all the authentications of the system
+"""
+
 import os
 from datetime import datetime, timedelta
 import uuid

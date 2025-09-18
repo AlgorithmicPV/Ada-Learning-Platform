@@ -39,6 +39,8 @@
 {% endblock %}
 {% block extra_js %}
     <script type="module"
+            src="{{ url_for('static', filename = 'js/user/community/community-utils.js')}}"></script>
+    <script type="module"
             src="{{ url_for('static', filename = 'js/user/community/community-base.js')}}"></script>
     <script type="module"
             src="{{ url_for('static', filename = 'js/user/community/question-card.js')}}"></script>
