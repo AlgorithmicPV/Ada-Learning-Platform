@@ -126,13 +126,14 @@ def update_username(new_username, user_id):
     character_limit_result = check_characters_limit(new_username,
                                                     max_length=50,
                                                     min_length=3)
-    if character_limit_result == "max_result":
+    print(character_limit_result)
+    if character_limit_result == "max_reject":
         flash(("Display name is too long. "
                "Maximum allowed is 50 characters."),
               category="warning")
         return
 
-    elif character_limit_result == "min_result":
+    elif character_limit_result == "min_reject":
         flash("Username is too short.", category="error")
         return
 
@@ -484,15 +485,15 @@ def change_password():
                                                              max_length=1024,
                                                              min_length=6)
 
-            if check_characters_result == "max_reject":
+            if check_characters_result == "min_reject":
                 flash("Password is too small", category="warning")
-                return
+                return redirect(url_for("settings.settings"))
 
-            elif check_characters_result == "min_reject":
+            elif check_characters_result == "max_reject":
                 flash(("Password is too long. "
                        "Maximum allowed is 1,024 characters."),
                       category="warning")
-                return
+                return redirect(url_for("settings.settings"))
 
             update_query = """
                         UPDATE User
