@@ -798,76 +798,49 @@ def ai_courses():
         ai_courses_data=ai_courses_data)
 
 
-# This route is used to generate a course based on the user's input using AI
-# It checks if the user is logged in and if the request is a POST request
-# with JSON
-@my_courses_bp.route("/my-courses/ai_generated/generating", methods=["POST"])
+@my_courses_bp.route(
+    "/my-courses/ai_generated/generating", methods=["POST"]
+)
 @login_required
 def generarting_course():
     """
     This route generates an AI course based on the user's input.
-
-    The function reads JSON data from the POST request and gets the
-    userInput field. It sends the input to the AI model to generate a
-    simple and clear course name. If the name is invalid, it returns
-    an error message. If valid, it sends another request to the AI model
-    to generate the full beginner-friendly course content in HTML format.
-    The course name and content are saved in the Ai_resource table with
-    a timestamp and default status. Finally, it returns a JSON response
-    with a redirect URL to the AI courses page and a status of "created".
-
-
-    Returns:
-        Response: JSON object with either an error or the redirect URL
-        after the course is generated and saved.
+    Returns JSON response with either an error or a redirect URL.
     """
-    data = request.get_json()
-    user_input = data.get("userInput")
+    try:
+        data = request.get_json()
+        user_input = data.get("userInput")
 
-    if user_input.strip():
-        check_characters_limit_result = check_characters_limit(user_input,
-                                                               max_length=1500,
-                                                               min_length=20)
+        if not user_input or not user_input.strip():
+            return jsonify({"error": "Invalid Input"})
+
+        check_characters_limit_result = check_characters_limit(
+            user_input, max_length=1500, min_length=20
+        )
         print(check_characters_limit_result)
 
         if check_characters_limit_result == "max_reject":
-            return jsonify(
-                {"warning": "Too big..."
-                 })
-        
+            return jsonify({"warning": "Too big..."})
         elif check_characters_limit_result == "min_reject":
-            return jsonify(
-                {"warning": "Too small..."
-                 })
-        
+            return jsonify({"warning": "Too small..."})
+
+        # First AI call → course name
         response = client.chat.completions.create(
             messages=[
                 {
                     "role": "system",
                     "content": f"""
-                    You are an AI assistant integrated into
-                    the Ada Learning Platform, developed by
+                    You are an AI assistant integrated into the
+                    Ada Learning Platform, developed by
                     G. A. Pasindu Vidunitha.
                     Your role is to generate a simple, clear,
                     and suitable course name based on the
                     following user input: {user_input}.
                     Return only the course name as plain text.
-                    Do not include any labels, prefixes,
-                    or extra text
-                    (e.g., avoid phrases like "Course name:",
-                    "Here is your course:", etc.).
-                    Output only the name itself.
-                    If the user input is random, unclear, or
-                    not related to programming or related
-                    fields (e.g., software, data, AI/ML, IT,
-                    cybersecurity), output exactly "invalid"
-                    and nothing else.
+                    If invalid, return "invalid".
                     """,
                 },
-                {
-                    "role": "user",
-                    "content": user_input,
-                },
+                {"role": "user", "content": user_input},
             ],
             temperature=1,
             top_p=1,
@@ -877,39 +850,27 @@ def generarting_course():
         course_name = response.choices[0].message.content
 
         if course_name == "invalid":
-            print("Invalid topic. Enter a programming-related subject.")
             return jsonify(
-                {"error": "Invalid topic. Enter a programming-related subject."
-                 })
+                {
+                    "error": "Invalid topic. Enter a programming-related "
+                             "subject."
+                }
+            )
 
+        # Second AI call → course content
         response = client.chat.completions.create(
             messages=[
-                {
-                    "role": "system",
-                    "content": "",
-                },
+                {"role": "system", "content": ""},
                 {
                     "role": "user",
                     "content": f"""
-                    You are an AI assistant integrated into
-                    the Ada Learning Platform, developed by
-                    G. A. Pasindu Vidunitha. Ada is a platform
-                    designed to help beginner developers
-                    learn programming and software development
-                    effectively.Your role is to generate beginner-friendly,
-                    easy-to-understand course content based on
-                    the following user input: {course_name}.
-                    Use proper HTML tags for all content,
-                    including headings (<h2>), paragraphs (<p>),
-                    lists (<ul>, <li>), and code blocks (<pre><code>).
-                    This ensures the output can be rendered cleanly
-                    in a webpage.Do not include introductions,
-                    explanations,or phrases like “Here is your course” —
-                    just return the raw structured HTML content.
-                    If the user input is random, unclear,
-                    or does not make sense,generate a
-                    meaningful beginner-friendly course
-                    topic on your own and proceed accordingly.""",
+                    You are an AI assistant integrated into the
+                    Ada Learning Platform. Generate beginner-
+                    friendly HTML-based course content for:
+                    {course_name}. Use <h2>, <p>, <ul>, <li>,
+                    <pre><code>. If unclear, create a meaningful
+                    programming-related topic.
+                    """,
                 },
             ],
             temperature=1,
@@ -918,43 +879,42 @@ def generarting_course():
         )
 
         course_content = response.choices[0].message.content
-
         user_id = session.get("user_id")
-
         resource_id = str(uuid.uuid4())
-
         timestamp = datetime.now().isoformat(timespec="seconds")
 
         insert_query = """
             INSERT INTO Ai_resource
-                (resource_id,
-                user_id,
-                title,
-                content,
-                generated_at,
-                status)
+                (resource_id, user_id, title, content,
+                 generated_at, status)
             VALUES (?, ?, ?, ?, ?, ?)
-                    """
+        """
 
-        db_execute(query=insert_query,
-                   fetch=False,
-                   values=(
-                       resource_id,
-                       user_id,
-                       course_name,
-                       course_content,
-                       timestamp,
-                       "Haven't Done",
-                   ))
+        db_execute(
+            query=insert_query,
+            fetch=False,
+            values=(
+                resource_id,
+                user_id,
+                course_name,
+                course_content,
+                timestamp,
+                "Haven't Done",
+            ),
+        )
 
         ai_courses_url = url_for("my_courses.ai_courses")
-        return (
-            jsonify({"redirect_url": ai_courses_url,
-                    "status": "created"}),
-            200,
+        return jsonify(
+            {"redirect_url": ai_courses_url, "status": "created"}
+        ), 200
+
+    except Exception as e:
+        # Log actual error for debugging
+        print(f"Error generating AI course: {e}")
+        return jsonify(
+            {"error": "An unexpected error occurred. "
+                      "Please try again later."}
         )
-    else:
-        return jsonify({"error": "Invalid Input"})
 
 
 # This route is used to search for AI-generated courses based
