@@ -99,6 +99,7 @@ if (doneButton) {
       })
         .then((response) => response.json())
         .then((data) => {
+          console.log(data);
           if (data["message_type"] == "solution_wrong") {
             solutionWrongMsg(image_url);
           } else if (data["message_type"] == "warning") {

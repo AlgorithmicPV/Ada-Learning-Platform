@@ -209,6 +209,10 @@
   margin-bottom: 15px;
   flex: 1;
   width: 100%;
+}
+
+.question p,
+.answer {
   white-space: normal; /* ensures normal line breaking */
   word-wrap: break-word; /* allows long words to break */
   overflow-wrap: break-word; /* modern standard */

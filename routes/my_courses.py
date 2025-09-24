@@ -164,6 +164,10 @@ def get_ai_courses(search_key: str = None):
 
     ai_courses_data_form_db = db_execute(
         query=query, fetch=True, fetchone=False, values=values)
+    
+    if search_key:
+        if not ai_courses_data_form_db:
+            return "no-result"
 
     if ai_courses_data_form_db:
         return ai_courses_data_form_db
@@ -1012,7 +1016,7 @@ def intermediate_route_ai():
 # This route is used to display the AI-generated course content
 @my_courses_bp.route("/my-courses/ai_generated/<course_name>")
 @login_required
-def ai_course(_course_name):
+def ai_course(course_name):
     """
     This route shows the content of an AI-generated course.
 

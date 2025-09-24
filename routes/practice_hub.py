@@ -88,6 +88,13 @@ def get_practice_challenges(search_key: str = None):
     challenges = db_execute(query=query,
                             fetch=True,
                             values=values)
+    
+    # Check, if the challenges is null because of a searchkey
+    # otherwise we can't get the no search result output
+    if search_key:
+        if not challenges:
+            return "no-result"
+        
     if challenges:
         return challenges
     else:

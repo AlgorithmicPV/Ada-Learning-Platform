@@ -1,3 +1,5 @@
+import { showAlertMessages } from "../../message-handler.js";
+
 // JaavaScript code for the AI course page
 
 let isSearchBoxOn = false;
@@ -66,36 +68,52 @@ let hasStartedReading = false;
 
 // Function to handle the speak button click event
 speakButton.addEventListener("click", () => {
-  content = document.querySelector(".content").textContent;
-  // Remove emojis and special characters from the content
-  // Becuase the speechSynthesis reads the emojis also
-  content = content.replace(
-    /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-    ""
-  );
-  if (isStoppedByUse == false) {
-    if (hasStartedReading) {
+  const el = document.querySelector(".content");
+  if (!el) {
+    console.warn("No .content element found.");
+    return;
+  }
+
+  // Get text and strip emojis/specials
+  let text = el.textContent ?? "";
+  text = text
+    .replace(
+      /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+      ""
+    )
+    .trim();
+
+  if (!text) {
+    console.warn("No content to read.");
+    return;
+  }
+
+  // Toggle logic
+  if (hasStartedReading) {
+    if (isStoppedByUse) {
+      resume_read_aloud();
+      isStoppedByUse = false;
+    } else {
       pause_read_aloud();
       isStoppedByUse = true;
     }
-  } else if (isStoppedByUse) {
-    if (hasStartedReading) {
-      resume_read_aloud();
-      isStoppedByUse = false;
-    }
+    return;
   }
 
-  if (hasStartedReading == false) {
-    read_aloud_text(content);
-    hasStartedReading = true;
-    console.log("working");
-    isStoppedByUse = false;
-  }
+  // First time: start reading
+  read_aloud_text(text);
+  hasStartedReading = true;
+  isStoppedByUse = false;
+  console.log("working");
 });
 
 // Stop reading aloud when the window is loaded
 // This ensures that if the user navigates away or reloads the page, reading stops
 window.addEventListener("load", () => {
+  stop_read_aloud();
+});
+
+window.addEventListener("pageshow", (event) => {
   stop_read_aloud();
 });
 
@@ -121,6 +139,18 @@ const ai_chat = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const result = await response.json();
+
+    console.log(result);
+
+    if (result["warning"]) {
+      showAlertMessages("warning", result["warning"]);
+      return;
+    }
+
+    if (result["error"]) {
+      showAlertMessages("error", result["error"]);
+      return;
+    }
 
     // Create a conversation wrapper to display the user input and AI response
     const conversation = document.createElement("div");
@@ -150,7 +180,7 @@ const ai_chat = async () => {
     // This will display the AI's response in a formatted way
     const ai_response = document.createElement("div");
     ai_response.classList.add("ai-response");
-    ai_response.innerHTML = marked.parse(result["response"]);
+    ai_response.innerHTML = marked.parse(result["result"]);
 
     // Append the AI response paragraph to the response wrapper
     // and then append the response wrapper to the conversation

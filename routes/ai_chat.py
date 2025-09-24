@@ -273,19 +273,23 @@ def check_answers():
                                                language))
 
                 system_content = f"""Given {user_code} and {challenge}
-                                    in {language}, decide if solution
-                                    is correct. Reply only:
-                                    Correct or Incorrect.
-                                    Give priority to DB {solutions[0]}.
-                                    If user code is similar and both solve it,
-                                    reply Correct, else Incorrect.  """
+                    in {language}, decide if solution
+                    is correct. Reply only:
+                    'Correct' or 'Incorrect'.
 
-                user_content = f"""code: {user_code},
-                                    challenge : {challenge}
-                                    and programing language: {language}"""
-                
-                print(system_content)
+                    Give 90% priority to DB solution \n{solutions[0]}\n.
+                    Do not be too strict — if the user code is reasonably
+                    similar to the DB solution and both solve the challenge,
+                    reply 'Correct' . Minor differences in style, structure,
+                    or variable names should still be accepted.
+                    Otherwise, reply 'Incorrect'. """
 
+                user_content = f"""code: \n{user_code}\n
+                                    challenge : \n{challenge}\n
+                                    answer from the system DB:
+                                        \n{solutions[0]}\n
+                                    and programing language: \n{language}\n"""
+                                
                 is_solution_correct = ai_response(
                     system_content, user_content)
 

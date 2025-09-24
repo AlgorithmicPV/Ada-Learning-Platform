@@ -32,7 +32,7 @@
         {% block extra_css %}{% endblock %}
     </head>
     <body>
-      {# Vertical Navigation bar #}
+        {# Vertical Navigation bar #}
         <div class="navigation-bar-wrapper">
             <a class="menu-cloppased-button">
                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +44,7 @@
                 </svg>
             </a>
             <a class="home-btn {% if request.path.startswith('/dashboard') %}active{% endif %}"
-                    href='{{ url_for("dashboard.dashboard") }}'>
+               href='{{ url_for("dashboard.dashboard") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -56,7 +56,7 @@
                 <p>Home</p>
             </a>
             <a class="my-course-btn {% if request.path.startswith('/my-courses') %}active{% endif %}"
-                    href='{{ url_for("my_courses.all_courses") }}'>
+               href='{{ url_for("my_courses.all_courses") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -68,7 +68,7 @@
                 <p>My Course</p>
             </a>
             <a class="practice-hub-btn {% if request.path.startswith('/practice-hub') %}active{% endif %}"
-                    href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'>
+               href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -78,7 +78,7 @@
                 <p>Practice Hub</p>
             </a>
             <a class="community-btn {% if request.path.startswith('/community') %}active{% endif %}"
-                    href='{{ url_for("community.all_community_questions") }}'>
+               href='{{ url_for("community.all_community_questions") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -90,7 +90,7 @@
                 <p>Community</p>
             </a>
             <a class="setting-btn {% if request.path.startswith('/settings') %}active{% endif %}"
-                    href='{{ url_for("settings.settings") }}'>
+               href='{{ url_for("settings.settings") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -100,8 +100,7 @@
                 </svg>
                 <p>Settings</p>
             </a>
-            <a class="logout-btn"
-                    href='{{ url_for("logout") }}'>
+            <a class="logout-btn" href='{{ url_for("logout") }}'>
                 <svg xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink"
                      version="1.1"
@@ -135,7 +134,7 @@
                 </svg>
             </button>
             <a class="home-btn {% if request.path.startswith('/dashboard') %}active{% endif %}"
-                    onclick="window.location.href='{{ url_for("dashboard.dashboard") }}'">
+               onclick="window.location.href='{{ url_for("dashboard.dashboard") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -147,7 +146,7 @@
                 <p>Home</p>
             </a>
             <a class="my-course-btn {% if request.path.startswith('/my-courses') %}active{% endif %}"
-                    onclick="window.location.href='{{ url_for("my_courses.all_courses") }}'">
+               onclick="window.location.href='{{ url_for("my_courses.all_courses") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -159,7 +158,7 @@
                 <p>My Course</p>
             </a>
             <a class="practice-hub-btn {% if request.path.startswith('/practice-hub') %}active{% endif %}"
-                    onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'">
+               onclick="window.location.href='{{ url_for("practice_hub.uncomplete_practice_challenges") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -169,7 +168,7 @@
                 <p>Practice Hub</p>
             </a>
             <a class="community-btn {% if request.path.startswith('/community') %}active{% endif %}"
-                    onclick="window.location.href='{{ url_for("community.all_community_questions") }}'">
+               onclick="window.location.href='{{ url_for("community.all_community_questions") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -181,7 +180,7 @@
                 <p>Community</p>
             </a>
             <a class="setting-btn {% if request.path.startswith('/settings') %}active{% endif %}"
-                    onclick="window.location.href='{{ url_for("settings.settings") }}'">
+               onclick="window.location.href='{{ url_for("settings.settings") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      id="Layer_1"
                      data-name="Layer 1"
@@ -192,7 +191,7 @@
                 <p>Settings</p>
             </a>
             <a class="logout-btn"
-                    onclick="window.location.href='{{ url_for("logout") }}'">
+               onclick="window.location.href='{{ url_for("logout") }}'">
                 <svg xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink"
                      version="1.1"
@@ -214,7 +213,7 @@
         </div>
         <div class="main-wrapper">
             <div class="top-bar">
-              {# Logo, Adds directly so it is easy to edit with css #}
+                {# Logo, Adds directly so it is easy to edit with css #}
                 <svg class="app_logo"
                      width="84"
                      height="54"
