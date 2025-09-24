@@ -133,6 +133,7 @@ def get_community_questions_from_db(filter_query: str, since_id: str):
     # When I add the filter_query,
     # I have added WHERE part,
     # Therefore I added AND instead of WHERE
+    # to the query
     if filter_query != "":
         # keeps a space before "AND" otherwise,
         # when we combine them without a space

@@ -93,12 +93,12 @@
                 messages %}
                 <div class="alert-box-wrapper">
                     {% for category, message in messages %}
-                          <script type="module">
+                        <script type="module">
                               import {showAlertMessages} from './../../static/js/message-handler.js'
                               let alertType = `{{ category }}`;
                               let alertMessage = `{{ message }}`;
                               showAlertMessages(alertType, alertMessage) 
-                          </script>
+                        </script>
                     {% endfor %}
                 </div>
             {% endif %}

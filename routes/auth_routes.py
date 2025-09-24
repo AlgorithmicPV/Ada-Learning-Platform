@@ -67,7 +67,6 @@ def login():
         - For the exception,
           It sends the flash message with the relevant error.
     """
-    session.clear()
     if (
         request.method == "POST"
     ):  # If the request method is POST, it means the user is trying to log in

@@ -613,7 +613,7 @@ def feedback():
                              "Please provide at least 10 characters.")})
 
         elif characters_limit_result == "max_reject":
-            return jsonify({'meesage':
+            return jsonify({'message':
                             ("Feedback is too long. "
                              "Please keep it under 300 characters.")})
 

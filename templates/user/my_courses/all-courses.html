@@ -12,13 +12,13 @@
 {% block content %}
     {{ super() }}
     <div class="all-courses-wrapper">
-        <!-- course_data is a list containing course details -->
-        <!-- course_data[0] = course_name -->
-        <!-- course_data[1] = course_title -->
-        <!-- course_data[2] = course_image -->
-        <!-- course_data[3] = course_background_image -->
-        <!-- course_data[4] = language -->
-        <!-- course_data[5] = course_progress -->
+        {# course_data is a list containing course details #}
+        {# course_data[0] = course_name #}
+        {# course_data[1] = course_title #}
+        {# course_data[2] = course_image #}
+        {# course_data[3] = course_background_image #}
+        {# course_data[4] = language #}
+        {# course_data[5] = course_progress #}
         {% if courses_data %}
             {% for course_data in courses_data %}
                 <div class="course-wrapper"
@@ -33,7 +33,7 @@
                             <p class="course-title">{{ course_data[1] }}</p>
                             <p class="completed-amt">{{ course_data[5] | round | int }}% complete</p>
                         </div>
-                        <!-- This form is for small screens and this hides in large screens -->
+                        {# This form is for small screens and this hides in large screens #}
                         <form class="small-screen-start-course"
                               action="{{ url_for("my_courses.all_courses") }}"
                               method="post">
@@ -62,7 +62,7 @@
                             </button>
                         </form>
                     </div>
-                    <!-- This shows when the user hovers over the course card -->
+                    {# This shows when the user hovers over the course card #}
                     <div class="hover">
                         <form action="{{ url_for("my_courses.all_courses") }}"  method="post">
                             <input type="hidden" name="course_id" value="{{ course_data[0] }}" />

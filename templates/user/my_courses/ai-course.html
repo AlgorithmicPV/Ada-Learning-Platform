@@ -8,21 +8,21 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 {% endblock %}
 {% block content %}
-    <!-- AI Course Page -->
+    {# AI Course Page #}
     <div class="ai-course-wrapper">
-        <!--Ai course top bar-->
+        {#Ai course top bar#}
         <div class="ai-course-top-bar">
             <p class="course-name">{{ course_name }}</p>
         </div>
-        <!--End Ai course top bar-->
-        <!-- AI Course Content -->
-        <!-- This is the main container for the AI course content and chat -->
+        {#End Ai course top bar#}
+        {# AI Course Content #}
+        {# This is the main container for the AI course content and chat #}
         <div class="ai-course-cont">
             <div class="ai-course-cont-wrapper">
-                <!-- This is the top bar of the AI course content, which includes the search box and the course name and read aloud button -->
+                {# This is the top bar of the AI course content, which includes the search box and the course name and read aloud button #}
                 <div class="ai-course-cont-top-bar">
-                    <!-- Search box and course name with read aloud button -->
-                    <!-- The search box allows users to search for keywords in the course content -->
+                    {# Search box and course name with read aloud button #}
+                    {# The search box allows users to search for keywords in the course content #}
                     <div class="search-keywords-wrapper">
                         <input type="text" id="searchBox" class="searchBox" placeholder="Search..." />
                         <button class="search-btn" onclick="show_search_box()">
@@ -35,9 +35,9 @@
                             </svg>
                         </button>
                     </div>
-                    <!--End of search box-->
-                    <!-- Course name and read aloud button -->
-                    <!-- The course name is displayed here, and the read aloud button allows users to listen to the course content -->
+                    {#End of search box#}
+                    {# Course name and read aloud button #}
+                    {# The course name is displayed here, and the read aloud button allows users to listen to the course content #}
                     <div class="coursename-and-read-aloud-wrapper">
                         <p class="coursename">{{ course_name }}</p>
                         <button class="speak-btn">
@@ -51,11 +51,11 @@
                             </svg>
                         </button>
                     </div>
-                    <!--End of course name and read aloud button-->
+                    {#End of course name and read aloud button#}
                 </div>
-                <!--End of ai course content top bar-->
-                <!-- This is the main content and chat wrapper, which contains the course content and the chat interface -->
-                <!-- The content is displayed in the content div, and the chat interface is in the ai-assistance-wrapper -->
+                {#End of ai course content top bar#}
+                {# This is the main content and chat wrapper, which contains the course content and the chat interface #}
+                {# The content is displayed in the content div, and the chat interface is in the ai-assistance-wrapper #}
                 <div class="content-and-chat-wrapper">
                     <div class="content-wrapper">
                         <div class="content">{{ content | safe }}</div>
@@ -86,15 +86,16 @@
                         </div>
                     </div>
                 </div>
-                <!--End of content and chat wrapper-->
+                {#End of content and chat wrapper#}
             </div>
         </div>
     </div>
-    <!-- End AI Course Page -->
+    {# End AI Course Page #}
 {% endblock %}
 {% block extra_js %}
     <script>let chat_url = '{{ url_for("ai_chat.ai_course_chat")  }}';</script>
-    <script src="{{  url_for('static', filename='js/user/my_courses/ai-course.js') }}"></script>
+    <script type="module"
+            src="{{  url_for('static', filename='js/user/my_courses/ai-course.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
     <script>hljs.highlightAll();</script>

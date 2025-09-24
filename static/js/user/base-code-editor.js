@@ -181,6 +181,16 @@ const send_the_code = async () => {
 
     const result = await response.json();
 
+    if (result["warning"]) {
+      showAlertMessages("warning", result["warning"]);
+      return;
+    }
+
+    if (result["error"]) {
+      showAlertMessages("error", result["error"]);
+      return;
+    }
+
     // Make a wrapper for the terminal line
     const terminal_line_wrapper = document.createElement("div");
     terminal_line_wrapper.classList.add("terminal-line-wrapper");
