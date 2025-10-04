@@ -325,8 +325,8 @@ def update_profile_image(file, user_id):
     if ext == '.webp':
         webp_filename = base_filename + ".webp"
         webp_path = os.path.join(upload_folder, webp_filename)
-        profile_image = f"images/profile_pics/{webp_filename[0]}"
-        file.save(webp_path, quality=90, optimize=True)
+        profile_image = f"images/profile_pics/{webp_filename}"
+        file.save(webp_path)
     else:
         # Generate unique filename
         original_filename = base_filename + ext
@@ -358,6 +358,7 @@ def update_profile_image(file, user_id):
 
         # Save relative webp path to DB
         profile_image = f"images/profile_pics/{webp_filename}"
+        print(profile_image)
 
     update_query = """
                 UPDATE USER
