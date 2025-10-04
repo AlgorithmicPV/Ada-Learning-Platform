@@ -320,12 +320,12 @@ def update_profile_image(file, user_id):
         # Delete the previous image
         # to keep the project clean
         if prev_iamge_tuple:
-            os.remove(f'static/{prev_iamge_tuple[0]}')
+            os.remove(f'static/{prev_iamge_tuple[0][0]}')
 
     if ext == '.webp':
         webp_filename = base_filename + ".webp"
         webp_path = os.path.join(upload_folder, webp_filename)
-        profile_image = f"images/profile_pics/{webp_filename}"
+        profile_image = f"images/profile_pics/{webp_filename[0]}"
         file.save(webp_path, quality=90, optimize=True)
     else:
         # Generate unique filename
