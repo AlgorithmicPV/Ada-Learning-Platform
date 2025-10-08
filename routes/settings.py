@@ -320,7 +320,7 @@ def update_profile_image(file, user_id):
         # Delete the previous image
         # to keep the project clean
         if prev_iamge_tuple:
-            os.remove(f'static/{prev_iamge_tuple[0]}')
+            os.remove(f'static/{prev_iamge_tuple[0][0]}')
 
     if ext == '.webp':
         webp_filename = base_filename + ".webp"
