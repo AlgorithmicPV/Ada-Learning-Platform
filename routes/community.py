@@ -13,6 +13,7 @@ from flask import (
     request,
     jsonify,
     render_template,
+    abort
 )
 import strip_markdown
 import markdown
@@ -512,26 +513,50 @@ def toggle_save():
 @login_required
 def discussions(question_id: str):
     """
-    Gets the question, and
-        if there is markdown code in that question,
-        it converts it to the html code.
-    It compares the question_id in the session with the question_id
-        from the frontend. If they are not equal, it redirects to
-        the 'community.all_community_questions'.
-        Otherwise, it gets the question ID, question, created date,
-        posted user, profile image URL, and save status from the database.
+    Shows the discussion page for a selected community question.
+
+    This route is called after the question ID has already been checked
+    and saved into the session by the `check_qid` route. When the page loads,
+    it double-checks that the question ID in the URL matches the one saved
+    in the session.
+
+    - If they are the same, it just loads the question normally.
+    - If they are different, it checks if the new question ID exists in the
+      database. If it does, it updates the session with that ID so the right
+      question is shown. If it doesn't exist, it shows a 404 error page.
+
+    After that, it gets all the question details such as the question text,
+    who posted it, the time it was created, profile image, number of answers,
+    and whether it's saved by the user. If the question has Markdown code,
+    it turns it into HTML before showing it on the page.
+
+    If the question doesn't exist or has been deleted, it takes the user
+    back to the main community questions page.
 
     Args:
-        - question_id (string): Used to check the question ID
-                                that comes from the frontend
+        question_id (str): The question ID from the URL.
 
     Returns:
-        - If the program gets all the data successfully,
-          it renders the discussion.html; otherwise,
-          it redirects to the “community.all_community_question”.
+        The discussion page if the question exists, or a 404/redirect
+        if it doesn't.
     """
     if question_id != session.get("question_id"):
-        return redirect(url_for("community.all_community_questions"))
+        # Uses the client side question id to check
+        # if there is an actual question id in the database
+        # If there is a question id in the database, it will set the
+        # session question_id
+        query = "SELECT question_id FROM question WHERE question_id = ?"
+
+        question_id = db_execute(
+            query=query,
+            fetch=True,
+            fetchone=True,
+            values=(question_id,))
+        
+        if question_id:
+            session["question_id"] = question_id[0]
+        else:
+            return abort(404)
 
     user_id = session.get("user_id")
     static_base = url_for('static', filename='')
@@ -578,11 +603,13 @@ def discussions(question_id: str):
                     Answer A ON A.question_id = Q.question_id
                 WHERE Q.question_id = :qid
                 """
-    question_details_from_db = db_execute(query=query,
-                                          fetch=True,
-                                          values={"uid": user_id,
-                                                  "qid": question_id,
-                                                  "static_base": static_base})
+    question_details_from_db = db_execute(
+        query=query,
+        fetch=True,
+        values={
+            "uid": user_id,
+            "qid": session.get('question_id'),
+            "static_base": static_base})
 
     if not question_details_from_db:
         return redirect(url_for("community.all_community_questions"))

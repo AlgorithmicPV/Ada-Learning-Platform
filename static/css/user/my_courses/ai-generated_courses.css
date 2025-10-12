@@ -18,6 +18,12 @@
   justify-content: center;
 }
 
+a {
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 5px;
+}
+
 .add-ai-generated-courses-btn {
   background-color: var(--text-color);
   border: none;

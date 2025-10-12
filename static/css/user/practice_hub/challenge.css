@@ -480,6 +480,21 @@ code {
   text-align: center;
 }
 
+.loader-screen {
+  background-color: var(--transparent-background-color);
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-screen .loader {
+  visibility: hidden;
+  opacity: 0;
+}
+
 /* Floating animation */
 @keyframes float {
   0% {

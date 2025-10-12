@@ -384,14 +384,7 @@ def intermediate_route():
 
     course_descriptor_query = """
                             SELECT
-                                language,
-                                course_name,
-                                (
-                                SELECT lesson_title
-                                FROM Lesson as L
-                                WHERE L.lesson_id = :lid
-                                    AND L.course_id = :cid
-                                ) as lesson_title
+                                language
                             FROM
                                 Course as C
                             WHERE
@@ -400,32 +393,20 @@ def intermediate_route():
 
     course_descriptor = db_execute(query=course_descriptor_query,
                                    fetch=True,
-                                   fetchone=False,
+                                   fetchone=True,
                                    values={
                                        "lid": lesson_id,
                                        "cid": course_id
                                    }
                                    )
 
-    session['language'] = course_descriptor[0][0]
-
-    course_name = course_descriptor[0][1]
-
-    lesson_title = course_descriptor[0][2]
-
-    # Formats the course name by replacing spaces with hyphens for URL
-    # compatibility
-    formated_course_name = "-".join(course_name.split(" "))
-
-    # Formats the lesson name by replacing spaces with hyphens for URL
-    # compatibility
-    formated_lesson_name = "-".join(lesson_title.split(" "))
+    session['language'] = course_descriptor[0]
 
     return redirect(
         url_for(
             "my_courses.lesson",
-            course_name=formated_course_name,
-            lesson_name=formated_lesson_name,
+            course_id=course_id,
+            lesson_id=lesson_id,
         )
     )
 
@@ -564,30 +545,137 @@ def lesson_completed():
 # This route shows the lesson content for a specific course and lesson
 # It retrieves the lesson content from the session and displays it on the
 # lesson page
-@my_courses_bp.route("/my-courses/<course_name>/<lesson_name>")
+@my_courses_bp.route("/my-courses/<course_id>/<lesson_id>")
 @login_required
-def lesson(course_name, lesson_name):
+def lesson(course_id, lesson_id):
     """
-    This route shows the lesson content for a specific course and lesson.
+    Shows the lesson page for a specific course and lesson.
 
-    The function gets the course_id, lesson_id, and user_id from the
-    session. It runs a query to load the lesson title, content,
-    completion percentage, navigation ids for next and previous lessons,
-    and a list of all lessons in the course. The data is processed to
-    create a clean 2D array of lesson ids and titles. Finally, the
-    lesson.html template is rendered with the lesson data. If no data is
-    found, it returns a 404 error.
+    This route is called after the course and lesson have already been
+    validated by the previous route. When the page loads, it checks if
+    the course_id and lesson_id in the URL are the same as the ones saved
+    in the session.
+
+    - If they are the same, it just loads the lesson normally.
+    - If they are different, it checks the database to see if the new
+      course_id or lesson_id actually exist.
+        • If they exist, it updates the session with those new values
+          and continues loading the correct lesson.
+        • If they don't exist, it shows a 404 error page.
+
+    Once the course and lesson IDs are valid, it gets the lesson content,
+    the user's progress, and the next/previous lesson IDs from the database.
+    It also gets all the lessons in the course to display in the sidebar.
+    The progress is shown as a percentage of completed lessons.
+
+    If no data is found (for example, if the course or lesson was deleted),
+    the user will see a 404 error.
 
     Args:
-        course_name (str): The course name from the URL (not used in the
-        function logic).
-        lesson_name (str): The lesson name from the URL (not used in the
-        function logic).
+        course_id (str): The course ID from the URL.
+        lesson_id (str): The lesson ID from the URL.
 
     Returns:
-        - Rendered HTML template with the lesson data, or a 404
-        error if no lesson is found.
+        Rendered HTML lesson page if everything is valid,
+        otherwise shows a 404 error page.
     """
+    if course_id != session.get("course_id"):
+        course_id_tuple = db_execute(
+            query="SELECT course_id FROM Course WHERE course_id = ?",
+            fetch=True,
+            fetchone=False,
+            values=(course_id,))
+
+        if course_id_tuple:
+            session["course_id"] = course_id
+        else:
+            abort(404)
+
+        user_id = session.get("user_id")
+        enrollment_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat(timespec="seconds")
+
+        insert_query = """
+            INSERT INTO Enrollment (
+                enrollment_id,
+                user_id,
+                course_id,
+                enrolled_at,
+                status,
+                last_accessed
+            )
+            SELECT ?, ?, ?, ?, ?, ?
+            WHERE NOT EXISTS (
+                SELECT 1 FROM Enrollment
+                WHERE user_id = ? AND course_id = ?
+            )
+        """
+
+        db_execute(
+            query=insert_query,
+            fetch=False,
+            fetchone=False,
+            values=(
+                enrollment_id,
+                user_id,
+                course_id,
+                timestamp,
+                "started",
+                timestamp,
+                user_id,
+                course_id
+            )
+        )
+
+        update_query = """
+            UPDATE Enrollment
+            SET last_accessed = ?
+            WHERE user_id = ? AND course_id = ? AND status = 'started'
+            """
+
+        db_execute(query=update_query, fetch=False, fetchone=False,
+                   values=(timestamp, user_id, course_id))
+
+    if lesson_id != session.get("lesson_id"):
+        lesson_id_query = """
+                SELECT L1.lesson_id FROM Lesson L1
+                    WHERE L1.lesson_id = :lid AND L1.course_id = :cid
+            """
+
+        lesson_id = db_execute(query=lesson_id_query,
+                               fetch=True,
+                               fetchone=True,
+                               values={
+                                    "lid": lesson_id,
+                                    "cid": course_id,
+                                })
+
+        if lesson_id:
+            lesson_id = lesson_id[0]
+        else:
+            abort(404)
+
+        session["lesson_id"] = lesson_id
+
+        course_descriptor_query = """
+                        SELECT
+                            language
+                        FROM
+                            Course as C
+                        WHERE
+                            C.course_id = :cid
+                        """
+
+        course_descriptor = db_execute(query=course_descriptor_query,
+                                       fetch=True,
+                                       fetchone=True,
+                                       values={
+                                            "lid": lesson_id,
+                                            "cid": course_id
+                                        })
+
+        session['language'] = course_descriptor[0]
+
     course_id = session.get("course_id")
     lesson_id = session.get("lesson_id")
     user_id = session.get("user_id")
@@ -708,7 +796,7 @@ def lesson(course_name, lesson_name):
             lessons_data=lessons_data
         )
     else:
-        return 404
+        abort(404)
 
 
 # This route is used to display the courses that the user has completed
@@ -953,74 +1041,15 @@ def search_ai_courses():
         )
 
 
-# This route is used to handle the intermediate step
-# when showing all AI-generated courses
-# This works between the AI-generated courses page
-# and the AI course content page
-# It checks if the user is logged in and retrieves the AI resource ID from
-# the form submission
-@my_courses_bp.route("/my-courses/ai_generated/intermediate",
-                     methods=["POST"])
-@login_required
-def intermediate_route_ai():
-    """
-    This route handles the intermediate step when opening an AI-generated
-    course.
-
-    The function gets the ai-course-id from the form and checks if it exists
-    in the Ai_resource table for the logged-in user. If the id is valid, it
-    saves it to the session, formats the course name with hyphens, and then
-    redirects to the ai_course route. If the id does not exist, it returns a
-    404 error.
-
-
-    Returns:
-        Response: Redirect to the ai_course page if valid, otherwise a 404
-        error.
-    """
-    user_id = session.get("user_id")
-
-    ai_resource_id = request.form.get("ai-course-id")
-
-    query = """
-        SELECT title
-        FROM Ai_resource
-        WHERE resource_id =? and user_id=?"""
-
-    row = db_execute(query=query,
-                     fetch=True,
-                     fetchone=True,
-                     values=(ai_resource_id,
-                             user_id,
-                             ))
-
-    # If the AI resource ID is not found, return a 404 error
-    # This is to ensure that the user cannot access a course that does
-    # not exist
-    if not row:
-        abort(404)
-
-    course_name = row[0]
-
-    session["ai_courses_id"] = ai_resource_id
-
-    formated_course_name = "-".join(course_name.split(" "))
-
-    return redirect(
-        url_for(
-            "my_courses.ai_course",
-            course_name=formated_course_name)
-    )
-
-
 # This route is used to display the AI-generated course content
-@my_courses_bp.route("/my-courses/ai_generated/<course_name>")
+@my_courses_bp.route("/my-courses/ai_generated/<ai_course_id>")
 @login_required
-def ai_course(course_name):
+def ai_course(ai_course_id):
     """
     This route shows the content of an AI-generated course.
 
-    The function gets the user_id and ai_resource_id from the session and
+    The function validates the ai course id and
+    gets the user_id and ai_resource_id from the session and
     queries the ai_resource table to load the course title and content.
     It saves the title in the session as the current topic and
     then renders the ai-course.html template
@@ -1028,15 +1057,13 @@ def ai_course(course_name):
 
     Args:
         course_name (str): The name of the course from the URL
-        (used only for routing).
 
     Returns:
         - Rendered HTML template showing the AI-generated
         course content.
     """
-    user_id = session.get("user_id")
-    ai_resource_id = session.get("ai_courses_id")
 
+    user_id = session.get("user_id")
     query = """
         select
             title,
@@ -1047,11 +1074,14 @@ def ai_course(course_name):
 
     ai_course_data = db_execute(query=query,
                                 fetch=True,
-                                values=(ai_resource_id,
+                                values=(ai_course_id,
                                         user_id,
-                                        ))[0]
-    title = ai_course_data[0]
-    content = ai_course_data[1]
+                                        ))
+    if not ai_course_data:
+        abort(404)
+        
+    title = ai_course_data[0][0]
+    content = ai_course_data[0][1]
 
     session["ai_course_topic"] = title
 

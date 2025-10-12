@@ -1,5 +1,8 @@
 {% extends 'user/practice_hub/practice-hub-base.html' %}
-{% block title %}Practice hub - {{ challenge_info[2] }}{% endblock %}
+{% block title
+    %}
+    Practice hub - {{ challenge_info[2] }}
+{% endblock %}
 {% block extra_css %}
     {{ super() }}
     <link rel="stylesheet"
@@ -177,6 +180,7 @@
 {% endblock %}
 {% block floatingItems %}
     {{ super() }}
+    <div class="loader-screen">{% include "components/loader.html" %}</div>
     <div class="message-box"></div>
 {% endblock %}
 {% block extra_js %}

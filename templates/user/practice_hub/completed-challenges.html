@@ -1,11 +1,7 @@
 {% extends 'user/practice_hub/practice-hub-base.html' %}
-{% block title
-    %}
-    Practice hub - Completed
-{% endblock %}
+{% block title %}Practice hub - Completed{% endblock %}
 {% block extra_css %}
-    {{ super() 
-    }}
+    {{ super() }}
     <link rel="stylesheet"
           href="{{ url_for('static', filename = 'css/user/practice_hub/completed-challenges.css') }}" />
     <link rel="stylesheet"
@@ -26,11 +22,9 @@
                 <tr>
                     <td>{{ challenge[1] }}</td>
                     <td>
-                        <form action="{{ url_for("practice_hub.validate_challenge_id") }}"
-                              method="post">
-                            <input type="hidden" name="challenge_id" value="{{ challenge[0] }}">
-                            <button type="submit">{{ challenge[2] }}</button>
-                        </form>
+                        <a href="{{ url_for('practice_hub.show_challenge', challenge_id=challenge[0]) }}">
+                            <button type="button">{{ challenge[2] }}</button>
+                        </a>
                     </td>
                     <td class="{% if challenge[3]=='Easy' %}easy{% elif challenge[3]=='Medium' %}medium{% else %}hard{% endif %}">
                         {{ challenge[3] }}
