@@ -85,41 +85,70 @@ options.forEach((option) => {
 });
 
 const doneButton = document.querySelector(".done-btn");
+const loadMainScreen = document.querySelector(".loader-screen");
+const loaderForResult = document.querySelector(".loader-screen .loader");
 
 if (doneButton) {
   doneButton.addEventListener("click", () => {
-    let userCode = window.editor.getValue();
-    if (userCode) {
-      fetch(check_answers_url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_code: userCode }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          if (data["message_type"] == "solution_wrong") {
-            solutionWrongMsg(image_url);
-          } else if (data["message_type"] == "warning") {
-            showAlertMessages("warning", data["message"]);
-          } else {
-            celebrate();
-            setTimeout(() => {
-              window.location.href = data["redirect_url"];
-            }, 3000);
-          }
-        })
-        .catch((error) => console.error(error));
-    } else {
+    const userCode = window.editor?.getValue?.() ?? "";
+
+    if (!userCode.trim()) {
       showAlertMessages(
         "warning",
         "You have to type the solution in the given code editor"
       );
+      return;
     }
+
+    // SHOW loader (styles only)
+    loadMainScreen.style.display = "flex";
+    loaderForResult.style.visibility = "visible";
+    loaderForResult.style.opacity = 1;
+
+    console.log(loaderForResult);
+    fetch(check_answers_url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ user_code: userCode }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((t) => {
+            throw new Error(t || `Request failed (${response.status})`);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (data["message_type"] === "solution_wrong") {
+          solutionWrongMsg(image_url);
+        } else if (data["message_type"] === "warning") {
+          showAlertMessages("warning", data["message"]);
+        } else {
+          celebrate();
+          setTimeout(() => {
+            if (data["redirect_url"]) {
+              window.location.href = data["redirect_url"];
+            }
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        showAlertMessages(
+          "warning",
+          "Something went wrong while checking your answer. Please try again."
+        );
+      })
+      .finally(() => {
+        // HIDE loader (styles only) — always runs
+        loadMainScreen.style.display = "none";
+        loaderForResult.style.visibility = "hidden";
+        loaderForResult.style.opacity = 0;
+      });
   });
 }
+
 const toggleSolution = document.querySelector(".toggle-solution");
 const solutionCode = document.querySelector(".solution .code");
 const solution = document.querySelector(".solution");

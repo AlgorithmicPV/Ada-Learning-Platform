@@ -9,7 +9,8 @@ from flask import (Blueprint,
                    redirect,
                    url_for,
                    request,
-                   jsonify)
+                   jsonify,
+                   abort)
 import markdown
 from utils import db_execute, login_required
 
@@ -129,35 +130,32 @@ def uncomplete_practice_challenges():
         challenges=unsolved_challenges)
 
 
-# This route validates the challenge ids comming
-# from the client side with the database and save it to the session data
-# This route will work when the user cicks on a challenge
-# if that clicked challenge's status is not started or completed,
-# It will mark it as "Started"
-# If the challenge id is validate,
-# this will redirect to the route that shows the challenge and
-# code editor to do the challenge
-@practice_hub_bp.route("/practice-hub/validate-challenge-id", methods=["POST"])
+# This Route shows the Challenge and the code editor etc..
+@practice_hub_bp.route("/practice-hub/<challenge_id>")
 @login_required
-def validate_challenge_id():
+def show_challenge(challenge_id):
     """
-    This route checks the challenge id from the client and sets up the session.
+    Show the selected coding challenge and its code editor.
 
-    The function takes the challenge_id from the form and validates
-    it with the database. If the id exists, it saves the challenge_id in
-    the session and checks if the user already has an attempt. If not,
-    it creates a new attempt with status "Started". It then gets
-    the challenge title, formats it by replacing spaces with "-", and
-    redirects the user to the challenge page with the code editor.
-    If the id is not valid, the user is redirected back to
-    the unsolved challenges page.
+    What this does (in simple steps):
+    1) Sets the default editor language to Python.
+    2) Checks the challenge_id from the URL against the database.
+       - If it doesn't exist, show a 404 error.
+    3) If it exists, make sure the user has a Challenge_attempt row.
+       If not, create one with status = "Started".
+    4) Load the challenge details (title, number, question, and the
+       user's current status for this challenge).
+    5) Convert the question (Markdown) into HTML so it displays nicely.
+    6) Render the challenge page with all that info.
 
+    Args:
+        challenge_id (str): The challenge ID from the URL.
 
     Returns:
-        - Redirect to the challenge page if valid,
-                otherwise to the unsolved challenges page.
+        Response: The rendered challenge page with the editor,
+        or a 404 error page if the ID is invalid.
     """
-    client_challenge_id = request.form.get("challenge_id")
+    session["language"] = "python"
 
     # Validates the challenge id comes from client side
     # with the database
@@ -170,84 +168,38 @@ def validate_challenge_id():
     challenge_id_from_db = db_execute(query=challenge_id_query,
                                       fetch=True,
                                       fetchone=True,
-                                      values=(client_challenge_id,))
+                                      values=(challenge_id,))
 
-    if challenge_id_from_db:
-        user_id = session.get("user_id")
-        challenge_attempt_id = str(uuid.uuid4())
-        insert_query = """
-                -- Insert a new challenge attempt with status 'Started'
-                -- if not already attempted
-                INSERT INTO
-                    Challenge_attempt (
-                                    id,
-                                    user_id,
-                                    challenge_id,
-                                    status)
-                SELECT :caid, :uid, :cid, 'Started'
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM Challenge_attempt
-                    WHERE challenge_id = :cid AND user_id = :uid
-                );
-            """
+    if not challenge_id_from_db:
+        abort(404)
 
-        db_execute(query=insert_query,
-                   fetch=False,
-                   values={'caid': challenge_attempt_id,
-                           'uid': user_id,
-                           'cid': client_challenge_id})
+    user_id = session.get("user_id")
 
-        session["challenge_id"] = client_challenge_id
+    challenge_attempt_id = str(uuid.uuid4())
+    insert_query = """
+            -- Insert a new challenge attempt with status 'Started'
+            -- if not already attempted
+            INSERT INTO
+                Challenge_attempt (
+                                id,
+                                user_id,
+                                challenge_id,
+                                status)
+            SELECT :caid, :uid, :cid, 'Started'
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM Challenge_attempt
+                WHERE challenge_id = :cid AND user_id = :uid
+            );
+        """
 
-        challenge_title_query = """
-                        SELECT challenge_title
-                        FROM Challenge
-                        WHERE challenge_id=?
-                        """
+    db_execute(query=insert_query,
+               fetch=False,
+               values={'caid': challenge_attempt_id,
+                       'uid': user_id,
+                       'cid': challenge_id})
 
-        challenge_title = db_execute(query=challenge_title_query,
-                                     fetch=True,
-                                     fetchone=True,
-                                     values=(client_challenge_id,))[0]
-
-        # Formates the challenge title,
-        # if there are space converted them into "-"
-        # For better user experence
-        formated_challenge_title = challenge_title.replace(" ", "-")
-
-        return redirect(
-            url_for(
-                "practice_hub.show_challenge",
-                challenge_title=formated_challenge_title))
-    else:
-        return redirect(
-            url_for("practice_hub.uncomplete_practice_challenges"))
-
-
-# This Route shows the Challenge and the code editor etc..
-@practice_hub_bp.route("/practice-hub/<challenge_title>")
-@login_required
-def show_challenge(challenge_title):
-    """
-    This route shows the selected challenge and the code editor.
-
-    The function sets the default coding language as Python,
-    gets the challenge_id from the session, and queries the
-    database for the challenge details and the user's status.
-    It then converts the question text into HTML using markdown
-    and prepares the data as a list. Finally, it renders the challenge.html
-    template with the challenge information.
-
-    Args:
-        challenge_title (str): The formatted challenge title from the URL.
-
-    Returns:
-        -  Rendered HTML template showing the challenge and code editor.
-    """
-    session["language"] = "python"
-
-    challenge_id = session.get("challenge_id")
+    session["challenge_id"] = challenge_id
     query = """
                 SELECT
                     challenge_id,
@@ -267,6 +219,7 @@ def show_challenge(challenge_title):
                                 fetch=True,
                                 values={"cid": challenge_id,
                                         "uid": session.get("user_id")})[0]
+
     challenge_info_list = list(challenge_info)
     challenge_info_list[3] = markdown.markdown(challenge_info_list[3])
 

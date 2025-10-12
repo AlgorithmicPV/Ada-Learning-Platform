@@ -18,6 +18,7 @@ from flask import (
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, InvalidHash
 from dotenv import load_dotenv
+from authlib.integrations.base_client.errors import OAuthError
 from extensions import oauth
 from utils import validate_email_address, db_execute, check_characters_limit
 
@@ -329,59 +330,71 @@ def authorize_google():
     Returns:
         Response: A redirect to the dashboard after successful login.
     """
-    token = google.authorize_access_token()
-    session["user"] = token
+    try:
+        token = google.authorize_access_token()
+        session["user"] = token
 
-    user_token = session.get("user")
-    user_info = user_token["userinfo"]
-    username = user_info["given_name"]
-    email = user_info["email"]
-    profile_pic = user_info["picture"]
-    google_id = user_info["sub"]
+        user_token = session.get("user")
+        user_info = user_token.get("userinfo", {})
 
-    user_id = str(uuid.uuid4())  # Creates a new primary key
+        username = user_info.get("given_name")
+        email = user_info.get("email")
+        profile_pic = user_info.get("picture")
+        google_id = user_info.get("sub")
 
-    timestamp = datetime.now().isoformat(
-        timespec="seconds")  # Gets the current time
-    print("Session state (login):", session.get('oauth_state'))
+        if not email:
+            flash("Login failed: unable to retrieve email.", "error")
+            return redirect(url_for("auth.login"))
 
-    insert_query = """
-        INSERT
-        INTO User
-            (user_id,
-            email,
-            full_name,
-            google_id,
-            auth_provider,
-            profile_image,
-            theme_preference,
-            join_date)
-        SELECT ?, ?, ?, ?, ?, ?, ?, ?
-        WHERE NOT EXISTS (
-            SELECT 1 FROM User WHERE email = ?
-            )"""
+        user_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat(timespec="seconds")
 
-    db_execute(query=insert_query,
-               fetch=False,
-               values=(user_id,
-                       email,
-                       username,
-                       google_id,
-                       "google",
-                       profile_pic,
-                       "dark",
-                       timestamp,
-                       email))
+        print("Session state (login):", session.get("oauth_state"))
 
-    session["username"] = username
-    email_query = "SELECT user_id FROM User Where email = ?"
-    # Fetch the user_id associated with the email
-    stored_user_id = db_execute(query=email_query,
-                                fetch=True,
-                                fetchone=True,
-                                values=(email,))
-    user_id = stored_user_id[0]
-    session["user_id"] = user_id  # Store the user_id in the session
-    session["auth_provider"] = "google"
+        insert_query = """
+            INSERT INTO User (
+                user_id, email, full_name, google_id,
+                auth_provider, profile_image,
+                theme_preference, join_date
+            )
+            SELECT ?, ?, ?, ?, ?, ?, ?, ?
+            WHERE NOT EXISTS (
+                SELECT 1 FROM User WHERE email = ?
+            )
+        """
+        db_execute(
+            query=insert_query,
+            fetch=False,
+            values=(
+                user_id, email, username, google_id,
+                "google", profile_pic, "dark",
+                timestamp, email
+            )
+        )
 
-    return redirect(url_for("dashboard.dashboard"))
+        email_query = "SELECT user_id FROM User WHERE email = ?"
+        stored_user_id = db_execute(
+            query=email_query,
+            fetch=True,
+            fetchone=True,
+            values=(email,)
+        )
+
+        if stored_user_id:
+            session["user_id"] = stored_user_id[0]
+
+        session["username"] = username
+        session["auth_provider"] = "google"
+
+        flash("Login successful!", "success")
+        return redirect(url_for("dashboard.dashboard"))
+
+    except OAuthError as e:
+        print(f"OAuthError: {e.error} - {e.description}")
+        flash("Authorization failed or access denied.", "error")
+        return redirect(url_for("auth.login"))
+
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        flash("An unexpected error occurred during login.", "error")
+        return redirect(url_for("auth.login"))
