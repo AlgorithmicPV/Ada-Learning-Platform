@@ -922,15 +922,23 @@ def generarting_course():
                 {
                     "role": "system",
                     "content": f"""
-                    You are an AI assistant integrated into the
-                    Ada Learning Platform, developed by
+                    You are an AI assistant integrated into
+                    the Ada Learning Platform, developed by
                     G. A. Pasindu Vidunitha.
                     Your role is to generate a simple, clear,
                     and suitable course name based on the
                     following user input: {user_input}.
                     Return only the course name as plain text.
-                    If invalid, return "invalid".
-                    """,
+                    Do not include any labels, prefixes,
+                    or extra text
+                    (e.g., avoid phrases like "Course name:",
+                    "Here is your course:", etc.).
+                    Output only the name itself.
+                    If the user input is random, unclear, or
+                    not related to programming or related
+                    fields (e.g., software, data, AI/ML, IT,
+                    cybersecurity), output exactly "invalid"
+                    and nothing else.""",
                 },
                 {"role": "user", "content": user_input},
             ],

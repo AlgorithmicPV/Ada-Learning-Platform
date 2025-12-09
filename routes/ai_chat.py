@@ -275,7 +275,7 @@ def check_answers():
                 system_content = f"""
                 Given the user's code:
                 {user_code}
-
+#NOTE: put prompts into a config file
                 and the challenge:
                 {challenge}
 
